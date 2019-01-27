@@ -55,7 +55,7 @@ info:
 
 ### 一、介绍
 
-&emsp;Urlrewriter的作用主要是重写url路径，以此来隐藏真实的路径，如：http://www.xxxx.com/crm_index.do，而真实访问的是http://www.xxxx.com/crm/index.jsp。还有一种就是，在高并发访问的时候，可以更具是否用静态文件来进行路径的重写。
+&emsp;Urlrewriter的作用主要是重写url路径，以此来隐藏真实的路径，如："http://www.xxxx.com/crm_index.do"，而真实访问的是"http://www.xxxx.com/crm/index.jsp"。还有一种就是，在高并发访问的时候，可以更具是否用静态文件来进行路径的重写。
 
 ### 二、整合
 
@@ -177,18 +177,18 @@ SpringCloud 版本为 Edgware 及以下，eureka包改为：
 
 ```pom
 <dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-eureka-server</artifactId>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-eureka-server</artifactId>
 </dependency>
 ```
 
 SpringCloud 版本为 Edgware 以上，eureka包改为netflix：
 
 ```pom
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
-        </dependency>
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+</dependency>
 ```
 
 ## SpringEureka
