@@ -306,7 +306,7 @@ eureka:
 
 http://localhost:9001/
 
-![1548158001871](F:\文件\桌面\markdown筆記\assets\1548158001871.png)
+![1548158001871](F:\文件\桌面\markdown筆記\note\SpringBoot\assets\1548158001871.png)
 
 #### eureka-api 入门
 
@@ -314,7 +314,7 @@ http://localhost:9001/
 
 ##### 模块结构
 
-![1548340246457](F:\文件\桌面\markdown筆記\assets\1548340246457.png)
+![1548340246457](F:\文件\桌面\markdown筆記\note\SpringBoot\assets\1548340246457.png)
 
 ##### 一、导入jar
 
@@ -352,7 +352,7 @@ public interface VideoService {
 
 ##### 模块结构
 
-![1548340282069](F:\文件\桌面\markdown筆記\assets\1548340282069.png)
+![1548340282069](F:\文件\桌面\markdown筆記\note\SpringBoot\assets\1548340282069.png)
 
 ##### 一、导入jar
 
@@ -524,7 +524,7 @@ eureka:
 
 http://localhost:9001/
 
-![1548331878651](F:\文件\桌面\markdown筆記\assets\1548331878651.png)
+![1548331878651](F:\文件\桌面\markdown筆記\note\SpringBoot\assets\1548331878651.png)
 
 
 
@@ -532,7 +532,7 @@ http://localhost:9001/
 
 ##### 模块结构
 
-![1548340368984](F:\文件\桌面\markdown筆記\assets\1548340368984.png)
+![1548340368984](F:\文件\桌面\markdown筆記\note\SpringBoot\assets\1548340368984.png)
 
 ##### 一、导入jar
 
@@ -666,7 +666,7 @@ eureka:
 
 http://localhost:9001/
 
-![1548339679969](F:\文件\桌面\markdown筆記\assets\1548339679969.png)
+![1548339679969](F:\文件\桌面\markdown筆記\note\SpringBoot\assets\1548339679969.png)
 
 
 
