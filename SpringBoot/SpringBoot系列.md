@@ -1,5 +1,7 @@
 # SpringBoot系列
 
+官方文档：https://docs.spring.io/spring-boot/docs/2.0.8.RELEASE/reference/htmlsingle/
+
 ## SpringBoot-Actuator 健康监控
 
 ### 一、介绍
@@ -134,9 +136,19 @@ UrlRewriter快速了解文章入口: <a href="https://blog.csdn.net/u010690828/a
 
 # SpringCloud系列
 
-## SpringCloud和SpringBoot版本对应
+> 以下内容，均在搭建 [lemon](https://github.com/ATSJP/lemon) 项目时，收集和写下的一些内容，如有错误欢迎指正>>>[@SJP](mailto:shijianpeng2010@163.com)
 
-官网：http://spring.io/projects/spring-cloud（一切始于官方文档）
+## 实际中应用及推荐文章
+
+推荐文章：https://blog.csdn.net/zrl0506/article/details/80165477
+
+![1548589316026](F:\文件\桌面\markdown筆記\note\SpringBoot\assets\20170918114736747.png)
+
+推荐文章：https://blog.csdn.net/qq_37170583/article/details/80704904
+
+## SpringCloud和SpringBoot对应版本
+
+官方文档：http://spring.io/projects/spring-cloud（一切始于官方文档）
 
 **Table1**
 
@@ -191,7 +203,7 @@ SpringCloud 版本为 Edgware 以上，eureka包改为netflix：
 </dependency>
 ```
 
-## SpringEureka
+## SpringCloudEureka
 
 ### 入门案例（一） Server与Client
 
@@ -199,7 +211,7 @@ SpringCloud 版本为 Edgware 以上，eureka包改为netflix：
 
 #### 项目整体结构：
 
-
+![1548589316026](F:\文件\桌面\markdown筆記\note\SpringBoot\assets\1548589316026.png)
 
 #### eureka-server入门
 
@@ -751,5 +763,100 @@ http://localhost:9001/
 
 
 
+## SpringCloudFegin
 
+官方文档：https://cloud.spring.io/spring-cloud-static/spring-cloud-openfeign/2.0.2.RELEASE/single/spring-cloud-openfeign.html
+
+##### 一、导入jar
+
+Springboot 2.0.0 以下
+
+```
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-feign</artifactId>
+</dependency>
+```
+
+Springboot 2.0.0 及以上
+
+```pom
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-openfeign</artifactId>
+</dependency>
+```
+
+##### 二、建立相关类
+
+启动类(加上注解)：
+
+```java
+/**
+  * 如果为了把eureka共有接口抽成单独模块，需注明扫描包，才可以加载jar包中的@FeignClient
+  * @EnableFeignClients(basePackages = { "com.lemon.soa.api" })
+  */
+@EnableFeignClients
+```
+
+调用服务：
+
+```java
+package com.lemon.consumer.controller;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+import javax.annotation.Resource;
+
+/**
+ * @author sjp
+ * @date 2019/1/24
+ **/
+@RestController
+public class ConsumerController {
+
+   @Resource
+   private RestTemplate restTemplate;
+
+   @RequestMapping("/")
+   public Double index() {
+        return restTemplate.getForObject("http://eureka-provider/1", Double.class);
+   }
+}
+```
+
+##### 三、配置yml
+
+```yml
+server:
+    port: 9003
+
+spring:
+    application:
+        name: eureka-consumer
+eureka:
+    instance:
+        # 使用IP注册
+        prefer-ip-address: true
+    #注册地址
+    client:
+        service-url:
+            defaultZone: http://localhost:9001/eureka/
+```
+
+##### 四、访问
+
+http://localhost:9001/
+
+![1548339679969](F:\文件\桌面\markdown筆記\note\SpringBoot\assets\1548339679969.png)
+
+
+
+
+
+坑：
+
+有些公共的组件抽出来其他模块的maven依赖，此时要在使用的项目中加载此jar包的spring component以及feign组件，仅仅依靠@ComponentScan是不够的，还需要在@EnableFeignClients(basePackages = {"com.xixicat"})中标注basekPackages。
 
