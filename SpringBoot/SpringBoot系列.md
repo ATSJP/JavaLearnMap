@@ -211,6 +211,12 @@ public class ShiroConfig {
 
 ### 一、介绍
 
+如楼主般配置，shiro和Urlrewirte整合，shiro的拦截器首先执行，后续才是urlrewrite的拦截器
+
+验证：urlrewrite拦截器打上断点 org.tuckey.web.filters.urlrewrite.UrlRewriteFilter#doFilter
+
+​           shiro的拦截器打上断点 org.apache.shiro.web.servlet.OncePerRequestFilter#doFilter
+
 ### 二、整合
 
 #### 1、导入jar
