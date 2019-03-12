@@ -63,6 +63,18 @@ docker start/stop <实例id>
 docker rm <实例id>
 ```
 
+**5、参数**
+
+```shell
+1. --restart
+       no -  容器退出时，不重启容器；
+       on-failure - 只有在非0状态退出时才从新启动容器；
+       always - 无论退出状态是如何，都重启容器；
+       
+```
+
+
+
 ### 四、常用示例
 
 #### 1、部署mysql
