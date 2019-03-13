@@ -183,11 +183,31 @@ docker的-p命令  5000:32769  docker端口->宿主端口
 ```
 
 #### 4、有时候获取镜像很慢
+
+a.
+
 ```shell
 curl -sSL https://get.daocloud.io/daotools/set_mirror.sh | sh -s http://2a22c3ad.m.daocloud.io
 
 systemctl restart docker #重启docker
 ```
+
+b.
+
+vim /etc/docker/daemon.json
+
+```shell
+{
+"registry-mirrors":["https://registry.docker-cn.com"]
+}
+```
+
+```shell
+systemctl daemon-reload
+systemctl restart docker
+```
+
+
 
 ### 六、扩展
 
@@ -195,5 +215,5 @@ systemctl restart docker #重启docker
 
 ##### A、Portainer
 ```shell
-docker run -d -p 9000:9000 portainer/portainer
+docker run --restart=always -d -p 9000:9000 portainer/portainer 
 ```
