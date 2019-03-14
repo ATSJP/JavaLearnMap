@@ -68,7 +68,7 @@ docker rm <实例id>
 #### 1、部署mysql
 
 ```shell
-sudo docker run --name=mysql -it -p 3306:3306 -e MYSQL_ROOT_PASSWORD=emc123123 -d mysql
+sudo docker run --name=mysql -it -p 3306:3306 -e MYSQL_ROOT_PASSWORD=emc123123 -d mysql:5.7
 
 docker exec -it mysql bash
 ```
@@ -185,3 +185,23 @@ systemctl restart docker #重启docker
 ```shell
 docker run -d -p 9000:9000 portainer/portainer
 ```
+
+**2、**redis
+
+```shell
+docker run -p 6379:6379 -d redis:latest redis-server
+```
+
+**3、gitlab**
+
+```shell
+docker run --name='gitlab' -d \
+       --net=gitlab_net \
+       --publish 1443:443 --publish 18080:80 \
+       --restart always \
+       --volume /root/docker/gitlab/config:/etc/gitlab \
+       --volume /root/docker/gitlab/logs:/var/log/gitlab \
+       --volume /root/docker/gitlab/data:/var/opt/gitlab \
+       gitlab/gitlab-ce:latest
+```
+
