@@ -63,6 +63,19 @@ docker start/stop <实例id>
 docker rm <实例id>
 ```
 
+**5、参数**
+
+```shell
+1. --restart
+       no -  容器退出时，不重启容器；
+       on-failure - 只有在非0状态退出时才从新启动容器；
+       always - 无论退出状态是如何，都重启容器；
+2.-v /usr/local/centos:/usr/local/centos:ro  
+      挂载宿主目录到容器
+```
+
+
+
 ### 四、常用示例
 
 #### 1、部署mysql
@@ -171,11 +184,31 @@ docker的-p命令  5000:32769  docker端口->宿主端口
 ```
 
 #### 4、有时候获取镜像很慢
+
+a.
+
 ```shell
 curl -sSL https://get.daocloud.io/daotools/set_mirror.sh | sh -s http://2a22c3ad.m.daocloud.io
 
 systemctl restart docker #重启docker
 ```
+
+b.
+
+vim /etc/docker/daemon.json
+
+```shell
+{
+"registry-mirrors":["https://registry.docker-cn.com"]
+}
+```
+
+```shell
+systemctl daemon-reload
+systemctl restart docker
+```
+
+
 
 ### 六、扩展
 
@@ -183,16 +216,25 @@ systemctl restart docker #重启docker
 
 ##### A、Portainer
 ```shell
-docker run -d -p 9000:9000 portainer/portainer
+docker run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock \
+   -v /usr/local/portainer:/usr/local/portainer \
+   --name portainer --restart=always \
+   portainer/portainer
 ```
 
-**2、**redis
+2、docker部署centos
+
+```shell
+docker run -itd --name centos7.2 --privileged -v /usr/local/centos:/usr/local/centos:ro centos7.2
+```
+
+**3、**redis
 
 ```shell
 docker run -p 6379:6379 -d redis:latest redis-server
 ```
 
-**3、gitlab**
+**4、gitlab**
 
 ```shell
 docker run --name='gitlab' -d \
@@ -204,4 +246,3 @@ docker run --name='gitlab' -d \
        --volume /root/docker/gitlab/data:/var/opt/gitlab \
        gitlab/gitlab-ce:latest
 ```
-
