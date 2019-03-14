@@ -70,7 +70,8 @@ docker rm <实例id>
        no -  容器退出时，不重启容器；
        on-failure - 只有在非0状态退出时才从新启动容器；
        always - 无论退出状态是如何，都重启容器；
-       
+2.-v /usr/local/centos:/usr/local/centos:ro  
+      挂载宿主目录到容器
 ```
 
 
@@ -215,5 +216,15 @@ systemctl restart docker
 
 ##### A、Portainer
 ```shell
-docker run --restart=always -d -p 9000:9000 portainer/portainer 
+docker run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock \
+   -v /usr/local/portainer:/usr/local/portainer \
+   --name portainer --restart=always \
+   portainer/portainer
 ```
+
+2、docker部署centos
+
+```shell
+docker run -itd --name centos7.2 --privileged -v /usr/local/centos:/usr/local/centos:ro centos7.2
+```
+
