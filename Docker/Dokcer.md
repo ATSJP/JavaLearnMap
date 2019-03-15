@@ -212,7 +212,7 @@ systemctl restart docker
 
 ### 六、扩展
 
-#### 1、管理docker的一些UI（https://blog.csdn.net/qq273681448/article/details/75007828/）
+#### 1、管理docker的一些UI及其他（https://blog.csdn.net/qq273681448/article/details/75007828/）
 
 ##### A、Portainer
 ```shell
@@ -234,7 +234,7 @@ docker run -itd --name centos7.2 --privileged -v /usr/local/centos:/usr/local/ce
 docker run -p 6379:6379 -d redis:latest redis-server
 ```
 
-**4、gitlab**
+4、docker部署gitlab
 
 ```shell
 docker run --name='gitlab' -d \
@@ -245,4 +245,13 @@ docker run --name='gitlab' -d \
        --volume /root/docker/gitlab/logs:/var/log/gitlab \
        --volume /root/docker/gitlab/data:/var/opt/gitlab \
        gitlab/gitlab-ce:latest
+```
+
+```shell
+docker run -d --net=gitlab_net -p 10443:443 -p 11110:80 -p 10022:22  --name gitlab -v /home/lp/docker/gitlab/config:/etc/gitlab -v /home/lp/docker/gitlab/logs:/var/log/gitlab   -v /home/lp/docker/gitlab/data:/var/opt/gitlab  gitlab/gitlab-ce:latest
+
+5、docker部署jenkins
+
+```shell
+  docker run -d --name jenkins -p 9002:8080 -v /usr/local/jenkins:/usr/local/jenkins jenkins   
 ```
