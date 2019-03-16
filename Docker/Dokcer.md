@@ -238,20 +238,16 @@ docker run -p 6379:6379 -d redis:latest redis-server
 
 ```shell
 docker run --name='gitlab' -d \
-       --net=gitlab_net \
-       --publish 1443:443 --publish 18080:80 \
+       --publish 1443:443 --publish 9003:80 \
        --restart always \
-       --volume /root/docker/gitlab/config:/etc/gitlab \
-       --volume /root/docker/gitlab/logs:/var/log/gitlab \
-       --volume /root/docker/gitlab/data:/var/opt/gitlab \
+       --volume /usr/local/gitlab/config:/etc/gitlab \
+       --volume /usr/local/gitlab/logs:/var/log/gitlab \
+       --volume /usr/local/gitlab/data:/var/opt/gitlab \
        gitlab/gitlab-ce:latest
 ```
-
-```shell
-docker run -d --net=gitlab_net -p 10443:443 -p 11110:80 -p 10022:22  --name gitlab -v /home/lp/docker/gitlab/config:/etc/gitlab -v /home/lp/docker/gitlab/logs:/var/log/gitlab   -v /home/lp/docker/gitlab/data:/var/opt/gitlab  gitlab/gitlab-ce:latest
 
 5、docker部署jenkins
 
 ```shell
-  docker run -d --name jenkins -p 9002:8080 -v /usr/local/jenkins:/usr/local/jenkins jenkins   
+  docker run -d --name jenkins -p 9002:8080 -v /usr/local/jenkins:/usr/local/jenkins jenkins  
 ```
