@@ -228,13 +228,13 @@ docker run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock \
 docker run -itd --name centos7.2 --privileged -v /usr/local/centos:/usr/local/centos:ro centos7.2
 ```
 
-**3、**redis
+3、redis
 
 ```shell
 docker run -p 6379:6379 -d redis:latest redis-server
 ```
 
-**4、gitlab**
+4、gitlab
 
 ```shell
 docker run --name='gitlab' -d \
