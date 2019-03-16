@@ -1,0 +1,28 @@
+/target/
+.mvn
+
+*.class
+.DS_Store
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# git
+*.orig
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# Eclipse
+.classpath
+.project
+target
+.settings
+
+### IntelliJ IDEA ###
+.idea
+*.iml
+
+
