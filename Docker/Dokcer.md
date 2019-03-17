@@ -180,7 +180,7 @@ docker rmi -f e9d3f7300f03
 PORTS
 0.0.0.0:32769->5000/tcp
 
-docker的-p命令  5000:32769  docker端口->宿主端口
+docker的-p命令  5000:32769  宿主端口->docker端口
 ```
 
 #### 4、有时候获取镜像很慢
@@ -251,3 +251,129 @@ docker run --name='gitlab' -d \
 ```shell
   docker run -d --name jenkins -p 9002:8080 -v /usr/local/jenkins:/usr/local/jenkins jenkins  
 ```
+
+6、yml
+
+```yml
+version: "2"
+services:
+
+    mysql:
+      image: mysql/mysql-server:5.7.21
+      ports:
+        - "3306:3306"
+      environment:
+        MYSQL_ROOT_PASSWORD: "zxcv1234"
+        MYSQL_ROOT_HOST: "%"
+        TZ: Asia/Shanghai
+      volumes:
+        - "/home/mac/docker/volumes/mysql-5.7.21/datadiri:/var/lib/mysql"
+      restart: always
+      container_name: docker_mysql
+
+    tomcat:
+      image: dordoka/tomcat
+      ports:
+        - "9002:8080"
+      environment:
+         TZ: Asia/Shanghai
+      volumes:
+        - "./volumes/tomcat/webapps:/opt/tomcat/webapps"
+        - "./volumes/tomcat/logs:/opt/tomcat/logs"
+      restart: always
+      container_name: docker_tomcat
+
+
+    docker-ui:
+      image: uifd/ui-for-docker
+      ports:
+        - "9000:9000"
+      volumes:
+        - "/var/run/docker.sock:/var/run/docker.sock"
+      restart: always
+      container_name: docker_ui
+
+    nginx:
+       image: daocloud.io/nginx
+       ports:
+         - "12000:80"
+       environment:
+         TZ: Asia/Shanghai
+       volumes:
+         - "./volumes/nginx/default.conf:/etc/nginx/conf.d/default.conf"
+       restart: always
+       container_name: docker_nginx
+
+    jenkins:
+       image: jenkins/jenkins:lts
+       ports:
+         - "12002:8080"
+         - "12003:50000"
+       environment:
+         TZ: Asia/Shanghai
+       volumes:
+         - "./volumes/jenkins:/var/jenkins_home"
+       restart: always
+       container_name: docker_jenkins
+
+    redis:
+      image: redis:3.2
+      ports:
+        - "6379:6379"
+      environment:
+        TZ: Asia/Shanghai
+      volumes:
+        - "/etc/localtime:/etc/localtime"
+      restart: always
+      container_name: docker_redis
+
+    zookeeper:
+      image: wurstmeister/zookeeper
+      ports:
+        - "2181:2181"
+      restart: always
+      container_name: kafka_zookeeper_1
+
+    kafka:
+      image: wurstmeister/kafka
+      volumes:
+          - /etc/localtime:/etc/localtime
+      ports:
+        - "9092:9092"
+      restart: always
+      environment:
+        KAFKA_ADVERTISED_HOST_NAME: 192.168.7.118
+        KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      depends_on:
+       - zookeeper
+      container_name: kafka_1
+
+
+    kafka-manager:
+     image: sheepkiller/kafka-manager:latest
+     ports:
+      - "9001:9000"
+     links:
+      - zookeeper
+      - kafka
+     environment:
+       ZK_HOSTS: zookeeper:2181
+       APPLICATION_SECRET: letmein
+       KM_ARGS: -Djava.net.preferIPv4Stack=true
+     restart: always
+     container_name: kafka_manager_1
+
+    es:
+      image: elasticsearch:5.6.4
+      container_name: ezview_elasticsearch_1
+      volumes:
+         - "./volumes/es/data:/usr/share/elasticsearch/data"
+         - "./volumes/es/config/es1.yml:/usr/share/elasticsearch/config/elasticsearch.yml"
+      ports:
+         - "9200:9200"
+         - "9300:9300"
+      restart: always
+      container_name: es_1
+
+```
+
