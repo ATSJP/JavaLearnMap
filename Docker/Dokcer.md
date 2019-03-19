@@ -215,6 +215,7 @@ systemctl restart docker
 #### 1、管理docker的一些UI及其他（https://blog.csdn.net/qq273681448/article/details/75007828/）
 
 ##### A、Portainer
+
 ```shell
 docker run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock \
    -v /usr/local/portainer:/usr/local/portainer \
@@ -222,19 +223,19 @@ docker run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock \
    portainer/portainer
 ```
 
-2、docker部署centos
+##### B、docker部署centos
 
 ```shell
 docker run -itd --name centos7.2 --privileged -v /usr/local/centos:/usr/local/centos:ro centos7.2
 ```
 
-3、redis
+##### C、redis
 
 ```shell
 docker run -p 6379:6379 -d redis:latest redis-server
 ```
 
-4、gitlab
+##### D、gitlab
 
 ```shell
 docker run --name='gitlab' -d \
@@ -246,13 +247,19 @@ docker run --name='gitlab' -d \
        gitlab/gitlab-ce:latest
 ```
 
-5、docker部署jenkins
+##### E、docker部署jenkins
 
 ```shell
   docker run -d --name jenkins -p 9002:8080 -v /usr/local/jenkins:/usr/local/jenkins jenkins  
 ```
 
-6、yml
+##### F、docker部署node.js
+
+```shell
+
+```
+
+##### G、yml
 
 ```yml
 version: "2"
