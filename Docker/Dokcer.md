@@ -81,7 +81,7 @@ docker rm <实例id>
 #### 1、部署mysql
 
 ```shell
-sudo docker run --name=mysql -it -p 3306:3306 -e MYSQL_ROOT_PASSWORD=emc123123 -d mysql:5.7
+sudo docker run --name=mysql -it -p 3306:3306 -e MYSQL_ROOT_PASSWORD=1234 -d mysql:5.7
 
 docker exec -it mysql bash
 ```
@@ -250,7 +250,7 @@ docker run --name='gitlab' -d \
 ##### E、docker部署jenkins
 
 ```shell
-  docker run -d --name jenkins -p 9002:8080 -v /usr/local/jenkins:/usr/local/jenkins jenkins  
+docker run -d --name jenkins -p 9002:8080 -v /usr/local/jenkins:/usr/local/jenkins jenkins  
 ```
 
 ##### F、docker部署node.js
@@ -388,6 +388,5 @@ F、图床
 
 ```shell
 docker run -it -d -p 9002:80 kdelfour/lychee-docker
-
 ```
 
