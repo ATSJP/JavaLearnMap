@@ -2,6 +2,88 @@
 
 官方文档：https://docs.spring.io/spring-boot/docs/2.0.8.RELEASE/reference/htmlsingle/
 
+## SpringBoot上传文件
+
+### 一、介绍
+
+### 二、整合
+
+```java
+ @PutMapping("/upload")
+ public SearchResponse upload(MultipartFile[] files) {
+    SearchResponse response = new SearchResponse();
+    return response;
+ }
+```
+
+### 三、采坑
+
+#### 1、上传文件受大小限制
+
+```log
+Spring Boot:The field file exceeds its maximum permitted size of 1048576 bytes.
+```
+
+解决：
+
+Spring Boot1.4版本后配置更改为:
+
+```yml
+spring.http.multipart.maxFileSize = 10Mb  
+spring.http.multipart.maxRequestSize=100Mb  
+```
+
+Spring Boot2.0之后的版本配置修改为:
+
+```yml
+spring.servlet.multipart.max-file-size = 10MB  
+spring.servlet.multipart.max-request-size=100MB
+```
+
+#### 2、复杂类型无法映射到对象中去
+
+**Controller:**
+
+```java
+ @PutMapping("/upload")
+    public SearchResponse upload(SearchRequest request, MultipartFile[] files) {
+        // TODO 为何映射不到复杂类型里 待解决
+        SearchResponse response = new SearchResponse();
+        request.setFiles(files);
+        searchService.upload(request, response);
+        return response;
+    }
+```
+
+**entity**
+
+```java
+public class SearchRequest extends BaseRequest {
+    @NotBlank
+    private String key;
+
+    private MultipartFile[] files;
+
+    public MultipartFile[] getFiles() {
+        return files;
+    }
+
+    public void setFiles(MultipartFile[] files) {
+        this.files = files;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+}
+```
+
+(待解决)
+
 ## SpringBoot整合shiro
 
 ### 一、介绍
