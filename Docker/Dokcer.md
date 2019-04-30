@@ -81,9 +81,17 @@ docker rm <实例id>
 #### 1、部署mysql
 
 ```shell
-sudo docker run --name=mysql -it -p 3306:3306 -e MYSQL_ROOT_PASSWORD=1234 -d mysql:5.7
+sudo docker run --name=mysql -it -p 3306:3306 -e MYSQL_ROOT_PASSWORD=1234 -d mysql:5.7 --lower_case_table_names=1
 
 docker exec -it mysql bash
+
+
+--restart=always 跟随docker启动
+--privileged=true 容器root用户享有主机root用户权限
+-v 映射主机路径到容器
+-e MYSQL_ROOT_PASSWORD=root 设置root用户密码
+-d 后台启动
+--lower_case_table_names=1 设置表名参数名等忽略大小写
 ```
 
 #### 2、删除所有的镜像和实例(container)

@@ -9,3 +9,12 @@ lower_case_table_names=1
 .....
 
 [root@test-huanqiu ~]# /etc/init.d/mysql start                                 //启动mysql
+
+
+
+
+show global variables like '%lower_case%';
+
+# docker
+
+/etc/mysql/mysql.conf.d/mysqld.cnf
