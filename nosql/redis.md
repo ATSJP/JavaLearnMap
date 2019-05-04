@@ -2,6 +2,30 @@
 
 ## redis
 
+### redis使用
+
+一、常用命令
+
+1、获取最大允许连接数
+
+```shell
+config get maxclients
+```
+
+2、获取当前连接情况
+
+```shell
+info clients
+```
+
+3、杀死指定连接
+
+```shell
+CLIENT KILL ip:port   
+```
+
+
+
 ### Springboot整合Redis
 
 ### Springboot整合Redisson
@@ -13,9 +37,9 @@
 ##### 1、引入POM
 
 ```POM
-        <spring-boot.version>2.0.0.RELEASE</spring-boot.version>
-        <redisson.version>3.8.2</redisson.version>
-        <redisson-springboot.version>3.9.1</redisson-springboot.version>
+        <spring-boot.version>2.1.1.RELEASE</spring-boot.version>
+        <redisson.version>3.10.6</redisson.version>
+        <redisson-springboot.version>3.10.6</redisson-springboot.version>
          
          <!-- redisson -->
          <dependency>
@@ -137,3 +161,16 @@ public class RedissonTest {
 ```
 
 #### 三、踩坑
+
+##### 1、redisson连接池的连接无法释放
+
+Springboot2.1.1 之前的版本在接入redisson的时候，redission无法自动释放redis连接，会导致池中连接都在占用状态，后续的请求将无法从连接池中获取连接，导致请求阻塞。
+
+解决方案，使用 2.1.1及之后的版本即可
+
+// TODO 具体原因待分析。
+
+##### 2、开发阶段应用经常重启，导致redis已经被应用占用的连接无法释放。
+
+// TODO 待解决方案，在系统关闭时，调用redisson.shutdown() 
+

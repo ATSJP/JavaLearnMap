@@ -289,6 +289,39 @@ public class ShiroConfig {
 
 继承FormAuthenticationFilter实现一些
 
+## SpringBoot整合SpringData
+
+### 四、踩坑
+
+#### 1、save无法获取自增主键
+
+解决方案：
+
+- 为实体类的id注解 @GeneratedValue(strategy=GenerationType.IDENTITY) 指定id的生成策略
+
+```java
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "article_id", nullable = false)
+    public int getArticleId() {
+        return articleId;
+    }
+ 
+    public void setArticleId(int articleId) {
+        this.articleId = articleId;
+    }
+```
+
+- 获取自增id
+
+```java
+ ArticleEntity article=articleRepository.saveAndFlush(articleEntity);
+ int id=article.getArticleId();
+```
+
+
+
 ## SpringBoot整合UrlRewrite
 
 ### 一、介绍
@@ -533,7 +566,7 @@ UrlRewriter快速了解文章入口: <a href="https://blog.csdn.net/u010690828/a
 
 推荐文章：https://blog.csdn.net/zrl0506/article/details/80165477
 
-![1548589316026](F:\文件\桌面\markdown筆記\note\SpringBoot\assets\20170918114736747.png)
+![1548589316026](F:\文件\桌面\markdown筆記\note\SpringBoot&SpringCloud\assets\20170918114736747.png)
 
 推荐文章：https://blog.csdn.net/qq_37170583/article/details/80704904
 
@@ -602,7 +635,7 @@ SpringCloud 版本为 Edgware 以上，eureka包改为netflix：
 
 #### 项目整体结构：
 
-![1548589316026](F:\文件\桌面\markdown筆記\note\SpringBoot\assets\1548589316026.png)
+![1548589316026](F:\文件\桌面\markdown筆記\note\SpringBoot&SpringCloud\assets\1548589316026.png)
 
 #### eureka-server入门
 
@@ -717,7 +750,7 @@ http://localhost:9001/
 
 ##### 模块结构
 
-![1548340246457](F:\文件\桌面\markdown筆記\note\SpringBoot\assets\1548340246457.png)
+![1548340246457](F:\文件\桌面\markdown筆記\note\SpringBoot&SpringCloud\assets\1548340246457.png)
 
 ##### 一、导入jar
 
@@ -927,7 +960,7 @@ eureka:
 
 http://localhost:9001/
 
-![1548331878651](F:\文件\桌面\markdown筆記\note\SpringBoot\assets\1548331878651.png)
+![1548331878651](F:\文件\桌面\markdown筆記\note\SpringBoot&SpringCloud\assets\1548331878651.png)
 
 
 
@@ -935,7 +968,7 @@ http://localhost:9001/
 
 ##### 模块结构
 
-![1548340368984](F:\文件\桌面\markdown筆記\note\SpringBoot\assets\1548340368984.png)
+![1548340368984](F:\文件\桌面\markdown筆記\note\SpringBoot&SpringCloud\assets\1548340368984.png)
 
 ##### 一、导入jar
 
@@ -1069,7 +1102,7 @@ eureka:
 
 http://localhost:9001/
 
-![1548339679969](F:\文件\桌面\markdown筆記\note\SpringBoot\assets\1548339679969.png)
+![1548339679969](F:\文件\桌面\markdown筆記\note\SpringBoot&SpringCloud\assets\1548339679969.png)
 
 
 
@@ -1241,7 +1274,7 @@ eureka:
 
 http://localhost:9001/
 
-![1548339679969](F:\文件\桌面\markdown筆記\note\SpringBoot\assets\1548339679969.png)
+![1548339679969](F:\文件\桌面\markdown筆記\note\SpringBoot&SpringCloud\assets\1548339679969.png)
 
 
 
