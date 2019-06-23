@@ -2,6 +2,113 @@
 
 官方文档：https://docs.spring.io/spring-boot/docs/2.0.8.RELEASE/reference/htmlsingle/
 
+## SpringBoot开启事务
+
+### 一、介绍
+
+### 二、配置
+
+**以SpringDataJpa为例** ：
+
+#### 1、配置jpa生成数据库平台
+
+（注意：mysql的InnoDB支持事务，MyISAM不支持事务）
+
+```yaml
+    jpa:
+        generateDdl: false
+        properties:
+            hibernate:
+                show_sql: true
+                # 选配，自行在mysql中设置库表引擎为InnoDB，可不需要配置
+                database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+```
+
+#### 2、类方法配置注解
+
+（注意：SpringBoot2.0后，动态代理默认使用Cglib代理，基于类方法的代理，而Jdk代理基于接口，这里先基于类方法代理，下面在具体说明）
+
+```java
+@Transactional(rollbackOn = Exception.class)
+public LoginInfoEntity register(String loginName, String password, String userName) {
+ 		...
+         // 手动抛异常
+         int i = 1 / 0；
+		return loginInfoEntity;
+}
+```
+
+3、写测试类
+
+```java
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import javax.annotation.Resource;
+
+/**
+ * UserServiceTest
+ *
+ * @author sjp
+ * @date 2019/5/4
+ */
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class UserServiceTest {
+
+	@Resource
+	private UserService userService;
+
+	@Test
+	public void register() {
+		userService.register("test9", "test9", "test9");
+	}
+}
+```
+
+注意：别忘记方法类，手动抛异常，int i = 1 / 0；
+
+**Tip1**：关于代理的proxy-target-class参数设置？
+
+**解决**：proxy-target-class属性值决定是基于接口的还是基于类的代理被创建。如果proxy-target-class 属性值被设置为true，那么基于类的代理将起作用（这时需要cglib库）。如果proxy-target-class属值被设置为false或者这个属性被省略，那么标准的JDK 基于接口的代理将起作用
+
+```yaml
+spring:
+    aop:
+   	   # SpringBoot2.0后默认是true
+        proxy-target-class: true
+```
+
+**Tip2**：@EnableTransactionManagement 咋回事，要不要在启动类设置？
+
+**解决**：SpringBoot2.0后不需要，默认是加载事务管理器的
+
+
+
+**博客**：<https://www.cnblogs.com/alimayun/p/10296340.html>
+
+<https://blog.csdn.net/equaker/article/details/81534922>
+
+
+
+### 三、踩坑
+
+## SpringBoot引入AOP
+
+### 一、介绍
+
+### 二、配置
+
+博客：https://blog.csdn.net/huang_550/article/details/53672321
+
+<https://www.cnblogs.com/onlymate/p/9630788.html>
+
+#### 1、配置
+
+### 三、踩坑
+
 ## SpringBoot上传文件
 
 ### 一、介绍
