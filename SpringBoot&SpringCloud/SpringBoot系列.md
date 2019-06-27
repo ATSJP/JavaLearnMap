@@ -398,7 +398,7 @@ public class ShiroConfig {
 
 ## SpringBoot整合SpringData
 
-### 四、踩坑
+### 三、踩坑
 
 #### 1、save无法获取自增主键
 
