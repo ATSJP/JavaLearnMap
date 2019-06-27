@@ -14,12 +14,12 @@
 
 ##### A、pom
 
-     ```pom
+```pom
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>1.8</java.version>
   </properties>
-  
+
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-parent</artifactId>
@@ -32,7 +32,7 @@
       <artifactId>spring-cloud-config-server</artifactId>
     </dependency>
   </dependencies>
- 
+
   <!-- 添加spring-boot的maven插件 -->
   <build>
     <plugins>
@@ -42,7 +42,7 @@
       </plugin>
     </plugins>
   </build>
-     ```
+```
 
 ##### B、yml
 
@@ -86,7 +86,20 @@ public class LemonConfigApplication {
 
 全部配置好后，启动应用，访问 http://localhost:9000/admin/dev （http://localhost:9000/admin-dev.json，http://localhost:9000/admin-dev.properties）
 
-![1561601935481](assets/1561601935481.png)
+![1561601935481](https://raw.githubusercontent.com/ATSJP/note/master/SpringBoot&SpringCloud/assets/1561601935481.png)
+
+注：配置文件的访问规则如下：
+
+```
+/{name}-{profiles}.yml
+/{label}/{name}-{profiles}.yml
+
+name : 文件名，一般以服务名来命名
+profiles : 一般作为环境标识
+lable : 分支（branch），指定访问某分支下的配置文件
+```
+
+有一点值得注意的是，如果有两个前缀名相同文件，例如一个order.yml，一个order-dev.yml。那么在访问相同前缀的文件时，config-server会对这两个文件进行一个合并。例如order.yml有一段配置是order-dev.yml没有的，理应访问order-dev.yml的时候是没有那段配置的，但访问的结果却是它俩合并之后的内容，即order-dev.yml会拥有order.yml里所配置的内容。
 
 #### 2、Client端配置
 
