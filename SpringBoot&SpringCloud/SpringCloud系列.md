@@ -97,6 +97,8 @@ public class LemonConfigApplication {
 name : 文件名，一般以服务名来命名
 profiles : 一般作为环境标识
 lable : 分支（branch），指定访问某分支下的配置文件
+
+例如：http://localhost:9000/dv_lemon_2019_07/provider-dev.yml
 ```
 
 有一点值得注意的是，如果有两个前缀名相同文件，例如一个order.yml，一个order-dev.yml。那么在访问相同前缀的文件时，config-server会对这两个文件进行一个合并。例如order.yml有一段配置是order-dev.yml没有的，理应访问order-dev.yml的时候是没有那段配置的，但访问的结果却是它俩合并之后的内容，即order-dev.yml会拥有order.yml里所配置的内容。
