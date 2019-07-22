@@ -1,12 +1,39 @@
 # Mysql
 
-## 问题：
+## 一、简介
 
-### 一、mysql 区分表名字大小写
+## 二、使用
+
+#### A、用户及权限
+
+```sql
+# 创建用户
+create user 'user01'@'127.0.0.1' identified by '666666';
+
+# 赋予全部权限
+grant all privileges on *.* to 'user01'@'127.0.0.1' identified by '666666';
+
+# 赋于指定权限
+grant select,insert on <database>.<table> to '<user>'@'<ip>' identified by '<password>';
+```
+
+#### B、远程
+
+```sql
+select host from user  where user ='root'
+
+update user set host = '%' where user = 'root';
+
+flush privileges;
+```
+
+## 三、常见问题
+
+### A、mysql 区分表名字大小写
 
 **问题具体描述**：linux下mysql区分表名大小写，window下表明不区分大小写
 
-​		         可以通过show global variables like '%lower_case%'; 查看该值设置
+>  可以通过show global variables like '%lower_case%'; 查看该值设置
 
 **解决**：
 
