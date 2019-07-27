@@ -2,7 +2,7 @@
 
 一、查看端口占用情况
 
-       netstae -apn|grep 11305
+       netstat -apn|grep 11305
     
        显示情况：
     
