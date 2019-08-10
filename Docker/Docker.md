@@ -392,9 +392,12 @@ services:
 
 ```
 
-F、图床
+##### F、图床
 
 ```shell
 docker run -it -d -p 9002:80 kdelfour/lychee-docker
+
+docker run --name=lychee -it -d -p 9002:80 kdelfour/lychee-docker
+
 ```
 
