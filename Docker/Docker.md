@@ -246,19 +246,62 @@ docker run -p 6379:6379 -d redis:latest redis-server
 ##### D、gitlab
 
 ```shell
-docker run --name='gitlab' -d \
-       --publish 1443:443 --publish 9003:80 \
-       --restart always \
-       --volume /usr/local/gitlab/config:/etc/gitlab \
-       --volume /usr/local/gitlab/logs:/var/log/gitlab \
-       --volume /usr/local/gitlab/data:/var/opt/gitlab \
-       gitlab/gitlab-ce:latest
+# 1
+docker run --detach \
+--hostname gitlab.shijianpeng.top \
+--publish 9443:443 --publish 9003:80 --publish 22:22 \
+--name gitlab \
+--restart always \
+--volume /root/gitlab_home/config:/etc/gitlab \
+--volume /root/gitlab_home/logs:/var/log/gitlab \
+--volume /root/gitlab_home/data:/var/opt/gitlab \
+gitlab/gitlab-ce:latest
+
+# 2 
+docker run --detach \
+--publish 9443:443 --publish 9003:80 --publish 9022:22 \
+--name gitlab \
+--restart always \
+--volume /root/gitlab_home/config:/etc/gitlab \
+--volume /root/gitlab_home/logs:/var/log/gitlab \
+--volume /root/gitlab_home/data:/var/opt/gitlab \
+gitlab/gitlab-ce:latest
 ```
 
 ##### E、docker部署jenkins
 
 ```shell
-docker run -d --name jenkins -p 9002:8080 -v /usr/local/jenkins:/usr/local/jenkins jenkins  
+镜像： jenkins/jenkins 
+      jenkinsci/blueocean
+
+docker run \
+    -d \
+    --name jenkins \
+    -p 9002:8080 \
+    -v /usr/local/jenkins:/usr/local/jenkins \
+    jenkins/jenkins   
+
+# 临时启动一个jenkins容器，停止后自动清除 --rm
+docker run \
+  --rm \
+  --name jenkins \
+  -u root \
+  -p 9001:8080 \
+  -v jenkins-data:/var/jenkins_home \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v "$HOME":/home \
+  jenkinsci/blueocean
+ 
+# 启动jenkins -d 后台运行 
+docker run \
+  -d \
+  --name jenkins \
+  -u root \
+  -p 9001:8080 \
+  -v jenkins-data:/var/jenkins_home \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v "$HOME":/home \
+  jenkinsci/blueocean
 ```
 
 ##### F、docker部署node.js
@@ -392,12 +435,9 @@ services:
 
 ```
 
-##### F、图床
+##### F、lychee图床
 
 ```shell
-docker run -it -d -p 9002:80 kdelfour/lychee-docker
-
 docker run --name=lychee -it -d -p 9002:80 kdelfour/lychee-docker
-
 ```
 
