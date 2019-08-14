@@ -240,7 +240,7 @@ docker run -itd --name centos7.2 --privileged -v /usr/local/centos:/usr/local/ce
 ##### C、redis
 
 ```shell
-docker run -p 6379:6379 -d redis:latest redis-server
+docker run -p 6379:6379 --name redis -d redis:latest redis-server
 ```
 
 ##### D、gitlab

@@ -1,9 +1,5 @@
 # Shiro如何做到无状态
 
-
-
-## Shiro
-
 ### 一、介绍
 
 #### 1、为什么要做无状态
@@ -12,31 +8,244 @@
 
 ### 二、使用
 
-声明：以下基于项目 SpringCloud项目 [Lemon](https://github.com/ATSJP/lemon) 完成设计，	直接看效果分析，请下载项目，确保sql执行，数据库密码Redis密码修改好，启动lemon-user子应用即可。
+声明：以下基于项目 SpringCloud项目 [Lemon](https://github.com/ATSJP/lemon) 完成设计，直接看效果分析，请下载项目，确保sql执行，数据库密码Redis密码修改好(目前已改为配置中心，请按照项目内，开发文档进行使用)，启动lemon-user子应用即可。
 
-#### 1、正常配置Shiro
+#### 1、正常配置Shiro（参考网上教程即可）
 
 #### 2、无状态Shiro
 
-##### A、引入Jar
-
-```pom
-        <!-- shiro -->
-        <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-spring</artifactId>
-        </dependency>
-```
-
-##### B、配置类
+##### A、拦截器
 
 ```java
-package com.lemon.config;
+import com.alibaba.fastjson.JSONObject;
+import com.lemon.shiro.token.StatelessToken;
+import com.lemon.utils.CookieUtils;
+import com.lemon.web.constant.base.ConstantApi;
+import org.apache.shiro.web.filter.AccessControlFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * 无状态拦截器
+ * 
+ * @author sjp
+ * @date 2019/4/30
+ **/
+public class StatelessAuthcFilter extends AccessControlFilter {
+
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /**
+     * 判断请求是否需要被拦截，拦截后执行onAccessDenied方法
+     * 
+     * @param request req
+     * @param response res
+     * @param mappedValue map
+     * @return true 不拦截 false 拦截
+     */
+	@Override
+	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+		return false;
+	}
+
+	@Override
+	protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
+		Cookie[] cookies = ((HttpServletRequest) request).getCookies();
+		// 用户唯一id
+		String uidStr = CookieUtils.getParamFromCookie(cookies, ConstantApi.UID);
+		if (StringUtils.isEmpty(uidStr)) {
+			onLoginFail(response);
+			return false;
+		}
+		Long uid = Long.parseLong(uidStr);
+		// 用户token
+		String token = CookieUtils.getParamFromCookie(cookies, ConstantApi.TOKEN);
+		if (StringUtils.isEmpty(token)) {
+			onLoginFail(response);
+			return false;
+		}
+		// 用户所在平台
+		String sid = CookieUtils.getParamFromCookie(cookies, ConstantApi.SID);
+		if (StringUtils.isEmpty(sid)) {
+			onLoginFail(response);
+			return false;
+		}
+		// 客户端请求的参数列表
+		Map<String, String[]> params = new HashMap<>(request.getParameterMap());
+		StatelessToken statelessToken = new StatelessToken(uid, token, params);
+		try {
+			// 委托给Realm进行登录
+			getSubject(request, response).login(statelessToken);
+		} catch (Exception e) {
+			logger.info("auth error->uid:{},sid:{},token:{},e:{}", uid, sid, token, e);
+			// 登录失败
+			onLoginFail(response);
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * 登录失败时默认返回401状态码
+	 */
+	private void onLoginFail(ServletResponse response) throws IOException {
+		HttpServletResponse httpResponse = (HttpServletResponse) response;
+		httpResponse.setStatus(HttpServletResponse.SC_OK);
+		httpResponse.setContentType("application/json;charset=UTF-8");
+		httpResponse.getWriter().write("error");
+	}
+
+}
+```
+
+##### B、登录认证器和无状态Token认证器
+
+```java
+package com.lemon.relam;
+
+import com.lemon.entity.LoginInfoEntity;
+import com.lemon.repository.LoginInfoRepository;
+import org.apache.shiro.authc.*;
+import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.ByteSource;
+
+import javax.annotation.Resource;
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * 登陆和授权认证器
+ *
+ * @author sjp 2018/12/9
+ */
+public class LoginRelam extends AuthorizingRealm {
+
+	@Resource
+	private LoginInfoRepository	loginInfoRepository;
+
+	private static final String	MONSTER	= "monster";
+
+	/**
+	 * 登陆
+	 *
+	 * @param authenticationToken token
+	 * @return info
+	 * @throws AuthenticationException exception
+	 */
+	@Override
+	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken)
+			throws AuthenticationException {
+		UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) authenticationToken;
+		LoginInfoEntity loginInfoEntity = loginInfoRepository.getByLoginName(usernamePasswordToken.getUsername());
+		if (loginInfoEntity == null) {
+			throw new UnknownAccountException("用户不存在！");
+		}
+		if (MONSTER.equals(loginInfoEntity.getLoginName())) {
+			throw new LockedAccountException("用户被锁定");
+		}
+		// 盐值加密，确保凭证一样加密后字符串不一样
+		ByteSource credentialsSalt = ByteSource.Util.bytes(loginInfoEntity.getLoginName());
+		return new SimpleAuthenticationInfo(loginInfoEntity.getLoginName(), loginInfoEntity.getLoginPwd(),
+				credentialsSalt, getName());
+	}
+
+	/**
+	 * 授权
+	 *
+	 * @param principalCollection p
+	 * @return a
+	 */
+	@Override
+	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
+		Object principal = principalCollection.getPrimaryPrincipal();
+		Set<String> roles = new HashSet<>();
+		roles.add("user");
+         // 此处授权角色仅供测试
+		if ("admin".equals(principal)) {
+			roles.add("admin");
+		}
+		return new SimpleAuthorizationInfo(roles);
+	}
+
+}
+```
+
+```java
+package com.lemon.shiro.realm;
+
+import com.lemon.shiro.token.StatelessToken;
+import com.lemon.tools.RedissonTools;
+import com.lemon.web.constant.base.ConstantCache;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.subject.PrincipalCollection;
+import org.springframework.util.StringUtils;
+
+import javax.annotation.Resource;
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * 无状态认证器
+ * 
+ * @author sjp
+ * @date 2019/4/30
+ **/
+public class StatelessRealm extends AuthorizingRealm {
+
+	@Resource
+	private RedissonTools redissonTools;
+
+	@Override
+	public boolean supports(AuthenticationToken token) {
+		// 仅支持StatelessToken类型的Token
+		return token instanceof StatelessToken;
+	}
+
+	@Override
+	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+		Set<String> roles = new HashSet<>();
+		// 此处可以来获取权限
+		return new SimpleAuthorizationInfo(roles);
+	}
+
+	@Override
+	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken)
+			throws AuthenticationException {
+		StatelessToken statelessToken = (StatelessToken) authenticationToken;
+		Long uid = statelessToken.getUid();
+         // 从Redis获取服务器存储的Token，用来和前端传入的Token对比 
+		// String token = redissonTools.get(ConstantCache.KEY.LOGIN_TOKEN.key + uid);
+         // 临时测试 可以设置常量
+		String token = "testToken";
+         token = StringUtils.isEmpty(token) ? "" : token;
+		return new SimpleAuthenticationInfo(uid, token, getName());
+	}
+
+}
+```
+
+##### C、配置类
+
+```java
 import com.lemon.relam.LoginRelam;
 import com.lemon.shiro.factory.StatelessDefaultSubjectFactory;
 import com.lemon.shiro.filter.StatelessAuthcFilter;
@@ -260,154 +469,77 @@ public class ShiroConfig {
 	// return simpleCookie;
 	// }
 }
-
 ```
 
-##### C、登录认证器和无状态Token认证器
 
-```java
-package com.lemon.relam;
-
-import com.lemon.entity.LoginInfoEntity;
-import com.lemon.repository.LoginInfoRepository;
-import org.apache.shiro.authc.*;
-import org.apache.shiro.authz.AuthorizationInfo;
-import org.apache.shiro.authz.SimpleAuthorizationInfo;
-import org.apache.shiro.realm.AuthorizingRealm;
-import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.util.ByteSource;
-
-import javax.annotation.Resource;
-import java.util.HashSet;
-import java.util.Set;
-
-/**
- * 登陆和授权
- *
- * @author sjp 2018/12/9
- */
-public class LoginRelam extends AuthorizingRealm {
-
-	@Resource
-	private LoginInfoRepository	loginInfoRepository;
-
-	private static final String	MONSTER	= "monster";
-
-	/**
-	 * 登陆
-	 *
-	 * @param authenticationToken token
-	 * @return info
-	 * @throws AuthenticationException exception
-	 */
-	@Override
-	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken)
-			throws AuthenticationException {
-		UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) authenticationToken;
-		LoginInfoEntity loginInfoEntity = loginInfoRepository.getByLoginName(usernamePasswordToken.getUsername());
-		if (loginInfoEntity == null) {
-			throw new UnknownAccountException("用户不存在！");
-		}
-		if (MONSTER.equals(loginInfoEntity.getLoginName())) {
-			throw new LockedAccountException("用户被锁定");
-		}
-		// 盐值加密，确保凭证一样加密后字符串不一样
-		ByteSource credentialsSalt = ByteSource.Util.bytes(loginInfoEntity.getLoginName());
-		return new SimpleAuthenticationInfo(loginInfoEntity.getLoginName(), loginInfoEntity.getLoginPwd(),
-				credentialsSalt, getName());
-	}
-
-	/**
-	 * 授权
-	 *
-	 * @param principalCollection p
-	 * @return a
-	 */
-	@Override
-	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-		Object principal = principalCollection.getPrimaryPrincipal();
-		Set<String> roles = new HashSet<>();
-		roles.add("user");
-		if ("admin".equals(principal)) {
-			roles.add("admin");
-		}
-		return new SimpleAuthorizationInfo(roles);
-	}
-
-}
-```
-
-```java
-package com.lemon.shiro.realm;
-
-import com.lemon.shiro.token.StatelessToken;
-import com.lemon.tools.RedissonTools;
-import com.lemon.web.constant.base.ConstantCache;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.authz.AuthorizationInfo;
-import org.apache.shiro.authz.SimpleAuthorizationInfo;
-import org.apache.shiro.realm.AuthorizingRealm;
-import org.apache.shiro.subject.PrincipalCollection;
-import org.springframework.util.StringUtils;
-
-import javax.annotation.Resource;
-import java.util.HashSet;
-import java.util.Set;
-
-/**
- * 无状态realm
- * 
- * @author sjp
- * @date 2019/4/30
- **/
-public class StatelessRealm extends AuthorizingRealm {
-
-	@Resource
-	private RedissonTools redissonTools;
-
-	@Override
-	public boolean supports(AuthenticationToken token) {
-		// 仅支持StatelessToken类型的Token
-		return token instanceof StatelessToken;
-	}
-
-	@Override
-	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-		Set<String> roles = new HashSet<>();
-		// 此处可以来获取权限
-		return new SimpleAuthorizationInfo(roles);
-	}
-
-	@Override
-	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken)
-			throws AuthenticationException {
-		StatelessToken statelessToken = (StatelessToken) authenticationToken;
-		Long uid = statelessToken.getUid();
-         // 从Redis获取服务器存储的Token，用来和前端传入的Token对比 
-		// String token = redissonTools.get(ConstantCache.KEY.LOGIN_TOKEN.key + uid);
-         // 临时测试 可以设置常量
-		String token = "testToken";
-         token = StringUtils.isEmpty(token) ? "" : token;
-		return new SimpleAuthenticationInfo(uid, token, getName());
-	}
-
-}
-```
 
 ##### D、工具类
 
-```java
-package com.lemon.tools;
+- ConstantApi
 
+  ```java
+  /**
+   * API接口公用返回提示code定义
+   * 
+   * @author sjp
+   * @date 2019/4/15
+   **/
+  public interface ConstantApi {
+  
+      String	TOKEN	= "token";
+      String	UID		= "uid";
+      String	SID		= "sid";
+  
+  }
+  ```
+
+- cookieUtils
+
+```java
+import org.springframework.util.CollectionUtils;
+
+import javax.servlet.http.Cookie;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * CookieUtils
+ *
+ * @author sjp
+ * @date 2019/5/3
+ */
+public class CookieUtils {
+
+	/**
+	 * 从cookie中获取名称的值
+	 * 
+	 * @param cookies cookies
+	 * @param name cookie值名称
+	 * @return value cookie值
+	 */
+	public static String getParamFromCookie(Cookie[] cookies, String name) {
+		if (cookies == null || cookies.length == 0) {
+			return "";
+		}
+		List<Cookie> cookieList = Arrays.stream(cookies).filter(item -> name.equals(item.getName()))
+				.collect(Collectors.toList());
+		if (CollectionUtils.isEmpty(cookieList)) {
+			return "";
+		}
+		return cookieList.get(0).getValue();
+	}
+
+}
+```
+
+- RedissonTools
+
+```java
 import org.redisson.api.RBucket;
 import org.redisson.api.RLock;
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -422,8 +554,6 @@ import java.util.concurrent.TimeUnit;
  **/
 @Service
 public class RedissonTools {
-
-	private Logger			logger	= LoggerFactory.getLogger(getClass());
 
 	@Resource
 	private RedissonClient	redissonClient;
@@ -443,43 +573,10 @@ public class RedissonTools {
 		r.setAsync(value, expiredSeconds, TimeUnit.SECONDS);
 		return r.get();
 	}
-
-	public <K, V> Map<K, V> getMap(String name) {
-		RMap<K, V> map = redissonClient.getMap(name);
-		return map.readAllMap();
-	}
-
-	public <K, V> void setMap(String name, Map map) {
-		RMap<K, V> r = redissonClient.getMap(name);
-		r.putAllAsync(map);
-	}
-
-	public void delete(String name) {
-		redissonClient.getBucket(name).deleteAsync();
-	}
-
-	public boolean tryLock(String key, int timeout, int expires) {
-		RLock rLock = redissonClient.getLock(key);
-		try {
-			// 获取锁有timeout等待时间 expires后释放锁
-			return rLock.tryLock(timeout, expires, TimeUnit.SECONDS);
-		} catch (InterruptedException e) {
-			logger.error("try lock fail，key:{} exception:{}", key, e.getMessage());
-			throw new RuntimeException("try lock fail，key:" + key, e);
-		}
-	}
-
-	public void unlockNoWait(String key) {
-		RLock rLock = redissonClient.getLock(key);
-		rLock.unlock();
-	}
-
 }
 ```
 
 ```java
-package com.lemon.tools;
-
 import org.apache.commons.codec.digest.DigestUtils;
 
 /**
@@ -510,7 +607,7 @@ public class TokenGenerate {
 }
 ```
 
-​	有了以上的配置，我们就可以正常测试了，大家都知道Shiro的认证器可以多个，策略可以是只要有一个通过即可。这样当用户首次登录的时候，我们希望他通过LoginRelam认证通过，在登录成功后，拿着服务器给的Token请求其他接口。StatelessRealm认证器就会通过认证放行。
+​	有了以上的配置，我们就可以正常测试了，大家都知道Shiro的认证器可以多个，策略可以配置成：只要有一个通过即可。这样当用户首次登录的时候，我们希望他通过LoginRelam认证通过，在登录成功后，拿着服务器给的Token请求其他接口。StatelessRealm认证器就会通过认证放行。
 
 ​	为了确保用户的Token可以识别出用户身份，所以加密的时候选择将用户的UID加密进去，待下次请求使用同样的参数进行Md5对比，来确保用户信息安全。
 
