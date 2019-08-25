@@ -2,6 +2,17 @@
 
 ### 一、介绍
 
+#### 1、卷（volume）
+
+“卷”是容器上的一个或多个“目录”，此类目录可绕过联合文件系统**，**与宿主机上的某个目录“绑定（关联）”，类似于挂载一样，宿主机的/data/web目录与容器中的/container/data/web目录绑定关系，然后容器中的进程向这个目录中写数据时，是直接写在宿主机的目录上的，绕过容器文件系统与宿主机的文件系统建立关联关系，使得可以在宿主机和容器内共享数据库内容，让容器直接访问宿主机中的内容，也可以宿主机向容器供集内容，两者是同步的。
+
+在宿主机上能够被共享的目录(可以是文件)就被称为volume。
+
+
+### 二、安装
+
+#### 1、yum安装docker
+
 ```shell
 # 
 sudo yum remove docker \
@@ -26,12 +37,7 @@ sudo yum -y install docker-ce
 sudo systemctl start docker
 ```
 
-
-
-
-### 二、安装
-
-#### 1、pip安装docker-compose
+#### 2、pip安装docker-compose
 
 ```shell
 sudo pip install -U docker-compose
