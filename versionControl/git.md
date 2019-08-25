@@ -64,8 +64,30 @@ git pull origin master --allow-unrelated-histories
 ```shell
 git reset HEAD~
 ```
-**问题二：如何恢复已经commit到本地的内容,并删除commit内容不保留**
+**问题三：如何恢复已经commit到本地的内容,并删除commit内容不保留**
 
 ```shell
 git reset --hard HEAD~
 ```
+
+**问题四：如何如何合并两个仓库**
+
+假设现在有两个repo：repo1，repo2，现在想把repo2中的更新合并到repo1中，设repo2的URL为 https://github.com/username/repo2
+命令如下：
+
+```shell
+cd repo1
+git checkout master		#假设是往repo1的master分支合并
+git remote add repo2 https://github.com/username/repo2
+git fetch repo2 master:repo2 
+git merge repo2 master
+git push 
+```
+解释：
+
+1. 进入repo1文件夹
+2. 切换到master分支（需要合并到哪个分支自选）
+3. 添加repo2URL作为repo1的新远程仓库，并命名为repo2
+4. 将repo2的master分支获取到repo1并创建分支名为repo2（此处不会切换到repo2分支）
+5. 将repo2分支合并到repo1的master分支上
+6. 提交更新到repo1的master分支上 
