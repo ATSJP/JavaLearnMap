@@ -447,3 +447,15 @@ services:
 docker run --name=lychee -it -d -p 9002:80 kdelfour/lychee-docker
 ```
 
+##### G、Oracle11g
+
+```shell
+docker run --name oracle -d \
+-p 1521:1521 -p 5500:5500 \
+-v /root/oracle_home:/opt/oracle/oradata \
+jaspeen/oracle-11g
+
+# 部署好修改密码
+docker exec oracle ./setPassword.sh root123*
+```
+

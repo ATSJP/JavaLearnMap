@@ -1,6 +1,14 @@
 # oracle
 
-## 一、常用
+## 一、介绍
+
+### 1、锁介绍
+
+移步：https://github.com/ATSJP/note/tree/master/sql/oracle/Oracle锁工作.md
+
+
+
+## 二、常用
 
 ### 1、复制表结构，建立新表
 
@@ -38,6 +46,15 @@ flashback table <tableName> to timestamp to_timestamp('2019-01-02 10:05:00','yyy
 FOR UPDATE
 ```
 
+### 6、查询oracle的版本号
+```sql
+select * from v$version;  
+
+select * from product_component_version;
+
+SET SERVEROUTPUT ON 
+EXEC dbms_output.put_line( dbms_db_version.version );  
+```
 ## 二、坑
 
 ### 1、时间格式
