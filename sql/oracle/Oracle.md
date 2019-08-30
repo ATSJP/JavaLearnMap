@@ -6,7 +6,9 @@
 
 移步：https://github.com/ATSJP/note/tree/master/sql/oracle/Oracle锁工作.md
 
+### 2、事务
 
+ 移步：https://github.com/ATSJP/note/tree/master/sql/oracle/Oracle之事务.md
 
 ## 二、常用
 
