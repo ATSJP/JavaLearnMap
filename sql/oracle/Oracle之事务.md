@@ -42,7 +42,7 @@ Spring的注解`@Transactional`注解提供了两大参数`propagation`、`isola
 
 ## 二、常用
 
-### 1、复制表结构，建立新表
+### 1、
 
 
 

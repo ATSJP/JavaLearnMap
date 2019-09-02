@@ -32,7 +32,32 @@ CLIENT KILL ip:port
  SLAVEOF NO ONE
 ```
 
+5、scan实现模糊查询
 
+> - SCAN相关命令包括SSCAN 命令、HSCAN 命令和 ZSCAN 命令，分别用于集合、哈希键及有续集等
+> 
+
+命令格式：
+
+ ```shell
+ SCAN cursor [MATCH pattern] [COUNT count]
+ ```
+
+  命令解释：scan 游标 MATCH <返回和给定模式相匹配的元素> count 每次迭代所返回的元素数量
+
+>   SCAN命令是增量的循环，每次调用只会返回一小部分的元素。所以不会有KEYS命令的坑(key的数量比较多，一次KEYS查询会block其他操作)。  
+>   SCAN命令返回的是一个游标，从0开始遍历，到0结束遍历。
+>   通过scan中的MATCH <pattern> 参数，可以让命令只返回和给定模式相匹配的元素，实现模糊查询的效果
+
+例如：
+
+```shell
+示例：
+scan 0 match DL* count 5 
+sscan myset 0 match f*
+```
+
+注意：游标的值，其实就是查出来结果的number号
 
 #### 三、使用
 
