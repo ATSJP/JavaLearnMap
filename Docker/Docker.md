@@ -128,6 +128,17 @@ docker exec -it <容器> /bin/bash
 
 #### 5、如何修改容器端口
 
+方案一：
+```shell
+# 先停止容器
+docker stop containerA
+# 将容器commit成为一个镜像（存在本地images库）
+docker commit containerA  newImageB
+# 运行容器
+docker run  -p 8080:8080 -p 8081:8081 -v /home/data/:/home/data/ -dt newImageB 
+```
+
+方案二：
 ```shell
 1. docker ps 查看 Container 的 id
 
@@ -141,7 +152,7 @@ docker exec -it <容器> /bin/bash
 
 ```
 
-#### 6、容器运行时，添加/删除端口映射规则
+方案三（不推荐）：
 
 ```shell
 a, 获取容器ip  
@@ -238,7 +249,7 @@ docker run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock \
 ##### B、docker部署centos
 
 ```shell
-docker run -itd --name centos7.2 --privileged -v /usr/local/centos:/usr/local/centos:ro centos7.2
+docker run -itd -p 9010:8080 -p 9011:22 --name centos7.2 --privileged -v /root/centos_home:/usr/local/centos:ro daocloud.io/library/centos   /usr/sbin/init
 ```
 
 ##### C、redis
