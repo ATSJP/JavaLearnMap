@@ -1,7 +1,5 @@
 ## Oracle之大表DDL操作那些事
 
-***
-
 ### 场景一、万级以上数据量在给表增加字段的时候，可以随意执行Alter吗？
 
 下面我们来看这条Alter语句：
@@ -240,10 +238,10 @@ graph TD
 8. （可选）重命名索引、触发器和约束
 对于采用了ROWID方式重定义的表，包括了一个隐含列M_ROW$$。推荐使用下列语句经隐含列置为UNUSED状态或删除。
 
- ```sql
-ALTER TABLE TABLE_NAME SET UNUSED (M_ROW$$);
-ALTER TABLE TABLE_NAME DROP UNUSED COLUMNS;
- ```
+     ```sql
+    ALTER TABLE TABLE_NAME SET UNUSED (M_ROW$$);
+    ALTER TABLE TABLE_NAME DROP UNUSED COLUMNS;
+     ```
 
 
 
