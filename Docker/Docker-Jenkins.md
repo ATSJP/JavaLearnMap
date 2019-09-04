@@ -77,7 +77,7 @@ docker ps | grep jenkins
 
 ### 7.浏览器访问 localhost:9001/
 
-![img](https://images2018.cnblogs.com/blog/946454/201803/946454-20180314100737580-1645742770.png)
+![1567576863615](assets/1567576863615.png)
 
 ### 8.去容器内部找密码
 
@@ -86,7 +86,7 @@ docker exec -it jenkins /bin/bash
 cat /var/jenkins_home/secrets/initialAdminPassword
 ```
 
-![1567502904219](assets/1567502904219.png)
+<img src="assets/1567502904219.png" alt="1567502904219" style="zoom: 200%;" />
 
 ### 9.后面就是配置插件的问题了  ，直接按照推荐安装一波即可。如果有失败的也不用慌，可以尝试重试，或者下一步，后续在继续安装（官方的镜像经常安装插件失败，可能和插件源有关）
 
