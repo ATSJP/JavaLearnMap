@@ -190,15 +190,18 @@ Error response from daemon: conflict: unable to delete e9d3f7300f03 (must be for
 
 ##### A、删除tag
 
+```shell
 docker rmi index-dev.qiniu.io/cs-kirk/nginx:latest
-
+```
 
 ##### B、强行删除
 
-docker rmi -f e9d3f7300f03        
-
+```shell
+docker rmi -f e9d3f7300f03    
+```
 
 #### 3、-p参数
+
 ```shell
 PORTS
 0.0.0.0:32769->5000/tcp
@@ -208,15 +211,15 @@ docker的-p命令  5000:32769  宿主端口->docker端口
 
 #### 4、有时候获取镜像很慢
 
-a.
+a.使用curl植入镜像Url
 
 ```shell
-curl -sSL https://get.daocloud.io/daotools/set_mirror.sh | sh -s http://2a22c3ad.m.daocloud.io
+curl -sSL https://get.daocloud.io/daotools/set_mirror.sh | sh -s http://f1361db2.m.daocloud.io
 
 systemctl restart docker #重启docker
 ```
 
-b.
+b.直接编辑配置文件
 
 vim /etc/docker/daemon.json
 
@@ -231,19 +234,39 @@ systemctl daemon-reload
 systemctl restart docker
 ```
 
-
-
 ### 六、扩展
 
 #### 1、管理docker的一些UI及其他（https://blog.csdn.net/qq273681448/article/details/75007828/）
 
-##### A、Portainer
+##### A、DockerUI
+
+Portainer
 
 ```shell
 docker run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock \
-   -v /usr/local/portainer:/usr/local/portainer \
+   -v /root/portainer_home:/usr/local/portainer \
    --name portainer --restart=always \
    portainer/portainer
+```
+
+Rancher
+
+```shell
+docker run -d --restart=unless-stopped \
+-v /root/rancher_home:/var/lib/rancher/ \
+-p 9001:80 \
+--name rancher \
+rancher/rancher:stable
+
+# 有代理的情况
+docker run -d --restart=unless-stopped \
+  -p 80:80 -p 443:443 \
+  -v /root/rancher_home:/var/lib/rancher/ \
+  -e HTTP_PROXY="http://192.168.27.189:8080" \
+  -e HTTPS_PROXY="http://192.168.27.189:8080" \
+  -e NO_PROXY="localhost,127.0.0.1" \
+  --name rancher \
+  rancher/rancher:stable
 ```
 
 ##### B、docker部署centos
@@ -285,41 +308,9 @@ gitlab/gitlab-ce:latest
 
 ##### E、docker部署jenkins
 
-```shell
-镜像： jenkins/jenkins 
-      jenkinsci/blueocean
+​      [点击进入](https://github.com/ATSJP/note/blob/master/Docker/Docker-Jenkins.md)
 
-docker run \
-    -d \
-    --name jenkins \
-    -p 9002:8080 \
-    -v /usr/local/jenkins:/usr/local/jenkins \
-    jenkins/jenkins   
-
-# 临时启动一个jenkins容器，停止后自动清除 --rm
-docker run \
-  --rm \
-  --name jenkins \
-  -u root \
-  -p 9001:8080 \
-  -v jenkins-data:/var/jenkins_home \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -v "$HOME":/home \
-  jenkinsci/blueocean
- 
-# 启动jenkins -d 后台运行 
-docker run \
-  -d \
-  --name jenkins \
-  -u root \
-  -p 9001:8080 \
-  -v jenkins-data:/var/jenkins_home \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -v "$HOME":/home \
-  jenkinsci/blueocean
-```
-
-##### F、docker部署node.js
+##### F、docker部署node
 
 ```shell
 
