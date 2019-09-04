@@ -75,7 +75,9 @@ docker run \
 docker ps | grep jenkins
 ```
 
-### 7.浏览器访问 localhost:9001/
+### 7.浏览器访问
+
+localhost:9001/
 
 ![1567576863615](assets/1567576863615.png)
 

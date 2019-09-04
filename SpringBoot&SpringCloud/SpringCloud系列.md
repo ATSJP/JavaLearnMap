@@ -86,7 +86,7 @@ public class LemonConfigApplication {
 
 全部配置好后，启动应用，访问 http://localhost:9000/admin/dev （http://localhost:9000/admin-dev.json，http://localhost:9000/admin-dev.properties）
 
-![1561601935481](https://raw.githubusercontent.com/ATSJP/note/master/SpringBoot&SpringCloud/assets/1561601935481.png)
+![1561601935481](./assets/1561601935481.png)
 
 注：配置文件的访问规则如下：
 
