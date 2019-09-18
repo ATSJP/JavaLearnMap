@@ -67,3 +67,27 @@ EXEC dbms_output.put_line( dbms_db_version.version );
 ### 2、oracle部分版本不支持 两层以上嵌套自查询（外两层的列，无法识别）
 知识加油站： [老外怎么说](
 https://asktom.oracle.com/pls/asktom/f?p=100:11:0::::P11_QUESTION_ID:1853075500346799932#185916940034636142)
+
+### 3、number和Varchar自动转化的情况
+
+情景一：数据库字段为Varchar2类型，存储字段值都为纯数字字符串。
+
+```sql
+-- 此时不会报错
+select * from table where cloumn = 123
+```
+
+情景二：数据库字段为Varchar2类型，存储字段值为 纯数字字符串，普通带字母英文串 混合。
+
+```sql
+-- 此时报错
+select * from table where cloumn = 123
+```
+
+原因：
+
+oracle在发现查询条件是数字的时候，会将原表的字段进行To_number，当遇到存值为字符串的时候，to_number('abc') 报错。
+
+结论：
+
+切记，保证sql查询类型对应，切勿有此类操作。

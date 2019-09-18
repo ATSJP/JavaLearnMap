@@ -15,11 +15,7 @@
 
 **集群部署：**
 
-```shell
-docker run -d --name jenkins -p 8080:8080 -p 50000:50000 andretadeu/jenkins-swarm
-
-docker run -d --name jenkins-slave-01 --link jenkins:jenkins andretadeu/jenkins-swarm-slave
-```
+[点此进入](<https://github.com/ATSJP/note/blob/master/Docker/Docker-Jenkins-cluster.md>)
 
 #### 2、war包部署
 

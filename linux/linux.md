@@ -63,3 +63,13 @@ grep -i “关键词” 文件名 （与方法一效果相同，写法不同）
 grep -i “train” log.log　　# 返回log.log中包含train的所有行
 ```
 
+## LINUX命令-YUM&APT-GET
+
+Apt-get
+
+1、搜索软件包
+
+```shell
+apt-cache search openjdk
+```
+

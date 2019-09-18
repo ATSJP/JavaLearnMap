@@ -4,7 +4,7 @@
 
 #### 1、数据卷
 
-[点击进入](https://github.com/ATSJP/note/tree/master/Docker/detail/Docker-volume.md)
+​	 [点击进入](https://github.com/ATSJP/note/tree/master/Docker/detail/Docker-volume.md)
 
 
 ### 二、安装
@@ -12,7 +12,7 @@
 #### 1、yum安装docker
 
 ```shell
-# 
+# 非必须
 sudo yum remove docker \
                   docker-client \
                   docker-client-latest \
@@ -35,15 +35,9 @@ sudo yum -y install docker-ce
 sudo systemctl start docker
 ```
 
-#### 2、pip安装docker-compose
+#### 2、Docker-compose安装
 
-```shell
-sudo pip install -U docker-compose
-
-chmod +x /usr/local/bin/docker-compose # 赋予安装目录 执行权限
-
-docker-compose up -d
-```
+​	  [点击进入](https://github.com/atsjp/note/tree/master/Docker/detail/Docker-compose.md)
 
 ### 三、使用
 
@@ -77,8 +71,6 @@ docker rm <实例id>
 2.-v /usr/local/centos:/usr/local/centos:ro  
       挂载宿主目录到容器
 ```
-
-
 
 ### 四、常用示例
 
