@@ -451,3 +451,12 @@ jaspeen/oracle-11g
 docker exec oracle ./setPassword.sh root123*
 ```
 
+F、Gitbit
+
+```shell
+docker run -d --name=gitblit \
+-p 9010:8080 -p 8443:8443 -p 9418:9418 -p 29418:29418 \
+-v /root/gitbit_home:/opt/gitblit-data \
+jacekkow/gitblit
+```
+
