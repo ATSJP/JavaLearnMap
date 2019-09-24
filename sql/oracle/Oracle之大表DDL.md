@@ -12,13 +12,25 @@ alter table table_name add (text_type NUMBER(1) default 0 NOT NULL);
 
 DDL原理：这条DDL执行，其实是先给表增加一列（不设置默认值及NOT NULL），然后给执行全表的update，更新这个字段为默认值，最终在设置这个字段的默认值及非空。
 
-> 如果各位有大数据量的表，可以使用表备份语句建立备份表，并进行上方这条DDL测试
->```sql
->-- 建表结构+复制数据
->create table newtable as select * from oldtable
->```
+> 如果各位有大数据量的表，可以使用表备份语句建立备份表，并进行上方这条DDL测试，Alter期间可以通过锁相关查询语句，看看产生了几级的锁。
+> ```sql
+> -- 建表结构+复制数据
+> create table newtable as select * from oldtable;
+> --查出oracle当前的被锁对象
+> SELECT l.session_id sid,  
+>        l.locked_mode 锁模式,  
+>        l.oracle_username 登录用户,  
+>        l.os_user_name 登录机器用户名,  
+>        s.machine 机器名,  
+>        s.terminal 终端用户名,  
+>        o.object_name 被锁对象名,  
+>        s.logon_time 登录数据库时间  
+> FROM v$locked_object l, all_objects o, v$session s  
+> WHERE l.object_id = o.object_id  
+>    AND l.session_id = s.sid;
+> ```
 
-很明显，全表的Update肯定会产生行锁也就是3级RX锁，这样数据量越大，处理时间变长，事务也越大。业务在处理DML语句（除Select语句）会因目标行被这里的操作锁住而产生阻塞等待，那么应用程序也就阻塞了，相当于人工手动停机，这样的事肯定没有一个人愿意看见，那么怎么处理合适呢？
+很明显，全表的Update肯定会产生行锁也就是3级RX锁，这样数据量越大，处理时间变长，事务也越大。业务在处理DML语句时，会因目标行被这里的操作锁住而产生阻塞等待，那么应用程序也就阻塞了，相当于人工手动停机，这样的事肯定没有一个人愿意看见，那么怎么处理合适呢？
 
 #### 方案一
 
@@ -45,17 +57,37 @@ st->o1->o2->o3->end
 -- 错误日志表-临时
 create table ins.err_log_20190826(status varchar2(200));
 
--- 收藏产品新增字段COLLECT_TYPE
-alter table ins.prod_collection add COLLECT_TYPE NUMBER(2);
+-- target_table新增字段target_column
+alter table ins.target_table add target_column NUMBER(2);
 
+-- 其中5000这个值源于实际测试得出，每5000提交一次事务，效率较高，实际中，各自可以自行测试
+ declare   
+   v_cnt pls_integer;
+ begin 
+   v_cnt:=1;
+   while v_cnt>0 loop
+     update ins.target_table t set t.target_column = 0 where t.target_column is null and rownum<=5000;
+     v_cnt:=sql%rowcount;
+     commit;
+   end loop;
+ end;
+
+-- 修改增加列的默认值
+alter table ins.target_table modify target_column default 0 not null;
+
+```
+
+其中上述游标语句也可以写出如下：
+
+```sql
 declare
   n1 number :=0;
   v_str varchar2(200);
 begin
-  for i in (select COLLECT_ID from ins.prod_collection)
+  for i in (select target_id from ins.target_table)
    loop
     n1 := n1+1;
-    update ins.prod_collection set COLLECT_TYPE = 0 where COLLECT_ID = i.COLLECT_ID;
+    update ins.target_table set target_column = 0 where target_id = i.target_id;
     if mod(n1,5000)=0 then 
       commit;    
     end if;
@@ -64,26 +96,10 @@ begin
 exception
   when others then
     rollback;
-    v_str := 'prod_collection' || SQLCODE || '_' || SQLERRM;
+    v_str := 'target_table' || SQLCODE || '_' || SQLERRM;
     insert into err_log_20190826 (status) values(v_str);
     commit;
 end;
-
--- 
--- DECLARE   
---   v_cnt pls_integer;
--- BEGIN 
---   v_cnt:=1;
---   while v_cnt>0 loop
---     update ins.cm_content t set t.top_flag =0, t.text_type =0  where t.top_flag !=0  and rownum<=10000;
---     v_cnt:=sql%rowcount;
---     commit;
---   end loop;
--- END;
-
--- 修改增加列的默认值
-alter table ins.prod_collection modify COLLECT_TYPE default 0 not null;
-
 ```
 
 好，到此差不多已经讲完了这个问题，但是平常工作中，我们在没有必要给这个字段加上非空要求时，就可以采用以下的sql，来增加新列，也就不会造成上述说的问题。是因为修改列增加默认值，只会对新插入的数据生效，而历史的数据，是不会处理的。
@@ -254,5 +270,5 @@ st->o1->o2->o3->o4->o5->o6->end
 
 
 
-注意：如果执行过程中出现错误或者人为选择退出的话，可以执行 DBMS_REDEFINITION.ABORT_REDEF_TABLE() 过程。
+注意：如果执行过程中出现错误或者人为选择退出的话，可以执行DBMS_REDEFINITION.ABORT_REDEF_TABLE() 过程。
 

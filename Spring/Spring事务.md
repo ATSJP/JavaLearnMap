@@ -63,21 +63,53 @@
   
 
   
-注意：
+  注意：
   
-1、事务传播性是Spring提供的，而不是数据库提供。
+  1、事务传播性是Spring提供的，而不是数据库提供。
   
-  2、事务的传播针对是单线程，在不同的线程，事务是隔离的。
+  2、事务是和线程绑定的，也就是事务的传播针对是单线程，在不同的线程，事务是隔离的。
+
+> **Tips**: PROPAGATION_REQUIRES_NEW 和 PROPAGATION_NESTED 有什么区别呢？
+>
+> **PROPAGATION_REQUIRES_NEW**：A的事务和B的事务是完全独立的，当执行到B时，B发现A有事务，则挂起，等B执行完（无论是commit还是rollback），A继续执行。
+> **PROPAGATION_NESTED**： 不会创建新的事务，当发现A有事务后，B作为A的子事务（新建一个保存点，但不产生新的事务），当B执行失败，B会rollback（回退到保存点，不会产生），并抛出异常到A，A发现B异常了，可以选择回滚，或者捕捉异常不会滚A的操作，继续执行。
+>
+> **场景举例：**
+>
+> 针对`PROPAGATION_NESTED`的特性（不产生新的事务），在下面这个场景下，很好的提现了其优势。我们有3个Service，目的：ServiceB和ServiceC两者优先B执行，B失败了执行C，且B的数据要求回滚掉，希望尽可能少开事务。
+>
+> ```java
+> ServiceA:
+> 
+> @Transactional(rollbackFor = RuntimeException.class)
+> void methodA() {  
+>     try {  
+>         ServiceB.methodB();
+>     } catch (SomeException) {  
+>         // 执行其他业务  
+>         ServiceC.methodC()
+>     }  
+> }
+> 
+> ServiceB:
+> 
+> @Transactional(propagation = Propagation.NESTED, rollbackFor = RuntimeException.class)
+> void methodB() {  
+>    // ...
+> }  
+> ```
+>
+> 如上设计，可以在B异常后Rollback掉B的脏数据，继续执行C，TryCatch起到一个分支执行的作用。
 
 #### 2、是否只读
 
-如果将事务设置为只读，表示这个事务只读取数据但不更新数据, 这样可以帮助数据库引擎优化事务
+如果将事务设置为只读，表示这个事务只读取数据但不更新数据, 这样可以帮助数据库引擎优化事务。
 
 #### 3、事务超时
 
-事务超时就是事务的一个定时器，在特定时间内事务如果没有执行完毕，那么就会自动回滚，而不是一直等待其结束。在 TransactionDefinition 中以 int 的值来表示超时时间，默认值是-1，其单位是秒
+事务超时就是事务的一个定时器，在特定时间内事务如果没有执行完毕，那么就会自动回滚，而不是一直等待其结束。在 TransactionDefinition 中以 int 的值来表示超时时间，默认值是-1，其单位是秒。
 
 #### 3、回滚规则
 
-回滚规则定义了哪些异常会导致事务回滚而哪些不会。默认情况下，事务只有遇到运行期异常时才会回滚
+回滚规则定义了哪些异常会导致事务回滚而哪些不会。默认情况下，事务只有遇到运行期异常时才会回滚。
 
