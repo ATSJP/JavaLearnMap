@@ -161,6 +161,30 @@ b. 根据编号删除规则
     iptables -t nat -D DOCKER $num
 ```
 
+#### 6、创建网络
+
+```shell
+docker network create test-network
+```
+
+#### 7、加入网络
+
+```shell
+docker run -it --network test-network --network-alias mysql  -e MYSQL_ROOT_PASSWORD=123 mysql:5.7
+```
+
+8、列出docker容器的名称和IP
+
+```
+docker inspect 容器ID | grep IPAddress
+
+sudo docker inspect -f='{{.Name}}' $(sudo docker ps -a -q)
+
+sudo docker inspect -f='{{.NetworkSettings.IPAddress}}' $(sudo docker ps -a -q)
+
+docker inspect -f='{{.Name}} {{.NetworkSettings.IPAddress}} {{.HostConfig.PortBindings}}' $(docker ps -aq)
+```
+
 ### 五、坑记录 
 
 #### 1、部分image无法删除
