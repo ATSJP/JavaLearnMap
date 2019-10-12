@@ -32,13 +32,23 @@ scrape_configs:
 
   ```shell
   docker run -d \
-  --name=prometheus \
-  -p 9090:9090 \
-  -v /root/monitor_home/prom-jvm-demo:/prometheus-config \
-  prom/prometheus --web.enable-lifecycle \
-  --config.file=/prometheus-config/prom-jmx.yml
+             --name=prometheus \
+             -p 9090:9090 \
+             -v /root/monitor_home/prometheus.yml:/config/prometheus.yml \
+             prom/prometheus --config.file=/config/prometheus.yml
   ```
+- docker部署（保存监控数据）
 
+  ```shell
+  docker run -d \
+             --name=prometheus \
+             -p 9090:9090 \
+             -u $(id -u):$(id -g) \
+             -v /root/monitor_home/prometheus.yml:/config/prometheus.yml \
+             -v /root/monitor_home/data:/prometheus \
+             prom/prometheus --config.file=/config/prometheus.yml
+  ```
+  
 - docker-compose部署
 
   ```yml
@@ -52,16 +62,38 @@ scrape_configs:
       restart: always 
       container_name: prometheus
       volumes:  
-        - /root/prometheus.yml:/etc/prometheus/prometheus.yml
+        - /root/monitor_home/prometheus.yml:/etc/prometheus/prometheus.yml
   ```
   
-## 二、管理API
+- docker-compose部署（保存监控数据）
+  
+  
+  ```yml
+  version: "3"
+  services: 
+    # 监控
+    prometheus:
+      image: prom/prometheus
+      ports:
+        - "9090:9090"  
+      restart: always 
+      container_name: prometheus
+      volumes:  
+        - /root/prometheus.yml:/etc/prometheus/prometheus.yml
+        - /root/monitor_home:/prometheus
+      # 以root运行一个容器，不是一个好的解决方案      
+      user: 'root'
+  ```
+  
+## 二、使用
+
+### A、管理API
 
 Prometheus提供了一组管理API，以简化自动化和集成。
 
 注意：{ip:port} 是普罗米修斯所在的IP和端口
 
-### A、健康检查
+#### 1、健康检查
 
 ```
 GET {ip:port}/-/healthy
@@ -69,7 +101,7 @@ GET {ip:port}/-/healthy
 
 该端点始终返回200，应用于检查Prometheus的运行状况。
 
-### B、准备检查
+#### 2、准备检查
 
 ```
 GET {ip:port}/-/ready
@@ -77,7 +109,7 @@ GET {ip:port}/-/ready
 
 当Prometheus准备服务流量（即响应查询）时，此端点返回200。
 
-### C、刷新
+#### 3、刷新
 
 ```
 PUT  {ip:port}/-/reload
@@ -88,18 +120,18 @@ POST {ip:port}/-/reload
 
 > - docker，如下拼接命令接口
 >
->   ```
+>   ```shell
 >   docker run -d \
->   --name=prometheus \
->   -p 9090:9090 \
->   -v /root/monitor_home/prom-jvm-demo:/prometheus-config \
->   prom/prometheus --web.enable-lifecycle \
->   --config.file=/prometheus-config/prom-jmx.yml
+>              --name=prometheus \
+>              -p 9090:9090 \
+>              -v /root/monitor_home/prom-jvm-demo:/prometheus-config \
+>              prom/prometheus --web.enable-lifecycle \
+>              --config.file=/prometheus-config/prom-jmx.yml
 >   ```
 >
 > - docker-compose
 >
->   ```
+>   ```yml
 >   services: 
 >     prometheus:
 >       image: prom/prometheus
@@ -115,7 +147,7 @@ POST {ip:port}/-/reload
 
 触发配置重新加载的另一种方法是将a发送`SIGHUP`给Prometheus进程。
 
-### D、放弃
+#### 4、放弃
 
 ```
 PUT  {ip:port}/-/quit
@@ -125,6 +157,15 @@ POST {ip:port}/-/quit
 该端点触发Prometheus的正常关闭。默认情况下它是禁用的，可以通过该`--web.enable-lifecycle`标志启用。
 
 触发正常关闭的另一种方法是将a发送`SIGTERM`给Prometheus进程。
+
+### B、储存
+
+以下是经常使用到的储存配置：
+
+- `--storage.tsdb.path`: Prometheus监控的数据存放点. 默认`data/`.
+- `--storage.tsdb.retention.time`: 数据保存最长时间. 默认 `15d`. 此配置会覆盖掉`storage.tsdb.retention`(`storage.tsdb.retention`是过时配置) .
+- `--storage.tsdb.retention.size`: [EXPERIMENTAL] This determines the maximum number of bytes that storage blocks can use (note that this does not include the WAL size, which can be substantial). The oldest data will be removed first. Defaults to `0` or disabled. This flag is experimental and can be changed in future releases. Units supported: KB, MB, GB, PB. Ex: "512MB"
+- `--storage.tsdb.wal-compression`: 配置是否打开WAL的压缩功能。你可以期望WAL的大小减少一半，而只增加很少的cpu负载。请注意，如果您启用了这个标记，并随后将Prometheus降级到2.11.0以下的版本，您将需要删除WAL，因为它将无法读取。.
 
 ## N、附件
 
