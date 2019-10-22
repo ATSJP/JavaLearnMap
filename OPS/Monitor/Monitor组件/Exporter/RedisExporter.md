@@ -1,10 +1,6 @@
 # RedisExporter
 
-
-目前Redis的Exporter存在以下几种：
-- 
-
-
+> 官方地址：[Github](https://github.com/oliver006/redis_exporter)
 
 ## 一、介绍
 
@@ -33,8 +29,8 @@
         ports:
           - "9121:9121"
         environment:
-          - '--redis.addr:redis://47.98.164.213:6379'
-          # - '--redis.password:'
+        	- REDIS_ADDR=redis://172.100.0.105:6379
+        	#- REDIS_PASSWORD=1234
   
   ```
 

@@ -120,30 +120,31 @@ POST {ip:port}/-/reload
 
 > - docker，如下拼接命令接口
 >
->   ```shell
->   docker run -d \
->              --name=prometheus \
->              -p 9090:9090 \
->              -v /root/monitor_home/prom-jvm-demo:/prometheus-config \
->              prom/prometheus --web.enable-lifecycle \
->              --config.file=/prometheus-config/prom-jmx.yml
->   ```
+> ```shell
+> docker run -d \
+>           --name=prometheus \
+>           -p 9090:9090 \
+>           -v /root/monitor_home/prometheus.yml:/prometheus-config/prometheus.yml \
+>           prom/prometheus --web.enable-lifecycle \
+>           --config.file=/prometheus-config/prometheus.yml
+> ```
 >
 > - docker-compose
 >
->   ```yml
->   services: 
->     prometheus:
->       image: prom/prometheus
->       ports:
+> ```yml
+> services: 
+>  prometheus:
+>    image: prom/prometheus
+>    ports:
 >         - "9090:9090"
->       container_name: prometheus
->       volumes:
->         - /root/lemon_home/1.0/prometheus.yml:/etc/prometheus/prometheus.yml
->       command:
->          # 支持热更新
->          - '--web.enable-lifecycle'
->   ```
+>    container_name: prometheus
+>    volumes:
+>         - /root/monitor_home/prometheus.yml:/prometheus-config/prometheus.yml
+>    command:
+>       [ "--config.file=/prometheus-config/prometheus.yml",
+>         "--web.enable-lifecycle"
+>       ]
+> ```
 
 触发配置重新加载的另一种方法是将a发送`SIGHUP`给Prometheus进程。
 

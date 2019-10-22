@@ -1,6 +1,6 @@
 ## Oracle之大表DDL操作那些事
 
-### 场景一、万级以上数据量在给表增加字段的时候，可以随意执行Alter吗？
+### 场景：万级以上数据量在给表增加字段的时候，可以随意执行Alter吗？
 
 下面我们来看这条Alter语句：
 
@@ -13,21 +13,22 @@ alter table table_name add (text_type NUMBER(1) default 0 NOT NULL);
 DDL原理：这条DDL执行，其实是先给表增加一列（不设置默认值及NOT NULL），然后给执行全表的update，更新这个字段为默认值，最终在设置这个字段的默认值及非空。
 
 > 如果各位有大数据量的表，可以使用表备份语句建立备份表，并进行上方这条DDL测试，Alter期间可以通过锁相关查询语句，看看产生了几级的锁。
+>
 > ```sql
 > -- 建表结构+复制数据
 > create table newtable as select * from oldtable;
 > --查出oracle当前的被锁对象
 > SELECT l.session_id sid,  
->        l.locked_mode 锁模式,  
->        l.oracle_username 登录用户,  
->        l.os_user_name 登录机器用户名,  
->        s.machine 机器名,  
->        s.terminal 终端用户名,  
->        o.object_name 被锁对象名,  
->        s.logon_time 登录数据库时间  
+>     l.locked_mode 锁模式,  
+>     l.oracle_username 登录用户,  
+>     l.os_user_name 登录机器用户名,  
+>     s.machine 机器名,  
+>     s.terminal 终端用户名,  
+>     o.object_name 被锁对象名,  
+>     s.logon_time 登录数据库时间  
 > FROM v$locked_object l, all_objects o, v$session s  
 > WHERE l.object_id = o.object_id  
->    AND l.session_id = s.sid;
+> AND l.session_id = s.sid;
 > ```
 
 很明显，全表的Update肯定会产生行锁也就是3级RX锁，这样数据量越大，处理时间变长，事务也越大。业务在处理DML语句时，会因目标行被这里的操作锁住而产生阻塞等待，那么应用程序也就阻塞了，相当于人工手动停机，这样的事肯定没有一个人愿意看见，那么怎么处理合适呢？
@@ -43,24 +44,29 @@ DDL原理：这条DDL执行，其实是先给表增加一列（不设置默认�
 ```flow
 st=>start: start
 o1=>operation: 增加可空列
-o2=>operation: 拆分若干个小事务更新
-o3=>operation: 修改列非空+默认值
+o2=>operation: 给可空列增加默认值
+o3=>operation: 拆分若干个小事务更新
+o4=>operation: 修改列非空
 end=>end: end
 
-st->o1->o2->o3->end
+st->o1->o2->o3->o4->end
 ```
 
-对应Sql，其中`err_log`用来记录错误信息，以供后续分析。
+对应Sql，其中`err_log`用来记录错误信息，以供后续分析，如果执行没问题，记得删除此表。
 
 ```sql
 -- start 
 -- 错误日志表-临时
 create table ins.err_log_20190826(status varchar2(200));
 
--- target_table新增字段target_column
+-- 增加可空列
 alter table ins.target_table add target_column NUMBER(2);
 
--- 其中5000这个值源于实际测试得出，每5000提交一次事务，效率较高，实际中，各自可以自行测试
+-- 给可空列增加默认值
+-- 注意：这一操作是为了防止新数据生成，新字段值为null，这样游标执行无法彻底更新完所有null值，导致最后执行出错
+alter table ins.target_table modify target_column default 0;
+
+-- 拆分若干个小事务更新：其中5000这个值源于实际测试得出，每5000提交一次事务，效率较高，实际中，各自可以自行测试
  declare   
    v_cnt pls_integer;
  begin 
@@ -72,9 +78,8 @@ alter table ins.target_table add target_column NUMBER(2);
    end loop;
  end;
 
--- 修改增加列的默认值
-alter table ins.target_table modify target_column default 0 not null;
-
+-- 修改列非空
+alter table ins.target_table modify target_column not null;
 ```
 
 其中上述游标语句也可以写出如下：
@@ -158,23 +163,26 @@ st->o1->o2->o3->o4->o5->o6->end
 > ```sql
 > CREATE TABLE INS.test_table
 > (
->     id NUMBER(10) NOT NULL,
->     link_id NUMBER(10) NOT NULL,
->     link_TYPE NUMBER(2) NOT NULL,
->     CREATE_ID       NUMBER(10),
->     CREATE_TIME     TIMESTAMP(6) DEFAULT sysdate,
->     MODIFY_ID       NUMBER(10) ,
->     MODIFY_TIME      TIMESTAMP(6) DEFAULT sysdate,
->     CONSTRAINT PK_test_table PRIMARY KEY (id)
+>  id NUMBER(10) NOT NULL,
+>  link_id NUMBER(10) NOT NULL,
+>  link_TYPE NUMBER(2) NOT NULL,
+>  CREATE_ID       NUMBER(10),
+>  CREATE_TIME     TIMESTAMP(6) DEFAULT sysdate,
+>  MODIFY_ID       NUMBER(10) ,
+>  MODIFY_TIME      TIMESTAMP(6) DEFAULT sysdate,
+>  CONSTRAINT PK_test_table PRIMARY KEY (id)
 > );
 > 
 > create index INS.IDX_test_table_1 on ins.test_table (link_id);
 > create index INS.IDX_test_table_2 on ins.test_table (link_TYPE); 
+> 
 > ```
+>
 > 需要给原表增加 flag 字段
 >
 > ```sql
 > alter table ins.test_table add (flag NUMBER(1) DEFAULT 0 NOT NULL);
+> 
 > ```
 
 1. 决定重定义模式
@@ -184,15 +192,18 @@ st->o1->o2->o3->o4->o5->o6->end
    begin
    DBMS_REDEFINITION.can_redef_table('INS','test_table');
    end;
+   
    ```
+
     默认是主键模式重定义，如果未报错，则可以使用主键模式，否则使用ROWID模式重定义（取决于原表是否有主键）
 
-    ```sql
+   ```sql
     -- 通过ROWID是否可以重定义
     begin
     DBMS_REDEFINITION.can_redef_table('INS','test_table', dbms_redefinition.cons_use_rowid);
     end;
-    ```
+   
+   ```
 
 2. 建立中间表
 
@@ -208,8 +219,9 @@ st->o1->o2->o3->o4->o5->o6->end
        MODIFY_ID       NUMBER(10) ,
        MODIFY_TIME      TIMESTAMP(6) DEFAULT sysdate
    ); 
-   ```
    
+   ```
+
 3. 开始重定义
 
    ```sql
@@ -226,16 +238,18 @@ st->o1->o2->o3->o4->o5->o6->end
                                 options_flag IN BINARY_INTEGER := 1,---重定义方式，这里的 1 代表主键模式 2 代表ROWID模式 (可以直接使用oracle提供的常量)
                                 orderby_cols IN VARCHAR2 := NULL,---对于分区表重定义的时候，分区列名
                                 part_name    INVARCHAR2 :=NULL);---对于分区表重定义的时候，需要重定义的分区。其中最后2个参数没用到，因为这里是由普通表转换为分区表；
-   ```
    
+   ```
+
 4. 给中间表建立索引等约束
 
    ```sql
    -- 由于索引名称是全局的，所以这里的命名肯定不能与原表冲突，如果必须要改为原表表名的可以在结束重定义后，删除中间表，再次修改索引名称
    create index INS.IDX_test_table_temp_1 on ins.test_table_temp (link_id);
    create index INS.IDX_test_table_temp_2 on ins.test_table_temp (link_TYPE); 
-   ```
    
+   ```
+
 5. 锁定同步数据（可选）
 
    ```sql
@@ -243,30 +257,35 @@ st->o1->o2->o3->o4->o5->o6->end
    begin                        
    DBMS_REDEFINITION.sync_interim_table('INS','test_table','test_table_temp');        
    end;                       
-   ```
    
+   ```
+
 6. 结束重定义
 
-    ```sql
-    -- 结束重定义
-    begin
-    DBMS_REDEFINITION.FINISH_REDEF_TABLE('INS','test_table','test_table_temp');
-    end;
-    ```
-    
+   ```sql
+   -- 结束重定义
+   begin
+   DBMS_REDEFINITION.FINISH_REDEF_TABLE('INS','test_table','test_table_temp');
+   end;
+   
+   ```
+
 7. 删除中间表
 
-    ```sql
-    -- 此时原表的结构已经是我们想要的结构，中间表是原表的初始结构
-    drop table ins.test_table_temp
-    ```
-8. （可选）重命名索引、触发器和约束
-对于采用了ROWID方式重定义的表，包括了一个隐含列M_ROW$$。推荐使用下列语句经隐含列置为UNUSED状态或删除。
+   ```sql
+   -- 此时原表的结构已经是我们想要的结构，中间表是原表的初始结构
+   drop table ins.test_table_temp
+   
+   ```
 
-     ```sql
+8. （可选）重命名索引、触发器和约束
+   对于采用了ROWID方式重定义的表，包括了一个隐含列M_ROW$$。推荐使用下列语句经隐含列置为UNUSED状态或删除。
+
+   ```sql
     ALTER TABLE TABLE_NAME SET UNUSED (M_ROW$$);
     ALTER TABLE TABLE_NAME DROP UNUSED COLUMNS;
-     ```
+   
+   ```
 
 
 

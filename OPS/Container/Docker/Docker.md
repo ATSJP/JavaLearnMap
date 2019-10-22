@@ -241,7 +241,7 @@ vim /etc/docker/daemon.json
 
 ```shell
 {
-"registry-mirrors":["https://registry.docker-cn.com"]
+"registry-mirrors":["http://f1361db2.m.daocloud.io"]
 }
 ```
 
