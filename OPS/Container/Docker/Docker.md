@@ -37,7 +37,7 @@ sudo systemctl start docker
 
 #### 2、Docker-compose安装
 
-​	  [点击进入](https://github.com/atsjp/note/tree/master/Docker/detail/Docker-compose.md)
+​	  [点击进入]( https://github.com/ATSJP/note/blob/master/OPS/Container/Docker/detail/Docker-compose.md )
 
 ### 三、使用
 
