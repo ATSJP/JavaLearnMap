@@ -197,15 +197,15 @@ management.health.status.http-mapping.FATAL=503
 
 ```yml
 endpoints:
-	info:
-		path: /appInfo
+    info:
+        path: /appInfo
 endpoint:
-	health:
-		path: /checkHealth
+    health:
+        path: /checkHealth
 eureka:
-	instance:
-		statusPageUrlPath: /${endpoints.info.path}
-		healthCheckUrlPath: /${endpoint.health.path}
+    instance:
+        statusPageUrlPath: /${endpoints.info.path}
+        healthCheckUrlPath: /${endpoint.health.path}
 ```
 
 2.0版本以后
