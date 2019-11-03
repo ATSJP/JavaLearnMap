@@ -24,7 +24,7 @@
 
 ```yml
 global:
-	scrape_interval:     5s 
+    scrape_interval:     5s 
 
 scrape_configs:
     - job_name: 'java'
