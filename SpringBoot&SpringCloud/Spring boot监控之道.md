@@ -42,10 +42,14 @@ management:
 management:
   endpoints:
     web:
+      # 默认即是actuator
+      basePath: /actuator
       exposure:
         include: "*"
   server:
-    port: 10111
+    # 监控对外暴露端口
+    port: 9001
+    # 配置监控根地址
     servlet:
       context-path: /
     ssl:
@@ -55,13 +59,13 @@ management:
       show-details: always
 ```
 
-上述配置信息仅供参考，具体须参照官方文档，由于spring boot的版本更新比较快，配置方式可能有变化。
+上述配置信息仅供参考，具体须参照官方文档，由于SpringBoot的版本更新比较快，配置方式可能有变化。
 
 ## 三、 健康检查
 
 今天重点说一下Actuator监控管理中的健康检查功能，随时能掌握线上应用的健康状况是非常重要的，尤其是现在流行的容器云平台下的应用，它们的自动恢复和扩容都依赖健康检查功能。
 
-当我们开启`health`的健康端点时，我们能够查到应用健康信息是一个汇总的信息，访问`http://127.0.0.1:10111/actuator/health`时，我们获取到的信息是`{"status":"UP"}`，status的值还有可能是 DOWN。
+当我们开启`health`的健康端点时，我们能够查到应用健康信息是一个汇总的信息，访问`http://127.0.0.1:9001/actuator/health`时，我们获取到的信息是`{"status":"UP"}`，status的值还有可能是 `DOWN`。
 
 要想查看详细的应用健康信息需要配置`management.endpoint.health.show-details` 的值为`always`，配置之后我们再次访问`http://127.0.0.1:10111/actuator/health`，获取的信息如下：
 
@@ -191,11 +195,17 @@ management.health.status.http-mapping.FATAL=503
 
 2.0前版本修改
 
-```properties
-endpoints.info.path=/appInfo
-endpoint.health.path=/checkHealth
-eureka.instance.statusPageUrlPath=/${endpoints.info.path}
-eureka.instance.healthCheckUrlPath=/${endpoint.health.path}
+```yml
+endpoints:
+	info:
+		path: /appInfo
+endpoint:
+	health:
+		path: /checkHealth
+eureka:
+	instance:
+		statusPageUrlPath: /${endpoints.info.path}
+		healthCheckUrlPath: /${endpoint.health.path}
 ```
 
 2.0版本以后
@@ -210,4 +220,60 @@ management:
 方案二、Spring Cloud Security或者采用Shiro控制
 
 方案三、监控另配端口，端口对内提供访问
+
+
+
+# SpringBoot引入开源监控Micrometer
+
+## 一、前言
+
+> Micrometer 为 Java 平台上的性能数据收集提供了一个通用的 API，它提供了多种度量指标类型（Timers、Guauges、Counters等），同时支持接入不同的监控系统，例如 Influxdb、Graphite、Prometheus 等。我们可以通过 Micrometer 收集 Java 性能数据，配合 Prometheus 监控系统实时获取数据，并最终在 Grafana 上展示出来，从而很容易实现应用的监控。
+
+Micrometer 中有两个最核心的概念，分别是计量器（Meter）和计量器注册表（MeterRegistry）。计量器用来收集不同类型的性能指标信息，Micrometer 提供了如下几种不同类型的计量器：
+
+- 计数器（Counter）: 表示收集的数据是按照某个趋势（增加／减少）一直变化的，也是最常用的一种计量器，例如接口请求总数、请求错误总数、队列数量变化等。
+- 计量仪（Gauge）: 表示搜集的瞬时的数据，可以任意变化的，例如常用的 CPU Load、Mem 使用量、Network 使用量、实时在线人数统计等，
+- 计时器（Timer）: 用来记录事件的持续时间，这个用的比较少。
+- 分布概要（Distribution summary）: 用来记录事件的分布情况，表示一段时间范围内对数据进行采样，可以用于统计网络请求平均延迟、请求延迟占比等。
+
+## 二、使用
+
+> 请注意，Spring Boot 集成 Micrometer 是 Spring 2.x 版本，因为在该版本 spring-boot-actuator 使用了 Micrometer 来实现监控，而在 Spring Boot 1.5x 中可以通过micrometer-spring-legacy 来使用 micrometer，显然在 2.x 版本有更高的集成度，使用起来也非常方便了。
+>
+> 既然如此，在继续下面的操作之前，请各位小伙伴确保Actuator配置正确，且可以访问。
+
+### A、引入jar
+
+```pom
+<dependency>
+	<groupId>io.micrometer</groupId>
+	<artifactId>micrometer-registry-prometheus</artifactId>
+	<version>1.3.0</version>
+</dependency>
+```
+### B、配置
+
+在Grafana中，作者提出2种方式配置Micrometer：（飞机票: https://grafana.com/grafana/dashboards/4701）
+
+- 在一个SpringBoot项目中，可以使用配置类
+
+  ```java
+  @Bean
+  MeterRegistryCustomizer<MeterRegistry> configurer(
+      @Value("${spring.application.name}") String applicationName) {
+      return (registry) -> registry.config().commonTags("application", applicationName);
+  }
+  ```
+
+- 在一个SpringBoot项目中，可以使用配置
+
+```properties
+management.metrics.tags.application=${spring.application.name}
+```
+
+最后，启动项目，访问Actuator监控地址：http://192.168.126.1:10000/actuator/prometheus ，你将会见到监控的数据。
+
+后面如何集成 Prometheus+Grafana 我们放在下个文章说明。
+
+飞机票：[Grafana+Prometheus+Micrometer监控JVM ]( https://github.com/ATSJP/note/blob/master/OPS/Monitor/Monitor实战/Grafana+Prometheus+Micrometer监控JVM.md )
 
