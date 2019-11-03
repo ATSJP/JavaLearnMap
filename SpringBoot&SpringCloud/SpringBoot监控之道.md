@@ -267,9 +267,9 @@ Micrometer 中有两个最核心的概念，分别是计量器（Meter）和计�
 
 - 在一个SpringBoot项目中，可以使用配置
 
-```properties
-management.metrics.tags.application=${spring.application.name}
-```
+    ```properties
+    management.metrics.tags.application=${spring.application.name}
+    ```
 
 最后，启动项目，访问Actuator监控地址：http://192.168.126.1:10000/actuator/prometheus ，你将会见到监控的数据。
 
