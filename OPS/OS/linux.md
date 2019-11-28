@@ -73,3 +73,32 @@ Apt-get
 apt-cache search openjdk
 ```
 
+## Linux命令-Iptables
+
+```
+  iptables [-t 表名] <-A|I|D|R> 链名 [规则编号] [-i|o 网卡名称] [-p 协议类型] [-s 源ip|源子网] [--sport 源端口号] [-d 目的IP|目标子网] [--dport 目标端口号] [-j 动作]
+    参数：-A 增加
+               -I 插入
+               -D 删除
+               -R 替换
+```
+
+1.新增
+
+```shell
+ iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+ iptables -A OUTPUT -p tcp --sport 22 -j ACCEPT
+  
+ iptables -I INPUT -p tcp --dport 8889 -j ACCEPT
+ 
+ -I 在表尾巴 -A 在表头
+```
+
+2.修改
+
+```
+ iptalbes -P INPUT DROP
+ iptables -P FORWARD DROP
+ iptables -P OUTPUT ACCEPT
+```
+
