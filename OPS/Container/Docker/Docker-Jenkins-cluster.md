@@ -51,11 +51,11 @@ docker run \
 
 启动好master以后进行如下配置：
 
-![1568778869495](assets/1568778869495.png)
+![1568778869495](Docker-Jenkins-cluster.assets/1568778869495.png)
 
 配置保存成功后，jenkins提示我们还需执行如下命令才能够使得slave节点与master建立链接：
 
-![1568778931449](assets/1568778931449.png)
+![1568778931449](Docker-Jenkins-cluster.assets/1568778931449.png)
 
 我们选择第二种方式，JavaWeb代理方式，将Agent.jar下载后，上传到slave1节点的任意位置，执行命令：
 
@@ -71,7 +71,7 @@ nohup java -jar agent.jar -jnlpUrl http://192.168.126.129:8080/computer/slave1/s
 
 如果执行以上命令，出现以下错误，则将IP地址替换成master的docker分配的IP即可。
 
-![1568784535364](assets/1568784535364.png)
+![1568784535364](Docker-Jenkins-cluster.assets/1568784535364-1579228699238.png)
 
 执行完之后，刷新master页面，查看slave的连通状态。
 

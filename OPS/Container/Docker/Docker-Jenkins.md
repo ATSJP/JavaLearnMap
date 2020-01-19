@@ -72,7 +72,7 @@ docker ps | grep jenkins
 
 localhost:9001/
 
-![1567576863615](assets/1567576863615.png)
+![1567576863615](Docker-Jenkins.assets/1567576863615.png)
 
 ### 6.获取启动密钥
 
@@ -81,10 +81,11 @@ docker exec -it jenkins /bin/bash
 cat /var/jenkins_home/secrets/initialAdminPassword
 ```
 
-<img src="assets/1567502904219.png" alt="1567502904219" style="zoom: 200%;" />
+<img src="Docker-Jenkins.assets/1567502904219.png" alt="1567502904219" style="zoom: 200%;" />
 
 ### 7.使用
 
 后面就是配置插件的问题了  ，直接按照推荐安装一波即可。如果有失败的也不用慌，可以尝试重试，或者下一步，后续在继续安装（官方的镜像经常安装插件失败，可能和插件源有关）
 
-![1567502846263](assets/1567502846263.png)
+![1567502846263](Docker-Jenkins.assets/1567502846263.png)
+
