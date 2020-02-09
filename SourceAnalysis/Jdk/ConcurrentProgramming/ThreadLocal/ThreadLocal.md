@@ -309,19 +309,85 @@ public class ThreadLocal<T> {
 
 在上述源码中，可见`ThreadLocalMap`对象实例，实际上是存放在每个`Thread`中的，只是被定义在`ThreadLocal`中。既然是这样的，那么`ThreadLocalMap`的生命周期与`Thread`一样长，在`Thread`被销毁的时候，`ThreadLocalMap`也会随之被回收。
 
-这么看来，好像`ThreadLocalMap`永远也不会发生内存泄露的问题呀？如果这么想，那离下次内存泄露不久了，咱们回头在斟酌下生命周期：`ThreadLocalMap`的生命周期与`Thread`一样长。这里你会不会产生一个疑问，如果`Thread`放在线程池里，`ThreadLocalMap`一直往里面`set`值，从不主动调用`remove`，是不是就发生了内存泄露？话不多说，咱们模拟下，看看结果。
+这么看来，好像`ThreadLocalMap`永远也不会发生内存泄露的问题呀？如果这么想，那离下次内存泄露事故不久了，咱们回头在斟酌下生命周期：`ThreadLocalMap`的生命周期与`Thread`一样长。这里你会不会产生一个疑问，如果`Thread`放在线程池里，`ThreadLocalMap`一直往里面`set`值，从不主动调用`remove`，是不是就发生了内存泄露？话不多说，咱们模拟下，看看结果。
 
 ```java
+  static class LocalVariable {
+    private Long[] a = new Long[4 * 1024 * 1024];
+  }
 
+  final static ThreadPoolExecutor poolExecutor =
+      new ThreadPoolExecutor(5, 5, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>());
+
+  final static ThreadLocal<LocalVariable> localVariable = new ThreadLocal<LocalVariable>();
+
+  /**
+   * jvm参数 -Xms100m -Xmx100m
+   *
+   * @throws InterruptedException
+   */
+  @Test
+  public void test4() throws InterruptedException {
+    for (int i = 0; i < 5000; ++i) {
+      poolExecutor.execute(() -> {
+        localVariable.set(new LocalVariable());
+        System.out.println("use local varaible:" + localVariable.get());
+//        localVariable.remove();
+      });
+      Thread.sleep(1000);
+    }
+    System.out.println("pool execute over");
+  }
 ```
 
+打印日志：
 
+```java
+use local varaible:thread.Test01$LocalVariable@759d4ea7
+use local varaible:thread.Test01$LocalVariable@6b5a2f85
+use local varaible:thread.Test01$LocalVariable@5171dc8b
+use local varaible:thread.Test01$LocalVariable@4a7b8c4f
+use local varaible:thread.Test01$LocalVariable@1cfaa313
+Exception in thread "pool-1-thread-9" java.lang.OutOfMemoryError: Java heap space
+use local varaible:thread.Test01$LocalVariable@492267bb
+...
+```
 
+`Jprofiler`监控：
 
+![unnormal](ThreadLocal.assets/unnormal.PNG)
 
+从日志看，出现了我们喜欢的字样`OOM`。从`Jprofiler`看，尽管`GC`活动很活跃，但是由于存在大量无法回收的堆内存，导致其一直处于紧张状态。我们再把`localVariable.remove();`的注释去除，跑一段时间试试。
 
+打印日志：
 
+没有发生`OOM`
 
+`Jprofiler`监控：
+
+![normal](ThreadLocal.assets/normal.PNG)
+
+从`Jprofiler`看，堆内存使用正常，`GC`可以正常回收掉不在需要的内存。
+
+好了，到此我们证明了，`ThreadLocalMap`使用不当，会发生内存泄露。
+
+既然发生了`OOM`，我们不妨则`dump`出堆，看下是不是由于`ThreadLocalMap`使用不当导致，进行反向验证，修改启动参数：
+
+```
+-Xms100m -Xmx100m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/dump.hprof
+```
+
+`Dump`文件使用`JDK`自带的`jvisualvm`查看：
+
+![Dump](ThreadLocal.assets/Dump.PNG)
+
+![Dump](ThreadLocal.assets/Dump2.PNG)
+
+ 首先我们查出排名前20的最大对象，然后我们发现大小基本差不多，所以我们随便选择了一个 `Thread`，通过对一个实例的分析，最终查到`ThreadLocalMap`大小异常，几乎占满了线程，通过对`ThreadLocalMap`内部结构分析，最终看到了`LocalVariable`这个大对象。
+
+好，我们对以上实验做下简单的总结：
+
+ `ThreadLocalMap`和`Thread`的生命周期一样长，所以不管线程是否重用，我们都应该，在使用完静态变量后，都应该主动加remove掉不需要的内容，以确保不会发生内存泄露问题。
 
 #### 误区
 
