@@ -617,7 +617,7 @@ public class TokenGenerate {
 
 通过JSESSIONID绑定当前登陆用户，如下图所示，浏览器的JsessionId对应着服务器内存中的某一个Session，而服务器的Session保存了代码中设置的信息，常用的 session.setAttribute("userInfo",userInfo) 设置用户的信息到Session中。如果清除掉JSESSIONID，则服务器认为该浏览器未登录，用户将会变为未登录状态。
 
-![1561617653644](./assets/1561617653644.png)
+![1561617653644](assets/1561617653644.png)
 
 
 
