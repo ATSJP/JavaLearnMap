@@ -1,10 +1,16 @@
-## ArraysList
+## ArrayList
+
+### 关系图
+
+![image-20200804154736870](ArrayList.assets/image-20200804154736870.png)
 
 ### 数据结构
 
 数组：Object[] elementData
 
-### 扩容
+### 原理
+
+#### 扩容
 
 **知识了解：**
 
@@ -58,8 +64,11 @@ minCapacity：最小扩容量，分析源码不难知道，等于当前数组的
 
 #### 非首次扩容
 
-```mermaid
+源码处理流程：
 
+[查看大图](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoiZ3JhcGggVEJcbiAgICBzdGFydFvlvIDlp4tdIC0tPiBvcGVyYXRpb24xW25ld0NhcGFjaXR5ID0gMS41ICogZWxlbWVudERhdGEubGVuZ3RoXVxuICAgIG9wZXJhdGlvbjEgLS0-IGNvbmRpdGlvbjF7bmV3Q2FwYWNpdHkgPCBtaW5DYXBhY2l0eX1cbiAgICBjb25kaXRpb24xIC0tIFlFUyAtLT4gb3BlcmF0aW9uMltuZXdDYXBhY2l0eSA9IG1pbkNhcGFjaXR5XSBcbiAgICBvcGVyYXRpb24yIC0tPiBjb25kaXRpb24ye25ld0NhcGFjaXR5ID4gTUFYX0FSUkFZX1NJWkV9XG4gICAgY29uZGl0aW9uMSAtLSBOTyAtLT4gY29uZGl0aW9uMlxuICAgIGNvbmRpdGlvbjIgLS0gWUVTIC0tPiBvcGVyYXRpb24zW25ld0NhcGFjaXR5ID0g5pa55rOVaHVnZUNhcGFjaXR5XSBcbiAgICBvcGVyYXRpb24zIC0tPiBvcGVyYXRpb240W-aJqeWuuV0gXG4gICAgY29uZGl0aW9uMiAtLSBOTyAtLT4gb3BlcmF0aW9uNFxuICAgIG9wZXJhdGlvbjQgLS0-IHN0b3Bb57uT5p2fXVxuICAgIHN1YmdyYXBoIOaWueazlWh1Z2VDYXBhY2l0eVxuICAgIG9wZXJhdGlvbjMgLS0-IGNvbmRpdGlvbjN7aW5DYXBhY2l0eSA8IDB9XG4gICAgY29uZGl0aW9uMyAtLSBZRVMgLS0-IG9wZXJhdGlvbjVbdGhyb3cgbmV3IE91dE9mTWVtb3J5RXJyb3JdIFxuICAgIG9wZXJhdGlvbjUgLS0-IHN0b3BcbiAgICBjb25kaXRpb24zIC0tIE5PIC0tPiBjb25kaXRpb240e21pbkNhcGFjaXR5ID4gTUFYX0FSUkFZX1NJWkV9XG4gICAgY29uZGl0aW9uNCAtLSBZRVMgLS0-IG9wZXJhdGlvbjZbbmV3Q2FwYWNpdHkgPSBJbnRlZ2VyLk1BWF9WQUxVRV0gXG4gICAgb3BlcmF0aW9uNiAtLT4gb3BlcmF0aW9uNFxuICAgIGNvbmRpdGlvbjQgLS0gTk8gLS0-IG9wZXJhdGlvbjdbbmV3Q2FwYWNpdHkgPSBNQVhfQVJSQVlfU0laRV0gXG4gICAgb3BlcmF0aW9uNyAtLT4gb3BlcmF0aW9uNFxuICAgIGVuZCIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In19)
+
+```mermaid
 graph TB
     start[开始] --> operation1[newCapacity = 1.5 * elementData.length]
     operation1 --> condition1{newCapacity < minCapacity}
@@ -82,39 +91,7 @@ graph TB
     end
 ```
 
-```flow
-st=>start: start
-c1=>condition: newCapacity < minCapacity
-c2=>condition: newCapacity > MAX_ARRAY_SIZE
-c3=>condition: minCapacity < 0
-c4=>condition: minCapacity > MAX_ARRAY_SIZE
-
-o1=>operation: oldCapacity = elementData.length
-o2=>operation: newCapacity = oldCapacity + (oldCapacity >> 1)
-o3=>operation: newCapacity = minCapacity
-o4=>operation: newCapacity = hugeCapacity(minCapacity)
-o5=>operation: throw new OutOfMemoryError()
-o6=>operation: newCapacity = Integer.MAX_VALUE
-o7=>operation: newCapacity = MAX_ARRAY_SIZE
-o8=>operation: 扩容
-
-end=>end: end
-
-st->o1->o2->c1
-c1(yes)->o3->c2
-c1(no)->c2
-
-c2(yes)->o4->c3
-c2(no)->o8->end
-
-c3(yes)->o5->end
-c3(no)->c4
-
-c4(yes)->o6->o8->end
-c4(no)->o7->o8->end
-```
-
-
+源码分析：
 
 ```java
     private void grow(int minCapacity) {
