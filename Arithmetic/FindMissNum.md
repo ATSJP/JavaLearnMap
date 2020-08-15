@@ -6,6 +6,11 @@ Given an array containing n distinct numbers taken from 0, 1, 2, ..., n, find th
 For example, Given nums = [0, 1, 3] return 2.
 Note: Your algorithm should run in linear runtime complexity. Could you implement it using only constant extra space complexity?
 
+### Translate
+
+给定一个包含从0,1,2，…， n，查找数组中缺失的那一个。例如，给定nums =[0,1,3]返回2。
+注意:你的算法应该以线性运行时复杂度运行。你能仅仅使用恒定的额外空间复杂度来实现它吗
+
 ### Answer
 
 Answer one：
@@ -44,5 +49,5 @@ Answer two：
 
 ### Analysis
 
-
+飞机票：[BitSet](../SourceAnalysis/Jdk/Collection/BitSet.md)
 
