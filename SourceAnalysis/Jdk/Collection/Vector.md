@@ -28,4 +28,4 @@
 
 2、因为线程安全是通过`synchronized`关键字控制的，所以具有`synchronized`的优缺点
 
-​     飞机票：[Synchronized](Synchronized.md)
+​     飞机票：[Synchronized](../ConcurrentProgramming/Synchronized.mdSynchronized.md)
