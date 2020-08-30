@@ -4,7 +4,7 @@
 
 ### 简介
 
-Synchronized是**内置锁**，是java语言特性提供的内置锁，其获得锁和释放锁是隐式的（进入代码块就是获得锁，走出代码就是释放锁，java.util.concurrent.locks 包中的锁是**显示锁**，需要进行lock和unlock）。
+`Synchronized`是**内置锁**，是`Java`语言特性提供的内置锁，其获得锁和释放锁是隐式的（进入代码块就是获得锁，走出代码就是释放锁，`java.util.concurrent.locks `包中的锁是**显示锁**，需要进行`lock`和`unlock`）。
 
 ### 使用
 
@@ -58,21 +58,21 @@ public class SynchronizedTest {
 
 #### 错误使用
 
-Synchronized不能被继承；
+`Synchronized`不能被继承；
 
-不能使用Synchronized关键字修饰接口方法；
+不能使用`Synchronized`关键字修饰接口方法；
 
-构造方法也不能用Synchronized。
+构造方法也不能用`Synchronized`。
 
 ### 特点
 
 1. 可重入性
 2. 当代码段执行结束或出现异常后会自动释放对监视器的锁定
 3. 是非公平锁，在等待获取锁的过程中不可被中断
-4. Synchronized的内存语义
-5. 互斥性，被Synchronized修饰的方法同时只能由一个线程执行
+4. `Synchronized`的内存语义
+5. 互斥性，被`Synchronized`修饰的方法同时只能由一个线程执行
 
-##### 证明
+**证明**
 
 1、如何证明可重入性
 
@@ -80,7 +80,7 @@ Synchronized不能被继承；
 
 答：当一个线程再次请求自己持有对象锁的临界资源时，这种情况属于重入锁。
 
-在Java中Synchronized是基于原子性的内部锁机制，是可重入的，因此在一个线程调用Synchronized方法的同时在其方法体内部调用该对象另一个Synchronized方法，也就是说一个线程得到一个对象锁后再次请求该对象锁，是允许的，这就是Synchronized的可重入性。
+在`Java`中`Synchronized`是基于原子性的内部锁机制，是可重入的，因此在一个线程调用`Synchronized`方法的同时在其方法体内部调用该对象另一个`Synchronized`方法，也就是说一个线程得到一个对象锁后再次请求该对象锁，是允许的，这就是`Synchronized`的可重入性。
 
 如下示例：
 
@@ -120,7 +120,7 @@ public class SynchronizedReentrantTest implements Runnable {
 
 需要特别注意另外一种情况，当子类继承父类时，**子类也是可以通过可重入锁调用父类的同步方法**。
 
-2、如何理解Synchronized是非公平锁，在等待获取锁的过程中不可被中断这句话
+2、如何理解`Synchronized`是非公平锁，在等待获取锁的过程中不可被中断这句话
 
 >何为公平锁？
 >
@@ -130,7 +130,7 @@ public class SynchronizedReentrantTest implements Runnable {
 >
 >答案：非公平锁是指多个线程获取锁的顺序并不是按照申请锁的顺序，有可能后申请的线程比先申请的线程优先获取锁在高并发的情况下，有可能会造成优先级反转或者饥饿现象(饥饿现象是指一个线程长时间获取不到锁，一直处理等待状态)
 
-Synchronized是非公平锁，其实对于synchronized来说，如果一个线程在等待锁，那么结果只有两种，要么它获得这把锁继续执行，要么它就保存等待，**即使调用中断线程的方法，也不会生效。**
+`Synchronized`是非公平锁，其实对于`Synchronized`来说，如果一个线程在等待锁，那么结果只有两种，要么它获得这把锁继续执行，要么它就保存等待，**即使调用中断线程的方法，也不会生效。**
 
 示例：
 
@@ -188,5 +188,186 @@ wait!!
 
 ### 原理
 
-Synchronized底层实际上是通过Mark Word实现的。
+**总结**：`Synchronized`底层实际上是通过`Monitor`(管程)实现的（`Java`转汇编后，又是通过`ACC_SYNCHRONIZED`  `monitorenter`  `monitorexit`等命令来调用`Monitor`的），锁的信息存在对象头中(其中对象头分两部分数据，一部分用于存储对象自身的运行时数据，官方叫做`Mark Word`，另一部分用于存储指向方法区对象类型数据的指针，如果是数组对象的话，还会有一个额外的部分用于存储数组长度)。
+
+#### Java转汇编
+
+**同步方法-示例1**：
+
+```java
+public class SyncSourceAnalysis {
+    public synchronized void method() {
+        System.out.println("Hello World!");
+    }
+}
+```
+
+使用`java -v SyncSourceAnalysis.class`反编译生成汇编代码，从汇编中可以见到方法进入多了一个flag:ACC_SYNCHRONIZED
+
+```asm
+Classfile /E:/SyncSourceAnalysis.class
+  Last modified 2020-8-30; size 544 bytes
+  MD5 checksum 22ebca5bb24ff26b4f77d38408ad2bd4
+  Compiled from "SyncSourceAnalysis.java"
+public class com.lemon.web.user.SyncSourceAnalysis
+  minor version: 0
+  major version: 52
+  flags: ACC_PUBLIC, ACC_SUPER
+Constant pool:
+   #1 = Methodref          #6.#17         // java/lang/Object."<init>":()V
+   #2 = Fieldref           #18.#19        // java/lang/System.out:Ljava/io/PrintStream;
+   #3 = String             #20            // Hello World!
+   #4 = Methodref          #21.#22        // java/io/PrintStream.println:(Ljava/lang/String;)V
+   #5 = Class              #23            // com/lemon/web/user/SyncSourceAnalysis
+   #6 = Class              #24            // java/lang/Object
+   #7 = Utf8               <init>
+   #8 = Utf8               ()V
+   #9 = Utf8               Code
+  #10 = Utf8               LineNumberTable
+  #11 = Utf8               LocalVariableTable
+  #12 = Utf8               this
+  #13 = Utf8               Lcom/lemon/web/user/SyncSourceAnalysis;
+  #14 = Utf8               method
+  #15 = Utf8               SourceFile
+  #16 = Utf8               SyncSourceAnalysis.java
+  #17 = NameAndType        #7:#8          // "<init>":()V
+  #18 = Class              #25            // java/lang/System
+  #19 = NameAndType        #26:#27        // out:Ljava/io/PrintStream;
+  #20 = Utf8               Hello World!
+  #21 = Class              #28            // java/io/PrintStream
+  #22 = NameAndType        #29:#30        // println:(Ljava/lang/String;)V
+  #23 = Utf8               com/lemon/web/user/SyncSourceAnalysis
+  #24 = Utf8               java/lang/Object
+  #25 = Utf8               java/lang/System
+  #26 = Utf8               out
+  #27 = Utf8               Ljava/io/PrintStream;
+  #28 = Utf8               java/io/PrintStream
+  #29 = Utf8               println
+  #30 = Utf8               (Ljava/lang/String;)V
+{
+  public com.lemon.web.user.SyncSourceAnalysis();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=1, locals=1, args_size=1
+         0: aload_0
+         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         4: return
+      LineNumberTable:
+        line 8: 0
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0       5     0  this   Lcom/lemon/web/user/SyncSourceAnalysis;
+
+  public synchronized void method();
+    descriptor: ()V
+    flags: ACC_PUBLIC, ACC_SYNCHRONIZED
+    Code:
+      stack=2, locals=1, args_size=1
+         0: getstatic     #2                  // Field java/lang/System.out:Ljava/io/PrintStream;
+         3: ldc           #3                  // String Hello World!
+         5: invokevirtual #4                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+         8: return
+      LineNumberTable:
+        line 10: 0
+        line 11: 8
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0       9     0  this   Lcom/lemon/web/user/SyncSourceAnalysis;
+}
+SourceFile: "SyncSourceAnalysis.java"
+```
+
+反编译结果 
+
+从编译的结果来看，方法的同步并没有通过指令 `monitorenter` 和 `monitorexit` 来完成（理论上其实也可以通过这两条指令来实现），不过相对于普通方法，其常量池中多了 `ACC_SYNCHRONIZED` 标示符。`JVM`就是根据该标示符来实现方法的同步的：
+
+> 当方法调用时，调用指令将会检查方法的` ACC_SYNCHRONIZED `访问标志是否被设置，如果设置了，执行线程将先获取`Monitor`，获取成功之后才能执行方法体，方法执行完后再释放`Monitor`。**在方法执行期间，其他任何线程都无法再获得同一个`Monitor`对象。**
+
+两种同步方式本质上没有区别，只是方法的同步是一种隐式的方式来实现，无需通过字节码来完成。两个指令的执行是`JVM`通过调用操作系统的互斥原语`mutex`来实现，被阻塞的线程会被挂起、等待重新调度，会导致“用户态和内核态”两个态之间来回切换，对性能有较大影响。
+
+**同步代码块-示例2**：
+
+```java
+public class SyncSourceAnalysis {
+    synchronized void hello() {
+
+    }
+
+    public static void main(String[] args) {
+        String anything = "anything";
+        synchronized (anything) {
+            System.out.println("hello word");
+        }
+    }
+}
+```
+
+使用`java -c SyncSourceAnalysis.class`反编译生成汇编代码，从下面源码可以看见`monitorenter`、`monitorexit`指令，`monitorexit`存在两条是因为第一条是正常程序退出，第二条是异常情况。
+
+```asm
+Compiled from "SyncSourceAnalysis.java"
+public class com.lemon.web.user.SyncSourceAnalysis {
+  public com.lemon.web.user.SyncSourceAnalysis();
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+       4: return
+
+  synchronized void hello();
+    Code:
+       0: return
+
+  public static void main(java.lang.String[]);
+    Code:
+       0: ldc           #2                  // String anything
+       2: astore_1
+       3: aload_1
+       4: dup
+       5: astore_2
+       6: monitorenter
+       7: getstatic     #3                  // Field java/lang/System.out:Ljava/io/PrintStream;
+      10: ldc           #4                  // String hello word
+      12: invokevirtual #5                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+      15: aload_2
+      16: monitorexit
+      17: goto          25
+      20: astore_3
+      21: aload_2
+      22: monitorexit
+      23: aload_3
+      24: athrow
+      25: return
+    Exception table:
+       from    to  target type
+           7    17    20   any
+          20    23    20   any
+}
+```
+
+反编译结果
+
+1. `monitorenter`：每个对象都是一个监视器锁（`Monitor`）。当monitor被占用时就会处于锁定状态，线程执行`monitorenter`指令时尝试获取`Monitor`的所有权，过程如下：
+
+   > 1. 如果`Monitor`的进入数为0，则该线程进入`Monitor`，然后将进入数设置为1，该线程即为`Monitor`的所有者；
+   > 2. 如果线程已经占有该`Monitor`，只是重新进入，则进入`Monitor`的进入数加1；
+   > 3. 如果其他线程已经占用了`Monitor`，则该线程进入阻塞状态，直到monitor的进入数为0，再重新尝试获取`Monitor`的所有权；
+
+2. `monitorexit`：执行`monitorexit`的线程必须是`objectref`所对应的`Monitor`的所有者。指令执行时，`Monitor`的进入数减1，如果减1后进入数为0，那线程退出monitor，不再是这个`Monitor`的所有者。其他被这个`Monitor`阻塞的线程可以尝试去获取这个 `Monitor `的所有权。
+
+通过上面两段描述，我们应该能很清楚的看出`Synchronized`的实现原理，**`Synchronized`的语义底层是通过一个`Monitor`的对象来完成，其实`wait/notify`等方法也依赖于`Monitor`对象，这就是为什么只有在同步的块或者方法中才能调用`wait/notify`等方法，否则会抛出`java.lang.IllegalMonitorStateException`的异常的原因。**
+
+**小结**：
+
+对于同步方法，`JVM`采用`ACC_SYNCHRONIZED`标记符来实现同步。 对于同步代码块。`JVM`采用`monitorenter`、`monitorexit`两个指令来实现同步。
+
+#### MarkWord
+
+
+
+#### Monitor
+
+
+
+### 锁升级 
 
