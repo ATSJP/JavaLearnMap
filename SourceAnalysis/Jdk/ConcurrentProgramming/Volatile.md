@@ -29,7 +29,7 @@
   }
 ```
 
- 对于simpleDemo方法，判断变量isSimpleOver无volatile修饰，2秒后打印以下语句，主线程无法停止：
+对于simpleDemo方法，判断变量isSimpleOver无volatile修饰，2秒后打印以下语句，主线程无法停止：
 
 ```text
 isSimpleOver:true
@@ -59,11 +59,20 @@ isVolatileOver:true
 
   为了提高性能，在遵守一定的规则下（即不管怎么重排序，单线程下程序的执行结果不能被改变。编译器，Runtime 和处理器都必须遵守）的情况下，编译器和处理器常常会对指令做重排序。
 
-
-
 ### 原理
 
+#### 保证变量的内存可见性
 
+###### 为什么
+
+首先，为什么会有内存可见性问题？
+
+
+
+
+
+
+![JMM](Volatile.assets/JMM.jpg)
 
 
 
