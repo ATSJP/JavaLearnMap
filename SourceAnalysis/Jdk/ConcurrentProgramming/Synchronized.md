@@ -217,7 +217,7 @@ public class SyncSourceAnalysis {
 }
 ```
 
-使用`java -c SyncSourceAnalysis.class`反编译生成汇编代码，从下面源码可以看见`monitorenter`、`monitorexit`指令，`monitorexit`存在两条是因为第一条是正常程序退出，第二条是异常情况。
+使用`javap -c SyncSourceAnalysis.class`反编译生成汇编代码，从下面源码可以看见`monitorenter`、`monitorexit`指令，`monitorexit`存在两条是因为第一条是正常程序退出，第二条是异常情况。
 
 ```asm
 Compiled from "SyncSourceAnalysis.java"
@@ -279,7 +279,7 @@ public class SyncSourceAnalysis {
 }
 ```
 
-使用`java -v SyncSourceAnalysis.class`反编译生成汇编代码，从汇编中可以见到方法进入多了一个`flag:ACC_SYNCHRONIZED`
+使用`javap -v SyncSourceAnalysis.class`反编译生成汇编代码，从汇编中可以见到方法进入多了一个`flag:ACC_SYNCHRONIZED`
 
 ```asm
 Classfile /E:/SyncSourceAnalysis.class
