@@ -291,6 +291,10 @@ docker run -d --restart=unless-stopped \
 docker run -itd -p 9010:8080 -p 9011:22 --name centos7.2 --privileged -v /root/centos_home:/usr/local/centos:ro daocloud.io/library/centos   /usr/sbin/init
 ```
 
+```shell
+docker run -itd --name ubuntu ubuntu
+```
+
 ##### C、redis
 
 ```shell
