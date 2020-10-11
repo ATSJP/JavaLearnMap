@@ -83,23 +83,43 @@ isVolatileOver:true
 
 ##### 如何保证内存可见性
 
-###### JAVA转汇编
+###### JAVA转汇编（飞机票：[Java反汇编](../Java2Assembly.md)）
 
 代码：
 
 ```java
+public class VolatileDemo {
+	private static volatile boolean isVolatileOver = false;
 
+	/**
+	 * -Xcomp -XX:+UnlockDiagnosticVMOptions -XX:+PrintAssembly -XX:+LogCompilation -XX:LogFile=jit.log
+	 * 
+	 * @param args args
+	 */
+	public static void main(String[] args) {
+		for (int i = 0; i < 1_000_000; i++) {
+			test();
+		}
+	}
+
+	public static void test() {
+		int i = 1;
+		i++;
+		System.out.println(i);
+		isVolatileOver = true;
+		int j = 1;
+		j++;
+		System.out.println(j);
+	}
+
+}
 ```
 
 Java转汇编：
 
-```vb
+![JITWatch](Volatile.assets/JITWatch.jpg)
 
-```
-
-从汇编的结果来看，被Volatile修复的变量在被写操作时，将会多处Lock前缀的指令，Lock指令主要时锁住总线，对于Lock指令有以下作用：
-
-> 总线：
+从汇编的结果来看，被Volatile修复的变量在被写操作时，将会多处Lock前缀的指令（即图中 lock addl $0x0,(%rsp)），Lock指令主要时锁住总线，对于Lock指令有以下作用：
 
 1. 将当前处理器缓存行的数据写回系统内存；
 2. 这个写回内存的操作会使得其他CPU里缓存了该内存地址的数据无效
