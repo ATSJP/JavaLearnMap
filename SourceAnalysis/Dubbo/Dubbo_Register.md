@@ -53,7 +53,7 @@ RedisRegistry中主要实现了如下接口：
 - doSubscribe(URL url, NotifyListener listener);//向注册中心监听服务
 - doUnsubscribe(URL url, NotifyListener listener);//取消监听注册中心服务
 
+![FailbackRegistry](Dubbo_Register.assets/FailbackRegistry.PNG)
 
-
-
+![RedisRegistry](Dubbo_Register.assets/RedisRegistry.png)
 
