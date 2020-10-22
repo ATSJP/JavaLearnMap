@@ -2,10 +2,9 @@
 
 ## 一、基本使用
 
+#### Stash
 
-```shell
-git commit –amend #修改本地commit的注释
-
+````shell
 git stash 将当前修改储藏起来
 
 git stash list 显示当前所有储藏记录
@@ -17,38 +16,84 @@ git stash appy <stash@{0}> 恢复当前储藏区的内容，但是不删除储�
 git stash drop 删除当前储藏区的内容
 
 git stash list 显示当前储藏区的内容
+````
 
-git reflog 显示历史命令
+#### Push
 
-git reset --hard <head>  回退到指定的head
-
-git checkout -- <fileName>  撤销指定的文件，到最近一次add或者commit的状态
-
-git remote add orgin <remote resp link>  关联仓库到远程仓库中
-
+```shell
 git push -u orgin master 推送本地内容到远程仓库中，注意-u 针对第一次关联仓库
 
-git checkout -b <分支名>  创建分支  -b表示创建并切换 （相当于下面两条命令）
-
-git branch <分支名>  创建分支
- 
-git checkout <分支名>  切换分支
-
-git branch -d <分支名>  删除分支
-
-## 回退本地分支版本，并且推送到远程仓库
-
-git reset --hard <head>
-
 git push -f 强制推送本地分支要 远程分支
+```
 
+#### Config
+
+```shell
 # 全局配置
 git config --global user.name "John Doe"
 
 git config --global http.proxy 'http://127.0.0.1:1080'
 git config --global https.proxy 'http://127.0.0.1:1080'
-
 ```
+
+#### Reflog
+
+```shell
+git reflog 显示历史命令
+```
+
+#### Reset
+
+```shell
+## 回退本地分支版本，并且推送到远程仓库
+git reset --hard <head>  回退到指定的head
+
+git reset --hard <head>
+```
+
+#### Checkout
+
+```shell
+git checkout -- <fileName>  撤销指定的文件，到最近一次add或者commit的状态
+
+git checkout -b <分支名>  创建分支  -b表示创建并切换 （相当于下面两条命令）
+
+git checkout <分支名>  切换分支
+```
+
+#### Branch
+
+```shell
+git branch <分支名>  创建分支
+
+git branch -d <分支名>  删除分支
+```
+
+#### Remote
+
+
+```shell
+git remote add orgin <remote resp link>  关联仓库到远程仓库中
+```
+
+#### Commit
+
+修改上一次Commit的提交时间：
+
+```shell
+git commit --amend --date="2020-10-21 21:08:05"
+```
+
+修改本地commit的注释：
+
+````shell
+git commit –amend
+````
+
+
+
+
+
 ## 二、常见问题
 
 **问题一、当本地初始化的库，第一次推送到远程仓库的时候，需要进行设置**
