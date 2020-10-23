@@ -97,3 +97,60 @@ final TreeNode<K,V> find(int h, Object k, Class<?> kc) {
         }
 ```
 
+
+
+
+
+```flow
+st=>start: start
+
+c1=>condition: table是否未初始化
+c2=>condition: table[i]是否为null
+c3=>condition: table[i]的hash、Key是否与当前加入节点的hash、key一样
+c4=>condition: tablke[i]是否TreeNode类型
+c5=>condition: 当前节点是否为null
+c6=>condition: 当前链表的节点是否超过TREEIFY_THRESHOLD
+c7=>condition: 当前节点的hash、key是否一样
+c8=>condition: e是否为Null
+
+o1=>operation: 进行resize
+o2=>operation: 根据Hash结果找到table[i]
+o3=>operation: newNode放入table[i]
+o4=>operation: 将当前值复制给e
+o5=>operation: 使用TreeNode方式put节点
+o6=>operation: 使用链表方式put节点
+o7=>operation: 取链表的第一个节点
+o8=>operation: newNode放入p.next
+o9=>operation: 对链表进行treeifyBin（即进行链表转树）
+o10=>operation: 已找到当前节点等于目标节点，break
+o11=>operation: 取链表下一节点
+o12=>operation: 替换e的值并返回e的旧值
+
+end=>end: end
+
+st->c1
+c1(yes)->o1->o2
+c1(no)->o2
+o2->c2
+c2(yes)->o3
+c2(no)->c3
+c3(yes)->o4
+c3(no)->c4
+c4(yes)->o5
+c4(no)->o6
+o6->o7->c5
+c5(yes)->o8->c6(yes)->o9
+c5(no)->c7
+c7(yes)->o10
+c7(no)->o11->c5
+o4->c8
+o5->c8
+o10->c8
+o9->c8
+c8(yes)->o12
+
+c5->end
+```
+
+
+
