@@ -93,6 +93,8 @@ public class Question3 {
 
   实际上，看到题目的一瞬间，滑动窗口应该是首先蹦出来的想法。
 
+  解决方案：
+
   ```java
   public static int lengthOfLongestSubstring(String s) {
       // 第三种 滑动窗口
@@ -111,6 +113,23 @@ public class Question3 {
   }
   ```
 
-  
+  思路：
+
+  ​	利用i和j表示滑动窗口的头和尾部，2个交叉前进，每次遍历都对比长度记录下最长的长度。
+
+  运行过程：
+
+  ​		![滑动窗口](Question3.assets/滑动窗口.jpg)
 
 - ...
+
+
+
+
+
+
+
+
+
+
+
