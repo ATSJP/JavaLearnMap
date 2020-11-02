@@ -129,7 +129,7 @@ AIO 是异步IO的缩写，虽然 NIO 在网络操作中，提供了非阻塞的
 
 BIO是一个连接一个线程，NIO是一个请求一个线程。（AIO是一个有效请求一个线程）
 
-![img](IO.assets/37237-20151222220329015-207666376.png)
+![img](IO.assets/BIO&NIO.png)
 
 ##### BIO、NIO、AIO适用场景
 
