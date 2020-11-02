@@ -87,7 +87,7 @@ I/O 多路复用模型使用了 Reactor 设计模式实现了这一机制。
 
 ![img](IO.assets/COMPARE_EN.png)
 
-![emma_1](IO.assets/COMPARE_CN.jpg)
+![img](IO.assets/COMPARE_CN.jpg)
 
 ### Java
 
