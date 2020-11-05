@@ -84,3 +84,51 @@ public class FstSerialTest {
 }
 ```
 
+### 常用功能
+
+**@Version**
+
+当给一个Class增加属性的时候，必须使用@Version注解，否则反序列化会失败。@Version注解接受一个Value值，此Value值从0开始，默认是0，每次增加属性，Value必须增加1，例如：
+
+```java
+class MyClass implements Serializable {
+
+     // fields on initial release 1.0
+     int x;
+     String y;
+
+     // fields added with release 1.5
+     @Version(1) String added;
+     @Version(1) String alsoAdded;
+
+     // fields added with release 2.0
+     @Version(2) String addedv2;
+     @Version(2) String alsoAddedv2;
+
+}
+```
+
+注意：Value必须增加1，是指当前Class内，Value最大值+1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
