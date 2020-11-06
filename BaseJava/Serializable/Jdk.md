@@ -42,7 +42,6 @@ public class TestDto implements Serializable {
 
 
 ```java
-
 import org.junit.Test;
 
 import java.io.FileInputStream;
@@ -101,10 +100,8 @@ public class JdkSerialTest {
 	@Test
 	public void deserializeTest() {
 		String filePath = "jdkSerial.txt";
-		TestDto testDto = new TestDto();
-		testDto.setName("test");
-		testDto.setAge(12);
-		serialize(testDto, filePath);
+		Object o = deserialize(filePath);
+		System.out.println(o);
 	}
 
 	@Test
@@ -113,10 +110,20 @@ public class JdkSerialTest {
 		TestDto testDto = new TestDto();
 		testDto.setName("test");
 		testDto.setAge(12);
-		Object o = deserialize(filePath);
-		System.out.println(o);
+		serialize(testDto, filePath);
+		System.out.println(testDto);
 	}
 
 }
 ```
+
+### 常见使用
+
+**增加减少属性**
+
+增加属性和减少属性，只要在不修改serialVersionUID的前提下，反序列化正常。
+
+**修改属性**
+
+字段名不变，修改属性的类型，反序列化报错。
 
