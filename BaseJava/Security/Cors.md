@@ -1,3 +1,7 @@
+[TOC]
+
+
+
 ## CORS
 
 ### 一、是什么？
@@ -53,7 +57,7 @@
 ​	预检请求：与简单请求不同的是，option请求多了2个字段：
 
  	`Access-Control-Request-Method`：该次请求的请求方式
-	 `Access-Control-Request-Headers`：该次请求的自定义请求头字段
+ 	 `Access-Control-Request-Headers`：该次请求的自定义请求头字段
 
 ​	服务器检查通过后，做出响应：
 
