@@ -1,3 +1,7 @@
+[TOC]
+
+
+
 ## 练习题第三题
 
 > ASCII ((American Standard Code for Information Interchange): 美国信息交换标准代码）是基于[拉丁字母](https://baike.baidu.com/item/拉丁字母/1936851)的一套电脑[编码](https://baike.baidu.com/item/编码/80092)系统，主要用于显示现代[英语](https://baike.baidu.com/item/英语/109997)和其他[西欧](https://baike.baidu.com/item/西欧/3028649)语言。它是最通用的[信息交换](https://baike.baidu.com/item/信息交换/716328)标准，并等同于[国际](https://baike.baidu.com/item/国际/766689)标准ISO/IEC 646。ASCII第一次以规范标准的类型发表是在1967年，最后一次更新则是在1986年，到目前为止共定义了128个字符
