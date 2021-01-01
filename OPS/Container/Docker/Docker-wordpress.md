@@ -1,3 +1,5 @@
+[TOC]
+
 #  Docker搭建WordPress
 
 ## 一 、建立mysql
