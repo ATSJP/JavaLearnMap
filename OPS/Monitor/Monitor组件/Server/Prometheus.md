@@ -1,3 +1,6 @@
+[TOC]
+
+
 # Prometheus之修炼篇
 
 > 官方文档：[https://prometheus.io](https://prometheus.io/)
