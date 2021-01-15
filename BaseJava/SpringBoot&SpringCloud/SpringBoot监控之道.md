@@ -229,14 +229,7 @@ management:
 
 ## 一、前言
 
-> Micrometer 为 Java 平台上的性能数据收集提供了一个通用的 API，它提供了多种度量指标类型（Timers、Guauges、Counters等），同时支持接入不同的监控系统，例如 Influxdb、Graphite、Prometheus 等。我们可以通过 Micrometer 收集 Java 性能数据，配合 Prometheus 监控系统实时获取数据，并最终在 Grafana 上展示出来，从而很容易实现应用的监控。
-
-Micrometer 中有两个最核心的概念，分别是计量器（Meter）和计量器注册表（MeterRegistry）。计量器用来收集不同类型的性能指标信息，Micrometer 提供了如下几种不同类型的计量器：
-
-- 计数器（Counter）: 表示收集的数据是按照某个趋势（增加／减少）一直变化的，也是最常用的一种计量器，例如接口请求总数、请求错误总数、队列数量变化等。
-- 计量仪（Gauge）: 表示搜集的瞬时的数据，可以任意变化的，例如常用的 CPU Load、Mem 使用量、Network 使用量、实时在线人数统计等，
-- 计时器（Timer）: 用来记录事件的持续时间，这个用的比较少。
-- 分布概要（Distribution summary）: 用来记录事件的分布情况，表示一段时间范围内对数据进行采样，可以用于统计网络请求平均延迟、请求延迟占比等。
+飞机票：[Micrometer](https://github.com/ATSJP/note/blob/master/BaseJava/Monitor/Micrometer.md)
 
 ## 二、使用
 
@@ -273,7 +266,7 @@ Micrometer 中有两个最核心的概念，分别是计量器（Meter）和计�
     management.metrics.tags.application=${spring.application.name}
     ```
 
-最后，启动项目，访问Actuator监控地址：http://192.168.126.1:10000/actuator/prometheus ，你将会见到监控的数据。
+最后，启动项目，访问Actuator监控地址：http://127.0.0.1:8080/actuator/prometheus ，你将会见到监控的数据。
 
 后面如何集成 Prometheus+Grafana 我们放在下个文章说明。
 
