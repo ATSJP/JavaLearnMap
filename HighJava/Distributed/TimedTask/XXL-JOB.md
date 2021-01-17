@@ -1,6 +1,35 @@
 ## XXL-JOB
 
+
+
 > 参照文档：[官方文档](https://www.xuxueli.com/xxl-job)
+>
+> <p>
+>                <a href="https://github.com/xuxueli/xxl-job/actions">
+>                               <img src="https://github.com/xuxueli/xxl-job/workflows/Java CI/badge.svg" alt="Actions Status">
+>                </a>
+>           
+>                <a href="https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-job/">
+>                               <img src="https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-job/badge.svg" alt="Maven Central">
+>                </a>
+>          
+>                <a href="https://github.com/xuxueli/xxl-job/releases">
+>                               <img src="https://img.shields.io/github/release/xuxueli/xxl-job.svg" alt="GitHub release">
+>                </a>
+>          
+>                <a href="https://github.com/xuxueli/xxl-job/">
+>                               <img src="https://img.shields.io/github/stars/xuxueli/xxl-job" alt="GitHub stars">
+>                </a>
+>         
+>                <a href="https://hub.docker.com/r/xuxueli/xxl-job-admin/">
+>                               <img src="https://img.shields.io/docker/pulls/xuxueli/xxl-job-admin" alt="Docker Status">
+>                </a>
+>      
+>                <a href="http://www.gnu.org/licenses/gpl-3.0.html">
+>                               <img src="https://img.shields.io/badge/license-GPLv3-blue.svg" alt="License">
+>                </a>
+>       
+> </p>
 
 ### 介绍
 
@@ -11,6 +40,8 @@
 - 动态：支持动态修改任务状态、启动/停止任务，以及终止运行中任务，即时生效；
 
 - 调度中心HA（中心式）：调度采用中心式设计，“调度中心”自研调度组件并支持集群部署，可保证调度中心HA；
+
+  > HA是Highly Available缩写，是双机集群系统简称，提高可用性集群，是保证业务连续性的有效解决方案，一般有两个或两个以上的节点，且分为活动节点及备用节点。
 
 - 执行器HA（分布式）：任务分布式执行，任务”执行器”支持集群部署，可保证任务执行HA；
 
@@ -66,22 +97,51 @@
 
 - 线程池隔离：调度线程池进行隔离拆分，慢任务自动降级进入”Slow”线程池，避免耗尽调度线程，提高系统稳定性；
 
-  
-
-
-
-> HA是Highly Available缩写，是双机集群系统简称，提高可用性集群，是保证业务连续性的有效解决方案，一般有两个或两个以上的节点，且分为活动节点及备用节点。
-
-
+  ......
 
 ### 使用
 
+项目地址：[Gitee](https://gitee.com/xuxueli0323/xxl-job)
 
+#### 单机部署
+
+##### 初始化数据库
+
+导入SQL：
+
+```shell
+/xxl-job/doc/db/tables_xxl_job.sql
+```
+
+##### Docker部署
+
+拉取镜像：
 
 ```shell
 docker pull xuxueli/xxl-job-admin
-
-
-docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://192.168.126.129:3306/xxl_job?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai --spring.datasource.username=root --spring.datasource.password=1234" -p 8080:8080 --name xxl-job-admin  -d xuxueli/xxl-job-admin:2.3.0
 ```
+
+运行：
+
+```shell
+docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl_job?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai --spring.datasource.username=root --spring.datasource.password=1234" -p 8080:8080 --name xxl-job-admin -d xuxueli/xxl-job-admin:2.3.0
+```
+
+##### 源码部署
+
+见官方文档。
+
+启动成功后，访问：http://localhost:8080/xxl-job-admin (该地址执行器将会使用到，作为回调地址)
+
+默认登录账号 “admin/123456”。
+
+#### 集群部署
+
+
+
+
+
+
+
+
 
