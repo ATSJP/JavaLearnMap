@@ -1,6 +1,114 @@
+[TOC]
+
+
+
 ## Pattern
 
+### 贪婪与非贪婪匹配
 
+#### 定义
+
+- 贪婪匹配是尽可能匹配多的字符
+
+- 非贪婪匹配就是尽叮能匹配少的字符
+
+贪婪匹配的写法是`.*`，非贪婪匹配的写法是`.*?`，多了一个`?`
+
+#### 举例
+
+例如：
+
+贪婪匹配
+
+```java
+/**
+ * 贪婪匹配
+ * 
+ * 运行结果：
+ * group:A12
+ * group:3
+ * replaceAll:
+ */
+@Test
+public void test2() {
+    Pattern pattern = Pattern.compile("WORD_(.*)(\\d+)_321");
+    Matcher matcher = pattern.matcher("WORD_A123_321");
+    while (matcher.find()) {
+        System.out.println("group:" + matcher.group(1));
+        System.out.println("group:" + matcher.group(2));
+    }
+    System.out.println("replaceAll:" + matcher.replaceAll(""));
+}
+```
+
+非贪婪匹配
+
+```java
+/**
+ * 非贪婪匹配
+ * 
+ * 运行结果：
+ * group:A
+ * group:123
+ * replaceAll:
+ */
+@Test
+public void test3() {
+    Pattern pattern = Pattern.compile("WORD_(.*?)(\\d+)_321");
+    Matcher matcher = pattern.matcher("WORD_A123_321");
+    while (matcher.find()) {
+        System.out.println("group:" + matcher.group(1));
+        System.out.println("group:" + matcher.group(2));
+    }
+    System.out.println("replaceAll:" + matcher.replaceAll(""));
+}
+```
+
+ 但是这里需要注意，如果匹配的结果在字符结尾，.*?就有可能匹配不到任何结果了，因为他会尽可能匹配少的字符（换句话说，都到末尾了，我尽可能少，那就是不匹配），例：
+
+```java
+/**
+ * 贪婪匹配
+ * 
+ * 运行结果：
+ * group:A12
+ * group:3
+ * group:1
+ * replaceAll:
+ */
+@Test
+public void test4() {
+    Pattern pattern = Pattern.compile("WORD_(.*)(\\d+)_32(.*)");
+    Matcher matcher = pattern.matcher("WORD_A123_321");
+    while (matcher.find()) {
+        System.out.println("group:" + matcher.group(1));
+        System.out.println("group:" + matcher.group(2));
+        System.out.println("group:" + matcher.group(3));
+    }
+    System.out.println("replaceAll:" + matcher.replaceAll(""));
+}
+
+/**
+ * 非贪婪匹配
+ * 
+ * 运行结果：
+ * group:A
+ * group:123
+ * group:
+ * replaceAll:1
+ */
+@Test
+public void test5() {
+    Pattern pattern = Pattern.compile("WORD_(.*?)(\\d+)_32(.*?)");
+    Matcher matcher = pattern.matcher("WORD_A123_321");
+    while (matcher.find()) {
+        System.out.println("group:" + matcher.group(1));
+        System.out.println("group:" + matcher.group(2));
+        System.out.println("group:" + matcher.group(3));
+    }
+    System.out.println("replaceAll:" + matcher.replaceAll(""));
+}
+```
 
 ###  从Compile到matcher
 
