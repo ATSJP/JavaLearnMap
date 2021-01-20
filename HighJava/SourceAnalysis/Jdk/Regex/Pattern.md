@@ -110,7 +110,7 @@ public void test5() {
 }
 ```
 
-###  从Compile到matcher
+###  从Compile到Matcher
 
 下面是使用正则的一种经典写法：
 
@@ -448,3 +448,237 @@ c2(no)->o4
 ```
 
 这样够清晰了吗，嘻嘻，好叻这样的一个流程，我们应该十分清晰了，下面将从其他细节部分再次深入了解。
+
+#### Matcher
+
+好了，看完Compile，我们再来看看经典写法：
+
+```java
+    @Test
+    public void test1() {
+        Pattern pattern = Pattern.compile("\\d+");
+        Matcher matcher = pattern.matcher("123A4234A234");
+        while (matcher.find()) {
+            System.out.println(matcher.group());
+        }
+    }
+```
+
+很明显，我们每次判断是否匹配上时，都通过`matcher.find()`进行查找。于是，我们大胆猜测，匹配的算法就在find方法中，让我们一起打开她的神秘面纱：
+
+```java
+public boolean find() {
+    int nextSearchIndex = last;
+    if (nextSearchIndex == first)
+        nextSearchIndex++;
+
+    // If next search starts before region, start it at region
+    if (nextSearchIndex < from)
+        nextSearchIndex = from;
+
+    // If next search starts beyond region then it fails
+    if (nextSearchIndex > to) {
+        for (int i = 0; i < groups.length; i++)
+            groups[i] = -1;
+        return false;
+    }
+    return search(nextSearchIndex);
+}
+```
+
+同样的，我们抛去不太重要的代码行，直接来看核心`search(nextSearchIndex)`：
+
+```java
+boolean search(int from) {
+    this.hitEnd = false;
+    this.requireEnd = false;
+    from        = from < 0 ? 0 : from;
+    this.first  = from;
+    this.oldLast = oldLast < 0 ? from : oldLast;
+    for (int i = 0; i < groups.length; i++)
+        groups[i] = -1;
+    acceptMode = NOANCHOR;
+    boolean result = parentPattern.root.match(this, from, text);
+    if (!result)
+        this.first = -1;
+    this.oldLast = this.last;
+    return result;
+}
+```
+
+可以非常清晰的看到` boolean result = parentPattern.root.match(this, from, text);`这一行，在结合我们上面Compile的探索，发现此行的目的为：从根节点Root开始match。
+
+有心的小伙伴，肯定有些纳闷，单链表的访问至少也有个指针负责遍历吧，这里咋就看起来遍历一次，就没了呢，别急，继续往下看。
+
+之前我们看Compile也讲过，Pattern类中有着不同的Node实现，她们之前有一个叫做Start的类，上面的parentPattern.root便是这个类的实例，下面我们来看看：
+
+```java
+    static class Node extends Object {
+        Node next;
+        Node() {
+            next = Pattern.accept;
+        }
+        /**
+         * This method implements the classic accept node.
+         */
+        boolean match(Matcher matcher, int i, CharSequence seq) {
+            matcher.last = i;
+            matcher.groups[0] = matcher.first;
+            matcher.groups[1] = matcher.last;
+            return true;
+        }
+        /**
+         * This method is good for all zero length assertions.
+         */
+        boolean study(TreeInfo info) {
+            if (next != null) {
+                return next.study(info);
+            } else {
+                return info.deterministic;
+            }
+        }
+    } 
+
+    static class Start extends Node {
+        int minLength;
+        Start(Node node) {
+            this.next = node;
+            TreeInfo info = new TreeInfo();
+            next.study(info);
+            minLength = info.minLength;
+        }
+        boolean match(Matcher matcher, int i, CharSequence seq) {
+            if (i > matcher.to - minLength) {
+                matcher.hitEnd = true;
+                return false;
+            }
+            int guard = matcher.to - minLength;
+            for (; i <= guard; i++) {
+                if (next.match(matcher, i, seq)) {
+                    matcher.first = i;
+                    matcher.groups[0] = matcher.first;
+                    matcher.groups[1] = matcher.last;
+                    return true;
+                }
+            }
+            matcher.hitEnd = true;
+            return false;
+        }
+        boolean study(TreeInfo info) {
+            next.study(info);
+            info.maxValid = false;
+            info.deterministic = false;
+            return false;
+        }
+    }
+```
+
+看到这边，是不是有点熟悉的味道了，有循环，有下一个节点，但是又有点不同，还是没有找到我们最熟悉的指针，仔细观察方法的返回值，是个boolean类型，那看起来是每个实现类都完成自己的匹配，并返回匹配结果，然后不属于自己匹配的部分，交由Next去匹配，我们暂且称作链表匹配，带着我们猜测，再去看看其他Node的实现：
+
+```java
+static final class UnixCaret extends Node {
+    boolean match(Matcher matcher, int i, CharSequence seq) {
+        int startIndex = matcher.from;
+        int endIndex = matcher.to;
+        if (!matcher.anchoringBounds) {
+            startIndex = 0;
+            endIndex = matcher.getTextLength();
+        }
+        // Perl does not match ^ at end of input even after newline
+        if (i == endIndex) {
+            matcher.hitEnd = true;
+            return false;
+        }
+        if (i > startIndex) {
+            char ch = seq.charAt(i-1);
+            if (ch != '\n') {
+                return false;
+            }
+        }
+        return next.match(matcher, i, seq);
+    }
+}
+```
+
+```java
+static final class UnixDollar extends Node {
+    boolean multiline;
+    UnixDollar(boolean mul) {
+        multiline = mul;
+    }
+    boolean match(Matcher matcher, int i, CharSequence seq) {
+        int endIndex = (matcher.anchoringBounds) ?
+            matcher.to : matcher.getTextLength();
+        if (i < endIndex) {
+            char ch = seq.charAt(i);
+            if (ch == '\n') {
+                // If not multiline, then only possible to
+                // match at very end or one before end
+                if (multiline == false && i != endIndex - 1)
+                    return false;
+                // If multiline return next.match without setting
+                // matcher.hitEnd
+                if (multiline)
+                    return next.match(matcher, i, seq);
+            } else {
+                return false;
+            }
+        }
+        // Matching because at the end or 1 before the end;
+        // more input could change this so set hitEnd
+        matcher.hitEnd = true;
+        // If a $ matches because of end of input, then more input
+        // could cause it to fail!
+        matcher.requireEnd = true;
+        return next.match(matcher, i, seq);
+    }
+    boolean study(TreeInfo info) {
+        next.study(info);
+        return info.deterministic;
+    }
+}
+```
+
+等等。如果你有耐心，大可以看完所有的Node实现，最后一定会发现，每个Node完成自己的任务后，调用Next的Match方法。
+
+最后，我们还是画上一张图，来说明下核心调用过程(涉及到的Node，仅为了演示，不分先后顺序)：
+
+```flow
+st=>start: Start
+o1=>operation: UnixCaret
+o2=>operation: Dollar
+o3=>operation: ...
+end=>end: End
+
+st->o1->o2->o3->end
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
