@@ -1,41 +1,25 @@
-## XXL-JOB
+[TOC]
+
+
+
+# XXL-JOB
 
 
 
 > 参照文档：[官方文档](https://www.xuxueli.com/xxl-job)
 >
-> <p>
->                <a href="https://github.com/xuxueli/xxl-job/actions">
->                               <img src="https://github.com/xuxueli/xxl-job/workflows/Java CI/badge.svg" alt="Actions Status">
->                </a>
->           
->                <a href="https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-job/">
->                               <img src="https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-job/badge.svg" alt="Maven Central">
->                </a>
->          
->                <a href="https://github.com/xuxueli/xxl-job/releases">
->                               <img src="https://img.shields.io/github/release/xuxueli/xxl-job.svg" alt="GitHub release">
->                </a>
->          
->                <a href="https://github.com/xuxueli/xxl-job/">
->                               <img src="https://img.shields.io/github/stars/xuxueli/xxl-job" alt="GitHub stars">
->                </a>
->         
->                <a href="https://hub.docker.com/r/xuxueli/xxl-job-admin/">
->                               <img src="https://img.shields.io/docker/pulls/xuxueli/xxl-job-admin" alt="Docker Status">
->                </a>
->      
->                <a href="http://www.gnu.org/licenses/gpl-3.0.html">
->                               <img src="https://img.shields.io/badge/license-GPLv3-blue.svg" alt="License">
->                </a>
->       
-> </p>
+> ![](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-job/badge.svg) ![](https://github.com/xuxueli/xxl-job/workflows/Java CI/badge.svg) ![](https://img.shields.io/github/release/xuxueli/xxl-job.svg) ![](https://img.shields.io/github/stars/xuxueli/xxl-job) ![](https://img.shields.io/docker/pulls/xuxueli/xxl-job-admin) ![](https://img.shields.io/badge/license-GPLv3-blue.svg)
+>  
 
-### 介绍
+## 介绍
 
 ​	XXL-JOB是一个分布式任务调度平台，其核心设计目标是开发迅速、学习简单、轻量级、易扩展。
 
-### 特性
+## 架构图
+
+![](https://www.xuxueli.com/doc/static/xxl-job/images/img_Qohm.png)
+
+## 特性
 
 - 动态：支持动态修改任务状态、启动/停止任务，以及终止运行中任务，即时生效；
 
@@ -99,13 +83,19 @@
 
   ......
 
-### 使用
+## 使用
 
 项目地址：[Gitee](https://gitee.com/xuxueli0323/xxl-job)
 
-#### 单机部署
+### 调度中心
 
-##### 初始化数据库
+
+
+#### 部署
+
+##### 单机部署
+
+###### 初始化数据
 
 导入SQL：
 
@@ -113,7 +103,7 @@
 /xxl-job/doc/db/tables_xxl_job.sql
 ```
 
-##### Docker部署
+###### Docker部署
 
 拉取镜像：
 
@@ -127,19 +117,90 @@ docker pull xuxueli/xxl-job-admin
 docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl_job?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai --spring.datasource.username=root --spring.datasource.password=1234" -p 8080:8080 --name xxl-job-admin -d xuxueli/xxl-job-admin:2.3.0
 ```
 
-##### 源码部署
+###### 源码部署
 
-见官方文档。
+**Tips**：见官方文档。
 
 启动成功后，访问：http://localhost:8080/xxl-job-admin (该地址执行器将会使用到，作为回调地址)
 
-默认登录账号 “admin/123456”。
+默认登录账号 “admin/123456”。 
 
-#### 集群部署
+##### 集群部署
 
+调度中心支持集群部署，提升调度系统容灾和可用性。
 
+调度中心集群部署时，几点要求和建议：
 
+- DB配置保持一致；
+- 集群机器时钟保持一致（单机集群忽视）；
+- 建议：推荐通过nginx为调度中心集群做负载均衡，分配域名。调度中心访问、执行器回调配置、调用API服务等操作均通过该域名进行。
 
+**Tips**：官方暂未提供集群部署示例。
+
+### 执行器项目
+
+#### 开发
+
+##### BEAN模式（类形式）
+
+Bean模式任务，支持基于类的开发方式，每个任务对应一个Java类。
+
+- 优点：不限制项目环境，兼容性好。即使是无框架项目，如main方法直接启动的项目也可以提供支持，可以参考示例项目 “xxl-job-executor-sample-frameless”；
+- 缺点：
+  - 每个任务需要占用一个Java类，造成类的浪费；
+  - 不支持自动扫描任务并注入到执行器容器，需要手动注入。
+
+```java
+1、开发一个继承自"com.xxl.job.core.handler.IJobHandler"的JobHandler类，实现其中任务方法。
+2、手动通过如下方式注入到执行器容器。
+​```
+XxlJobExecutor.registJobHandler("demoJobHandler", new DemoJobHandler());
+​```
+```
+
+##### BEAN模式（方法形式）
+
+Bean模式任务，支持基于方法的开发方式，每个任务对应一个方法。
+
+- 优点：
+  - 每个任务只需要开发一个方法，并添加”[@XxlJob](https://github.com/XxlJob)”注解即可，更加方便、快速。
+  - 支持自动扫描任务并注入到执行器容器。
+- 缺点：要求Spring容器环境；
+
+```java
+// 可参考Sample示例执行器中的 "com.xxl.job.executor.service.jobhandler.SampleXxlJob" ，如下：
+@XxlJob(value="demoJobHandler", init = "initDemoJobHandler", destroy = "destroyDemoJobHandler")
+public void demoJobHandler() throws Exception {
+    XxlJobHelper.log("XXL-JOB, Hello World.");
+}
+
+public void initDemoJobHandler(){}
+
+public void destroyDemoJobHandler(){}
+```
+
+#### 部署
+
+##### 单机部署
+
+**Tips**：见官方文档。
+
+##### 集群部署
+
+执行器支持集群部署，提升调度系统可用性，同时提升任务处理能力。
+
+执行器集群部署时，几点要求和建议：
+
+- 执行器回调地址（xxl.job.admin.addresses）需要保持一致；执行器根据该配置进行执行器自动注册等操作。
+- 同一个执行器集群内AppName（xxl.job.executor.appname）需要保持一致；调度中心根据该配置动态发现不同集群的在线执行器列表。
+
+**Tips**：官方暂未提供集群部署示例。
+
+### GLUE模式
+
+简单来说，就是在线编写代码、配置，实时发布。
+
+**Tips**：见官方文档。
 
 
 
