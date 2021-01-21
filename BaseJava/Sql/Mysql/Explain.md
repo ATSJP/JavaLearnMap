@@ -128,39 +128,48 @@ explain select * from father
 
 9. **MATERIALIZED**，子查询物化，表出现在非相关子查询中 并且需要进行物化时会出现MATERIALIZED关键词；
 
-   
-
 10. **UNCACHEABLE SUBQUERY**，结果集无法缓存的子查询，需要逐次查询；
+
+    ```sql
+    explain select * from father where id = (select id from son where id = @@sql_log_bin)
+    ```
+
+    ![explain_uncacheable_subquery](Explain.assets/explain_uncacheable_subquery.png)
 
 11. **UNCACHEABLE UNION**，表示子查询不可被物化 需要逐次运行。
 
+    ```sql
+    explain select f.* from father f where exists (select 1 from son s where s.father_id = f.id union select 1 from dual)
+    ```
 
+    ![explain_uncacheable_union](Explain.assets/explain_uncacheable_union.png)
 
 #### Type
 
 **性能排序**：null->system->const->eq-ref->ref->fulltext->ref_or_null->index_merge->unique_subquery->index_subquery->range->index->ALL
 
-1. null
+1. null，不访问任何一个表格
 
-   ，不访问任何一个表格
+   ```sql
+   explain select now();
+   ```
 
-   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220221562-1941538266.png)![img]()
+   ![explain_type_null](Explain.assets/explain_type_null.png)
 
-2. system
+2. system，表中只有一条数据，相当于系统表； 这个类型是特殊的 `const` 类型。
 
-   - 官网解释：The table has only one row (= system table). This is a special case of the [const](https://dev.mysql.com/doc/refman/5.7/en/explain-output.html#jointype_const) join type.
-   - join type 为const，并且表格仅含有1行记录。
+3. const，主键或者唯一索引的常量查询，表格最多只有1行记录符合查询，通常const使用到主键或者唯一索引进行定值查询，常量查询非常快。
 
-3. const
+   ```sql
+   explain select * from father where id = 1;
+   ```
 
-   - 主键或者唯一索引的常量查询，表格最多只有1行记录符合查询，通常const使用到主键或者唯一索引进行定值查询。
-   - 常量查询非常快。
-   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220349734-69873590.png)![img]()
+   ![explian_type_const](Explain.assets/explian_type_const.png)
 
 4. eq_ref
 
    - join 查询过程中，关联条件为主键或者唯一索引，出来的行数不止一行
-   - eq_ref是一种性能非常好的 join 操作。![img]()
+   - eq_ref是一种性能非常好的 join 操作。
    - 例子说明：首先从su表格查询所有数据共7行出来，然后每一行跟 xin 的主键id中的1行做匹配。
    - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220433765-1802813303.png)
 
