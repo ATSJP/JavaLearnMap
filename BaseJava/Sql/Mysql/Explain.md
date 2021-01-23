@@ -35,12 +35,13 @@ CREATE TABLE `son` (
   KEY `idx_son_03` (`father_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='son'
 
-INSERT INTO godwealth.son (name,age,father_id) VALUES
-	 ('小王',30,1),
-	 ('小李子',30,2);
-INSERT INTO godwealth.father (name,age) VALUES
-	 ('老王',30),
-	 ('老王',30);
+INSERT INTO son (name,age,father_id) VALUES
+	 ('xiaowang',10,1),
+	 ('dawang',10,1),
+	 ('xiaoli',10,2);
+INSERT INTO father (name,age) VALUES
+	 ('laowang',30),
+	 ('laoli',30);
 ```
 
 以下面的查询SQL为例：
@@ -148,7 +149,7 @@ explain select * from father
 
 **性能排序**：null->system->const->eq-ref->ref->fulltext->ref_or_null->index_merge->unique_subquery->index_subquery->range->index->ALL
 
-1. null，不访问任何一个表格
+1. **null**，不访问任何一个表格
 
    ```sql
    explain select now();
@@ -156,9 +157,9 @@ explain select * from father
 
    ![explain_type_null](Explain.assets/explain_type_null.png)
 
-2. system，表中只有一条数据，相当于系统表； 这个类型是特殊的 `const` 类型。
+2. **system**，表中只有一条数据，相当于系统表； 这个类型是特殊的 `const` 类型。
 
-3. const，主键或者唯一索引的常量查询，表格最多只有1行记录符合查询，通常const使用到主键或者唯一索引进行定值查询，常量查询非常快。
+3. **const**，主键或者唯一索引的常量查询，表格最多只有1行记录符合查询，通常const使用到主键或者唯一索引进行定值查询，常量查询非常快。
 
    ```sql
    explain select * from father where id = 1;
@@ -166,28 +167,41 @@ explain select * from father
 
    ![explian_type_const](Explain.assets/explian_type_const.png)
 
-4. eq_ref
+4. **eq_ref**，除了system和const类型之外,效率最高的连接类型；唯一索引扫描，对于每个索引键，表中只有一条记录与之对应；常用于主键或唯一索引扫描。
 
-   - join 查询过程中，关联条件为主键或者唯一索引，出来的行数不止一行
-   - eq_ref是一种性能非常好的 join 操作。
-   - 例子说明：首先从su表格查询所有数据共7行出来，然后每一行跟 xin 的主键id中的1行做匹配。
-   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220433765-1802813303.png)
+   ```sql
+   explain select * from son s join father f on s.father_id = f.id where s.name = 'xiaowang';
+   ```
 
-5. ref
+   ![explain_type_eq_ref](Explain.assets/explain_type_eq_ref.png)
 
-   - 非聚集索引的常量查询
-   - 性能也是很不错的。
-   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220526796-647910285.png)![img]()
+5. **ref**，非聚集索引的常量查询
 
-6. fulltext
+   ```sql
+   explain select * from father f where f.age = 1;
+   ```
 
-   - 查询的过程中，使用到了 fulltext 索引（fulltext index在innodb引擎中，只有5.6版本之后的支持）
-   - 例子是innodb引擎下、带fulltext index的表格查询
-   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220540265-1865474177.png)![img]()
+   ![explain_type_ref](Explain.assets/explain_type_ref.png)
+
+6. **fulltext**，查询的过程中，使用到了 fulltext 索引（fulltext index在innodb引擎中，只有5.6版本之后的支持）
+
+   ```sql
+   ALTER TABLE father ADD FULLTEXT(name);
+   explain select * from father where match(name) AGAINST('xiaowang')
+   ```
+
+   ![explain_type_fulltext](Explain.assets/explain_type_fulltext.png)
 
 7. ref_or_null
 
    - 跟ref查询类似，在ref的查询基础上，不过会加多一个null值的条件查询
+
+     ```sql
+     explain select * from father f where f.age = 1 or f.age is null;
+     ```
+
+     
+
    - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220600312-1531705376.png)![img]()
 
 8. index merg
