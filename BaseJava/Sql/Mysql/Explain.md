@@ -22,7 +22,7 @@ CREATE TABLE `father` (
   PRIMARY KEY (`id`) USING BTREE,
   KEY `idx_father_01` (`name`) USING BTREE,
   KEY `idx_father_02` (`age`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='father'
+) ENGINE=InnoDB CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='father';
 
 CREATE TABLE `son` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -33,8 +33,9 @@ CREATE TABLE `son` (
   KEY `idx_son_01` (`name`) USING BTREE,
   KEY `idx_son_02` (`age`) USING BTREE,
   KEY `idx_son_03` (`father_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='son'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='son';
 
+-- 数据量尽可能的多，因为Mysql会评估执行效率，如果全表扫描更快，她将会放弃走索引
 INSERT INTO son (name,age,father_id) VALUES
 	 ('xiaowang',10,1),
 	 ('dawang',10,1),
@@ -42,6 +43,9 @@ INSERT INTO son (name,age,father_id) VALUES
 INSERT INTO father (name,age) VALUES
 	 ('laowang',30),
 	 ('laoli',30);
+
+-- 插入随机值
+INSERT INTO father (name,age) values (substring(MD5(RAND()),1,5),FLOOR(RAND()*100+1)) ;
 ```
 
 以下面的查询SQL为例：
@@ -200,50 +204,84 @@ explain select * from father
      explain select * from father f where f.age = 1 or f.age is null;
      ```
 
-     
 
-   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220600312-1531705376.png)![img]()
 
-8. index merg
 
-   - 当条件谓词使用到多个索引的最左边列并且谓词之间的连接为or的情况下，会使用到 索引联合查询
-   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220611156-868108546.png)
 
-9. unique subquery
+
+
+   
+
+8. **index merge**，当条件谓词使用到多个索引的最左边列并且谓词之间的连接为or的情况下，会使用到 索引联合查询（注意：Mysql在数据量小的时候放弃索引直接走全表，见[文章](https://baidu.com)，故在测试此Type时，自行批量插入测试数据即可，本次测试，追加插入了10条）
+
+   ```sql
+   INSERT INTO father (name,age) values (substring(MD5(RAND()),1,5),FLOOR(RAND()*100+1)) ;
+   ```
+
+   执行计划：
+
+   ```sql
+   explain select * from father f where f.age = 1 or f.name = 'laowang';
+   ```
+
+   ![explain_type_index_merge](Explain.assets/explain_type_index_merge.png)
+
+9. **unique subquery**
 
    - eq_ref的一个分支，查询主键的子查询：
    - value IN (SELECT primary_key FROM single_table WHERE some_expr)
-   - *暂时无法模拟出来，目前在5.7.17版本怎么测试，出来的type都是 eq_ref*
+
+   
+   
+   
 
 10. index subquery
 
     - ref的一个分支，查询非聚集索引的子查询：
     - value IN (SELECT key_column FROM single_table WHERE some_expr)
-    - *暂时无法模拟出来，目前在5.7.17版本怎么测试，出来的type都是 ref*
-
-11. range
-
-    - 当谓词使用到索引范围查询的时候：=、<>、>、>=、<、<=、IS NULL、BETWEEN、IN、<=> (这是个表达式：左边可以推出右边,右边也可推出左边)
-    - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220636609-1394291654.png)
-
-12. index
-
-    - 使用到索引，但是不是索引查找，而是对索引树做一个扫描，即使是索引扫描，大多数情况下也是比全表扫描性能要好的，因为索引树上的键值只有索引列键值+主键，而全表扫描则是在 聚集索引树（主键+所有列）上进行扫描，索引树相比之下要廋得多跟小得多了。
-    - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220647093-1271534948.png)![img]()
-
-13. all
-
-    - 全表扫描，性能比较差。
-    - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220659796-1493381634.png)![img]()
-    - 关于 index跟all，这里再举一个例子说明下
-      - 下图中，表格su有3个索引：主键、ix_age、ix_name，这三个索引树的内容分别为：主键id+所有列、age+主键id、name+主键id，依次，当扫描主键id查询的时候，这三个索引都能够提供 主键id列，那么哪个性能比较好呢？索引树最小的，扫描次数最少的则为最优，根据索引数内容可得大小：ix_age < ix_name < pk，故执行计划会选择 ix_age。
-      - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220714109-349225041.png)
 
 
+
+
+
+
+
+11. **range**，当谓词使用到索引范围查询的时候：=、<>、>、>=、<、<=、IS NULL、BETWEEN、IN、<=> (这是个表达式：左边可以推出右边,右边也可推出左边)
+
+    ```sql
+    explain select * from father f where f.age between 1 and 10;
+    ```
+
+    ![explain_type_range](Explain.assets/explain_type_range.png)
+
+12. **index**，使用到索引，但是不是索引查找，而是对索引树做一个扫描，即使是索引扫描，大多数情况下也是比全表扫描性能要好的，因为索引树上的键值只有索引列键值+主键，而全表扫描则是在 聚集索引树（主键+所有列）上进行扫描，索引树相比之下要廋得多跟小得多了。
+
+    ```sql
+    explain select age from father;
+    ```
+
+    ![explain_type_index](Explain.assets/explain_type_index.png)
+
+13. **all**，全表扫描，性能比较差。
+
+    ```sql
+    explain select * from father;
+    ```
+
+    ![explain_type_all](Explain.assets/explain_type_all.png)
+
+    关于 index跟all，这里再举一个例子说明下
+    - 下图中，表格father有3个索引：主键、idx_father_01、idx_father_02，这三个索引树的内容分别为：主键id+所有列、name+主键id、age+主键id，依次，当扫描主键id查询的时候，这三个索引都能够提供主键id列，那么哪个性能比较好呢？索引树最小的，扫描次数最少的则为最优，根据索引数内容可得大小：ix_age < ix_name < pk，故执行计划会选择 ix_age。
+
+      ```sql
+      explain select id from father ;
+      ```
+
+      ![explain_type_index1](Explain.assets/explain_type_index1.png)
 
 #### Ref
 
-  当 join type 为 eq_ref 或者 ref 时，谓词的关联信息。可能为 ：null（非 eq_ref\ref join type时）、const（常量）、关联的谓词列名。
+  当 join type 为 eq_ref 或者 ref 时，谓词的关联信息。可能为 ：null（非 eq_ref、ref join type时）、const（常量）、关联的谓词列名。
 
  #### Extra
 
