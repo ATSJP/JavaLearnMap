@@ -289,46 +289,35 @@ explain select * from father
 
 - Using index，使用到索引
 
-- Using index condition，使用到索引过滤
+  索引覆盖，也就是不止要使用到索引，而且没有回表查询，举个例子说明
 
-- Using MRR，使用到索引内部排序
+  ```sql
+  explain select * from father where age= 2;
+  ```
+
+  ![explain_extra_null](Explain.assets/explain_extra_null.png)
+
+  ```sql
+  explain select id, age from father where age= 2;
+  ```
+
+  ![explain_extra_index](Explain.assets/explain_extra_index.png)
+
+  这两个查询中，条件都是一样，但是第一个返回的是所有列，而索引idx_father_02上仅包含主键列跟索引键值，故需要再根据主键的值去PK树上找到对应的列，这个操作称为回表，所以第一个查询中extra没有USING INDEX，而第二个查询有。
+
+- Using index conditio，简称 ICP，使用到索引过滤
+
+  
+
+- Using MRR，简称 MRR，使用到索引内部排序
 
 - Using where，使用到where条件
 
+  根据where条件，先取出数据，再跟其他表格关联查询
+
 - Using temporary，使用到临时表
 
- 
+  使用到临时表，表数量较少的情况下，临时表使用缓存，但是比较大的时候，则会磁盘存储，这种情况下，性能将会急剧下降
 
-1. Using index
+- Using filesort，无法利用索引来完成的排序
 
-   - 索引覆盖，也就是不止要使用到索引，而且没有回表查询，举个例子说明
-
-     ```sql
-     explain select * from father where age= 2 ;
-     ```
-
-     ![explain_extra_null](Explain.assets/explain_extra_null.png)
-
-     
-
-     ```sql
-     explain select age from father where age= 2 ;
-     ```
-
-     ![explain_extra_index](Explain.assets/explain_extra_index.png)
-
-   - 这两个查询中，条件都是一样，但是第一个返回的是所有列，而索引 IX_age上仅包含主键列跟索引键值，故需要再根据主键的值去PK树上找到对应的列，这个操作称为回表，所以第一个查询中extra没有USING INDEX，而第二个查询有。
-
-2. Using index conditio，简称 ICP
-
-3. Using MRR，简称 MRR
-
-4. Using where
-
-   - 根据where条件，先取出数据，再跟其他表格关联查询
-
-5. Using filesort，无法利用索引来完成的排序
-
-6. Using temporary，使用到临时表
-
-7. 使用到临时表，表数量较少的情况下，临时表使用缓存，但是比较大的时候，则会磁盘存储，这种情况下，性能将会急剧下降
