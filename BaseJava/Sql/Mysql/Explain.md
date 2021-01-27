@@ -19,15 +19,17 @@ CREATE TABLE `father` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `name` varchar(50) NOT NULL COMMENT 'name',
   `age` int(3) NOT NULL DEFAULT '0' COMMENT 'age',
+  `remark` varchar(50) DEFAULT NULL COMMENT 'remark',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `idx_father_01` (`name`) USING BTREE,
   KEY `idx_father_02` (`age`) USING BTREE
-) ENGINE=InnoDB CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='father';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='father';
 
 CREATE TABLE `son` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `name` varchar(50) NOT NULL COMMENT 'name',
   `age` int(3) NOT NULL DEFAULT '0' COMMENT 'age',
+  `remark` varchar(50) DEFAULT NULL COMMENT 'remark',
   `father_id` int(11) DEFAULT NULL COMMENT 'father_id',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `idx_son_01` (`name`) USING BTREE,
@@ -36,16 +38,17 @@ CREATE TABLE `son` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='son';
 
 -- 数据量尽可能的多，因为Mysql会评估执行效率，如果全表扫描更快，她将会放弃走索引
-INSERT INTO son (name,age,father_id) VALUES
-	 ('xiaowang',10,1),
-	 ('dawang',10,1),
-	 ('xiaoli',10,2);
-INSERT INTO father (name,age) VALUES
-	 ('laowang',30),
-	 ('laoli',30);
+INSERT INTO father (name, age, remark) VALUES
+	 ('laowang', 30, '备注1'),
+	 ('laoli', 30, null);
+INSERT INTO son (name, age, father_id, remark) VALUES
+	 ('xiaowang', 10, 1, '备注1'),
+	 ('dawang', 10, 1, null),
+	 ('xiaoli', 10, 2, null);
 
--- 插入随机值
-INSERT INTO father (name,age) values (substring(MD5(RAND()),1,5),FLOOR(RAND()*100+1)) ;
+-- 插入随机值*10
+INSERT INTO father (name, age, remark) values (substring(MD5(RAND()),1,5), FLOOR(RAND()*100+1), substring(MD5(RAND()),1,5)) ;
+INSERT INTO son (name, age, remark) values (substring(MD5(RAND()),1,5), FLOOR(RAND()*100+1), substring(MD5(RAND()),1,5)) ;
 ```
 
 以下面的查询SQL为例：
@@ -86,7 +89,7 @@ explain select * from father
 4. **UNION RESULT**，每个结果集的取出来后，会做合并操作，这个操作就是 UNION RESULT；
 
    ```sql
-   explain select * from father union select id as son_id, name as son_name, age as son_age from son 
+   explain select id as f_id, name as f_name, age as f_age from father union select id as s_id, name as s_name, age as s_age from son 
    ```
 
    ![explain_union_result](Explain.assets/explain_union_result.png)
@@ -132,6 +135,12 @@ explain select * from father
    ![explain_derived](Explain.assets/explain_derived.png)
 
 9. **MATERIALIZED**，子查询物化，表出现在非相关子查询中 并且需要进行物化时会出现MATERIALIZED关键词；
+
+   ```sql
+   explain select f.* from father f where f.age in (select age from son)
+   ```
+
+   ![explain_simple_join](Explain.assets/explain_simple_join.png)
 
 10. **UNCACHEABLE SUBQUERY**，结果集无法缓存的子查询，需要逐次查询；
 
@@ -196,7 +205,7 @@ explain select * from father
 
    ![explain_type_fulltext](Explain.assets/explain_type_fulltext.png)
 
-7. ref_or_null
+7. **ref_or_null**
 
    - 跟ref查询类似，在ref的查询基础上，不过会加多一个null值的条件查询
 
@@ -212,13 +221,7 @@ explain select * from father
 
    
 
-8. **index merge**，当条件谓词使用到多个索引的最左边列并且谓词之间的连接为or的情况下，会使用到 索引联合查询（注意：Mysql在数据量小的时候放弃索引直接走全表，见[文章](https://baidu.com)，故在测试此Type时，自行批量插入测试数据即可，本次测试，追加插入了10条）
-
-   ```sql
-   INSERT INTO father (name,age) values (substring(MD5(RAND()),1,5),FLOOR(RAND()*100+1)) ;
-   ```
-
-   执行计划：
+8. **index merge**，当条件谓词使用到多个索引的最左边列并且谓词之间的连接为or的情况下，会使用到 索引联合查询
 
    ```sql
    explain select * from father f where f.age = 1 or f.name = 'laowang';
@@ -239,10 +242,6 @@ explain select * from father
 
     - ref的一个分支，查询非聚集索引的子查询：
     - value IN (SELECT key_column FROM single_table WHERE some_expr)
-
-
-
-
 
 
 
