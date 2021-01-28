@@ -78,6 +78,10 @@ explain select * from father
 | filtered      | 实际显示行数占扫描rows的比例 | 实际显示的行数 = rows * filtered / 100                       |
 | extra         | 特性使用                     |                                                              |
 
+#### ID
+
+该语句所在的层级，如果ID相同从上到下执行，如果ID不同，则ID越大的越先执行，其作用类似于执行计划中缩进。
+
 #### Select_Type
 
 1. **SIMPLE**，简单查询方式，不使用UNION跟子查询；
@@ -160,7 +164,7 @@ explain select * from father
 
 #### Type
 
-**性能排序**：null->system->const->eq-ref->ref->fulltext->ref_or_null->index_merge->unique_subquery->index_subquery->range->index->ALL
+**性能排序**（[参考官方](https://dev.mysql.com/doc/refman/5.7/en/explain-output.html)）：null->system->const->eq-ref->ref->fulltext->ref_or_null->index_merge->unique_subquery->index_subquery->range->index->ALL
 
 1. **null**，不访问任何一个表格
 
@@ -172,7 +176,7 @@ explain select * from father
 
 2. **system**，表中只有一条数据，相当于系统表； 这个类型是特殊的 `const` 类型。
 
-3. **const**，主键或者唯一索引的常量查询，表格最多只有1行记录符合查询，通常const使用到主键或者唯一索引进行定值查询，常量查询非常快。
+3. **const**，主键或者唯一索引的常量查询，表格最多只有1行记录符合查询。
 
    ```sql
    explain select * from father where id = 1;
@@ -180,15 +184,15 @@ explain select * from father
 
    ![explian_type_const](Explain.assets/explian_type_const.png)
 
-4. **eq_ref**，除了system和const类型之外,效率最高的连接类型；唯一索引扫描，对于每个索引键，表中只有一条记录与之对应；常用于主键或唯一索引扫描。
+4. **eq_ref**，唯一索引扫描，对于每个索引键，表中只有一条记录与之对应；常用于主键或唯一索引扫描。
 
    ```sql
-   explain select * from son s join father f on s.father_id = f.id where s.name = 'xiaowang';
+   explain select * from son s join father f on s.father_id = f.id;
    ```
 
    ![explain_type_eq_ref](Explain.assets/explain_type_eq_ref.png)
 
-5. **ref**，非聚集索引的常量查询
+5. **ref**，索引非唯一性扫描
 
    ```sql
    explain select * from father f where f.age = 1;
@@ -200,7 +204,7 @@ explain select * from father
 
    ```sql
    ALTER TABLE father ADD FULLTEXT(name);
-   explain select * from father where match(name) AGAINST('xiaowang')
+   explain select * from father where match(name) AGAINST('xiaowang');
    ```
 
    ![explain_type_fulltext](Explain.assets/explain_type_fulltext.png)
@@ -210,7 +214,7 @@ explain select * from father
    - 跟ref查询类似，在ref的查询基础上，不过会加多一个null值的条件查询
 
      ```sql
-     explain select * from father f where f.age = 1 or f.age is null;
+     explain select * from son s where s.father_id = 1 or s.father_id is null;
      ```
 
 
@@ -238,7 +242,7 @@ explain select * from father
    
    
 
-10. index subquery
+10. **index subquery**
 
     - ref的一个分支，查询非聚集索引的子查询：
     - value IN (SELECT key_column FROM single_table WHERE some_expr)
@@ -304,11 +308,11 @@ explain select * from father
 
   这两个查询中，条件都是一样，但是第一个返回的是所有列，而索引idx_father_02上仅包含主键列跟索引键值，故需要再根据主键的值去PK树上找到对应的列，这个操作称为回表，所以第一个查询中extra没有USING INDEX，而第二个查询有。
 
-- Using index conditio，简称 ICP，使用到索引过滤
+- Using index condition，使用到索引过滤
 
   
 
-- Using MRR，简称 MRR，使用到索引内部排序
+- Using MRR，使用到索引内部排序
 
 - Using where，使用到where条件
 
@@ -318,5 +322,17 @@ explain select * from father
 
   使用到临时表，表数量较少的情况下，临时表使用缓存，但是比较大的时候，则会磁盘存储，这种情况下，性能将会急剧下降
 
+  ```sql
+  explain select distinct remark from son;
+  ```
+
+  ![explain_extra_using_temporary](Explain.assets/explain_extra_using_temporary.png)
+
 - Using filesort，无法利用索引来完成的排序
+
+  ```sql
+  explain select remark from son order by remark;
+  ```
+
+  ![explain_extra_using_filesort](Explain.assets/explain_extra_using_filesort.png)
 
