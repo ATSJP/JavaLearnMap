@@ -4,6 +4,8 @@
 
 ##  执行计划
 
+> 参考[官方文档](https://dev.mysql.com/doc/refman/5.7/en/explain-output.html)
+
 ### 介绍
 
 项目开发中，性能是我们比较关注的问题，特别是数据库的性能；作为一个开发，经常和SQL语句打交道，想要写出合格的SQL语句，我们需要了解SQL语句在数据库中是如何扫描表、如何使用索引的。
@@ -288,9 +290,103 @@ explain select * from father
 
  #### Extra
 
-常用到
+- `Child of '*`table`*' pushed join@1`
 
-- Using index，使用到索引
+  
+
+- `const row not found` 
+
+  
+
+- `Deleting all rows`
+
+  
+
+- `Distinct`
+
+  
+
+- `FirstMatch(*`tbl_name`*)`
+
+  
+
+- `Full scan on NULL key` 
+
+  
+
+- `Impossible HAVING` 
+
+  
+
+- `Impossible WHERE`
+
+  
+
+- `Impossible WHERE noticed after reading const tables`
+
+  
+
+- `LooseScan(*`m`*..*`n`*)` 
+
+  
+
+- `No matching min/max row` 
+
+  
+
+- `no matching row in const table`
+
+  
+
+- `No matching rows after partition pruning`
+
+  
+
+- `No tables used` 
+
+  
+
+- `Not exists` 
+
+  
+
+- `Plan isn't ready yet`
+
+  
+
+- `Range checked for each record (index map: *`N`*)`
+
+  
+
+- `Scanned *`N`* databases` 
+
+  
+
+- `Select tables optimized away` 
+
+  
+
+- `Skip_open_table`, `Open_frm_only`, `Open_full_table`
+
+  
+
+- `Start temporary`, `End temporary` 
+
+  
+
+- `unique row not found` 
+
+  
+
+- `Using filesort`，无法利用索引来完成的排序
+
+  ```sql
+  explain select remark from son order by remark;
+  ```
+
+  ![explain_extra_using_filesort](Explain.assets/explain_extra_using_filesort.png)
+
+- `Using index`，使用到索引
 
   索引覆盖，也就是不止要使用到索引，而且没有回表查询，举个例子说明
 
@@ -308,17 +404,27 @@ explain select * from father
 
   这两个查询中，条件都是一样，但是第一个返回的是所有列，而索引idx_father_02上仅包含主键列跟索引键值，故需要再根据主键的值去PK树上找到对应的列，这个操作称为回表，所以第一个查询中extra没有USING INDEX，而第二个查询有。
 
-- Using index condition，使用到索引过滤
+- `Using index condition`
 
   
 
-- Using MRR，使用到索引内部排序
+- `Using index for group-by` 
 
-- Using where，使用到where条件
+  
 
-  根据where条件，先取出数据，再跟其他表格关联查询
+- `Using join buffer (Block Nested Loop)`, `Using join buffer (Batched Key Access)`
 
-- Using temporary，使用到临时表
+  
+
+- `Using MRR`，使用到索引内部排序
+
+  
+
+- `Using sort_union(...)`, `Using union(...)`, `Using intersect(...)`
+
+  
+
+- `Using temporary`，使用到临时表
 
   使用到临时表，表数量较少的情况下，临时表使用缓存，但是比较大的时候，则会磁盘存储，这种情况下，性能将会急剧下降
 
@@ -328,11 +434,26 @@ explain select * from father
 
   ![explain_extra_using_temporary](Explain.assets/explain_extra_using_temporary.png)
 
-- Using filesort，无法利用索引来完成的排序
+
+- `Using where`，使用到where条件
+
+  根据where条件，先取出数据，再跟其他表格关联查询
+
+- `Using where with pushed condition` 
+
+  
+
+- `Zero limit`，谓词不成立
 
   ```sql
-  explain select remark from son order by remark;
+  explain select * from son limit 0 ;
   ```
+  
+  ![explain_extra_zero_limit](Explain.assets/explain_extra_zero_limit.png)
 
-  ![explain_extra_using_filesort](Explain.assets/explain_extra_using_filesort.png)
+
+
+
+
+
 
