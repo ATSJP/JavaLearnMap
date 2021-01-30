@@ -39,7 +39,7 @@ CREATE TABLE `son` (
   KEY `idx_son_03` (`father_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='son';
 
--- 数据量尽可能的多，因为Mysql会评估执行效率，如果全表扫描更快，她将会放弃走索引
+-- 插入几个自定义值
 INSERT INTO father (name, age, remark) VALUES
 	 ('laowang', 30, '备注1'),
 	 ('laoli', 30, null);
@@ -47,10 +47,29 @@ INSERT INTO son (name, age, father_id, remark) VALUES
 	 ('xiaowang', 10, 1, '备注1'),
 	 ('dawang', 10, 1, null),
 	 ('xiaoli', 10, 2, null);
+	 
+-- 插入随机值
+delimiter $$
+create procedure pre()
+begin
+declare i int;
+set i=0;
+while i<5000 do
+    INSERT INTO father (name, age, remark) values (substring(MD5(RAND()),1,5), FLOOR(RAND()*100+1), substring(MD5(RAND()),1,5));
+    INSERT INTO son (name, age, remark) values (substring(MD5(RAND()),1,5), FLOOR(RAND()*100+1), substring(MD5(RAND()),1,5));
+set i=i+1;
+end while;
+end
+$$
 
--- 插入随机值*10
-INSERT INTO father (name, age, remark) values (substring(MD5(RAND()),1,5), FLOOR(RAND()*100+1), substring(MD5(RAND()),1,5)) ;
-INSERT INTO son (name, age, remark) values (substring(MD5(RAND()),1,5), FLOOR(RAND()*100+1), substring(MD5(RAND()),1,5)) ;
+-- 还原delimiter
+delimiter ;
+
+-- 执行上述函数
+call pre();
+
+-- 删除上述函数
+drop procedure pre;
 ```
 
 以下面的查询SQL为例：
@@ -166,7 +185,9 @@ explain select * from father
 
 #### Type
 
-**性能排序**（[参考官方](https://dev.mysql.com/doc/refman/5.7/en/explain-output.html)）：null->system->const->eq-ref->ref->fulltext->ref_or_null->index_merge->unique_subquery->index_subquery->range->index->ALL
+**性能排序**：
+
+null->system->const->eq_ref->ref->fulltext->ref_or_null->index_merge->unique_subquery->index_subquery->range->index->all
 
 1. **null**，不访问任何一个表格
 
@@ -189,7 +210,7 @@ explain select * from father
 4. **eq_ref**，唯一索引扫描，对于每个索引键，表中只有一条记录与之对应；常用于主键或唯一索引扫描。
 
    ```sql
-   explain select * from son s join father f on s.father_id = f.id;
+   explain select * from son s join father f on s.id = f.id;
    ```
 
    ![explain_type_eq_ref](Explain.assets/explain_type_eq_ref.png)
@@ -211,21 +232,13 @@ explain select * from father
 
    ![explain_type_fulltext](Explain.assets/explain_type_fulltext.png)
 
-7. **ref_or_null**
+7. **ref_or_null**，跟ref查询类似，在ref的查询基础上，不过会加多一个null值的条件查询
 
-   - 跟ref查询类似，在ref的查询基础上，不过会加多一个null值的条件查询
+   ```sql
+   explain select s.father_id from son s where s.father_id = 1 or s.father_id is null;
+   ```
 
-     ```sql
-     explain select * from son s where s.father_id = 1 or s.father_id is null;
-     ```
-
-
-
-
-
-
-
-   
+   ![explain_type_ref_or_null](Explain.assets/explain_type_ref_or_null.png)
 
 8. **index merge**，当条件谓词使用到多个索引的最左边列并且谓词之间的连接为or的情况下，会使用到 索引联合查询
 
@@ -235,21 +248,17 @@ explain select * from father
 
    ![explain_type_index_merge](Explain.assets/explain_type_index_merge.png)
 
-9. **unique subquery**
+9. **unique subquery**，eq_ref的一个分支，查询主键的子查询
 
-   - eq_ref的一个分支，查询主键的子查询：
-   - value IN (SELECT primary_key FROM single_table WHERE some_expr)
+   ```sql
+   value IN (SELECT primary_key FROM single_table WHERE some_expr)
+   ```
 
-   
-   
-   
+10. **index subquery**，ref的一个分支，查询非聚集索引的子查询
 
-10. **index subquery**
-
-    - ref的一个分支，查询非聚集索引的子查询：
-    - value IN (SELECT key_column FROM single_table WHERE some_expr)
-
-
+    ```sql
+    value IN (SELECT key_column FROM single_table WHERE some_expr)
+    ```
 
 11. **range**，当谓词使用到索引范围查询的时候：=、<>、>、>=、<、<=、IS NULL、BETWEEN、IN、<=> (这是个表达式：左边可以推出右边,右边也可推出左边)
 
