@@ -97,7 +97,7 @@ explain select * from father
 | ref           | 谓词的关联信息               | 当 join type 为 const、eq_ref 或者 ref 时，谓词的关联信息。可能为 ：null（非 const \ eq_ref \ ref join type 时）、const（常量）、关联的谓词列名。 |
 | rows          | 扫描的行数                   | 该表格扫描到的行数。这里注意在mysql里边是嵌套链接，所以，需要把所有rows相乘就会得到查询数据行关联的次数 |
 | filtered      | 实际显示行数占扫描rows的比例 | 实际显示的行数 = rows * filtered / 100                       |
-| extra         | 特性使用                     |                                                              |
+| extra         | 特性使用                     | 下文详细说明。                                               |
 
 #### ID
 
@@ -182,6 +182,8 @@ explain select * from father
     ```
 
     ![explain_uncacheable_union](Explain.assets/explain_uncacheable_union.png)
+
+#### Partitions
 
 #### Type
 
