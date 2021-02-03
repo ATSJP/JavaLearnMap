@@ -4,8 +4,6 @@
 
 # ElasticJob
 
-
-
 > 参照文档：[官方文档](https://shardingsphere.apache.org/elasticjob/current/cn/overview/)
 >
 > ![](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)![](https://img.shields.io/github/release/apache/shardingsphere-elasticjob.svg)![](https://maven-badges.herokuapp.com/maven-central/org.apache.shardingsphere.elasticjob/elasticjob/badge.svg)![](https://secure.travis-ci.org/apache/shardingsphere-elasticjob.png?branch=master)![](https://coveralls.io/repos/github/apache/shardingsphere-elasticjob/badge.svg?branch=master)![](https://img.shields.io/github/stars/apache/shardingsphere-elasticjob.svg?style=social&label=Star)![](https://img.shields.io/github/forks/apache/shardingsphere-elasticjob.svg?style=social&label=Fork)![](https://img.shields.io/github/watchers/apache/shardingsphere-elasticjob.svg?style=social&label=Watch)
