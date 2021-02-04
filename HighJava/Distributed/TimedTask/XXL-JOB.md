@@ -8,8 +8,7 @@
 
 > 参照文档：[官方文档](https://www.xuxueli.com/xxl-job)
 >
-> ![](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-job/badge.svg) ![](https://github.com/xuxueli/xxl-job/workflows/Java CI/badge.svg) ![](https://img.shields.io/github/release/xuxueli/xxl-job.svg) ![](https://img.shields.io/github/stars/xuxueli/xxl-job) ![](https://img.shields.io/docker/pulls/xuxueli/xxl-job-admin) ![](https://img.shields.io/badge/license-GPLv3-blue.svg)
->  
+> ![](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-job/badge.svg)![](https://img.shields.io/github/release/xuxueli/xxl-job.svg) ![](https://img.shields.io/github/stars/xuxueli/xxl-job) ![](https://img.shields.io/docker/pulls/xuxueli/xxl-job-admin) ![](https://img.shields.io/badge/license-GPLv3-blue.svg)
 
 ## 介绍
 
