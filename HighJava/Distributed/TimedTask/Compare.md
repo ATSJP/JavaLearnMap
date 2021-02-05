@@ -1,6 +1,5 @@
 ## 对比
 
-
   <table>
    <thead>
     <tr>
@@ -11,6 +10,12 @@
     </tr>
    </thead>
    <tbody>
+    <tr>
+     <td>Github收藏</td>
+     <td> </td>
+     <td><img src="https://img.shields.io/github/stars/apache/shardingsphere-elasticjob.svg?style=social&label=Star"/></td>
+     <td><img src="https://img.shields.io/github/stars/xuxueli/xxl-job"/></td>
+    </tr>
     <tr>
      <td>依赖</td>
      <td>mysql</td>
@@ -73,7 +78,8 @@
     </tr>
    </tbody>
   </table>
-## 
+
+
 
 
 
