@@ -10,11 +10,11 @@
 >
 > [二进制](https://baike.baidu.com/item/二进制)的“00101000”直接可以转换成16进制的“28”。字节是电脑中的基本存储单位，根据计算机字长的不同，字具有不同的[位数](https://baike.baidu.com/item/位数/6281904)，现代电脑的字长一般是32位的，也就是说，一个字的位数是32。字节是8位的[数据单元](https://baike.baidu.com/item/数据单元/1415766)，一个字节可以表示0－255的十进制数据。对于32位字长的现代电脑，一个字等于4个字节，对于早期的16位的电脑，一个字等于2个字节。
 
-## **^(亦或运算)** 
+## ^(亦或运算)
 
 
 
-## **&（与运算）** 
+## &（与运算）
 
 
 
@@ -69,16 +69,16 @@
 最后我们将上述例子执行一遍：
 
 ```java
-public static void main(String[] args) {
-    System.out.println("10:" + Integer.toBinaryString(10));
-    System.out.println("-10:" + Integer.toBinaryString(-10));
-    System.out.println("10<<2运算的结果是 :" + ((10) << 2) + " " + Integer.toBinaryString(((10) << 2)));
-    System.out.println("-10<<2运算的结果是 :" + ((-10) << 2) + " " + Integer.toBinaryString((-10) << 2));
-    System.out.println("10>>2运算的结果是 :" + ((10) >> 2) + " " + Integer.toBinaryString(((10) >> 2)));
-    System.out.println("-10>>2运算的结果是 :" + ((-10) >> 2) + " " + Integer.toBinaryString((-10) >> 2));
-    System.out.println("10>>>2运算的结果是 :" + ((10) >>> 2) + " " + Integer.toBinaryString((10) >>> 2));
-    System.out.println("-10>>>2运算的结果是 :" + ((-10) >>> 2) + " " + Integer.toBinaryString((-10) >>> 2));
-} 
+	public static void main(String[] args) {
+		System.out.println("10:" + Integer.toBinaryString(10));
+		System.out.println("-10:" + Integer.toBinaryString(-10));
+		System.out.println("10<<2运算的结果是 :" + ((10) << 2) + " " + Integer.toBinaryString((10) << 2));
+		System.out.println("-10<<2运算的结果是 :" + ((-10) << 2) + " " + Integer.toBinaryString((-10) << 2));
+		System.out.println("10>>2运算的结果是 :" + ((10) >> 2) + " " + Integer.toBinaryString((10) >> 2));
+		System.out.println("-10>>2运算的结果是 :" + ((-10) >> 2) + " " + Integer.toBinaryString((-10) >> 2));
+		System.out.println("10>>>2运算的结果是 :" + ((10) >>> 2) + " " + Integer.toBinaryString((10) >>> 2));
+		System.out.println("-10>>>2运算的结果是 :" + ((-10) >>> 2) + " " + Integer.toBinaryString((-10) >>> 2));
+	}
 ```
 
 输出：
