@@ -211,7 +211,7 @@ public int kmpSearch(String haystack, String needle, int[] next){
 
 我们用下面这个字符串来讲一下：XXYXXYXXX。
 
-![img](https://pic1.zhimg.com/50/v2-b5cee9ee8ee005dacf293529e91d727a_hd.jpg?source=1940ef5c)![img](https://pic1.zhimg.com/80/v2-b5cee9ee8ee005dacf293529e91d727a_720w.jpg?source=1940ef5c)
+<img src="https://pic1.zhimg.com/50/v2-b5cee9ee8ee005dacf293529e91d727a_hd.jpg?source=1940ef5c" alt="img"  />                     
 
 对于该字符串：
 
@@ -222,65 +222,65 @@ public int kmpSearch(String haystack, String needle, int[] next){
 
 - 首先 index[0] 肯定是填写 0
 
-![img](https://pic1.zhimg.com/50/v2-da21a4dd9cfaa77255270d4ad0376c69_hd.jpg?source=1940ef5c)![img](https://pic1.zhimg.com/80/v2-da21a4dd9cfaa77255270d4ad0376c69_720w.jpg?source=1940ef5c)
+<img src="https://pic1.zhimg.com/50/v2-da21a4dd9cfaa77255270d4ad0376c69_hd.jpg?source=1940ef5c" alt="img" style="zoom: 45%;" />                              <img src="https://pic1.zhimg.com/80/v2-da21a4dd9cfaa77255270d4ad0376c69_720w.jpg?source=1940ef5c" alt="img" style="zoom: 45%;" />
 
 - 然后填写 index[1]。**如果匹配上，我们把 i 和 j 都加一**。
 
-![img](https://pic3.zhimg.com/50/v2-5af23f3346f6a1aabd41d375957aefb0_hd.jpg?source=1940ef5c)![img](https://pic3.zhimg.com/80/v2-5af23f3346f6a1aabd41d375957aefb0_720w.jpg?source=1940ef5c)
+<img src="https://pic3.zhimg.com/50/v2-5af23f3346f6a1aabd41d375957aefb0_hd.jpg?source=1940ef5c" alt="img" style="zoom:45%;" />                              <img src="https://pic3.zhimg.com/80/v2-5af23f3346f6a1aabd41d375957aefb0_720w.jpg?source=1940ef5c" alt="img" style="zoom:45%;" />
 
 - 然后填写 index[2]，**如果没有匹配上，就把 j 回溯到 j 当前指向的前一个位置的 index 处。在这里，也就是 0 。**
 
-![img](https://pic1.zhimg.com/50/v2-b35a768f7aef845ab218dfae66426e1b_hd.jpg?source=1940ef5c)![img](https://pic1.zhimg.com/80/v2-b35a768f7aef845ab218dfae66426e1b_720w.jpg?source=1940ef5c)
+<img src="https://pic1.zhimg.com/50/v2-b35a768f7aef845ab218dfae66426e1b_hd.jpg?source=1940ef5c" alt="img" style="zoom:45%;" />                              <img src="https://pic1.zhimg.com/80/v2-b35a768f7aef845ab218dfae66426e1b_720w.jpg?source=1940ef5c" alt="img" style="zoom:45%;" />
 
 - 注意，是回溯完成后才开始填表，此时 index[2] 为 0
 
-![img](https://pic2.zhimg.com/50/v2-79011ce06e96d9eb7731016b727c0070_hd.jpg?source=1940ef5c)![img](https://pic2.zhimg.com/80/v2-79011ce06e96d9eb7731016b727c0070_720w.jpg?source=1940ef5c)
+<img src="https://pic2.zhimg.com/50/v2-79011ce06e96d9eb7731016b727c0070_hd.jpg?source=1940ef5c" alt="img" style="zoom:45%;" />                              <img src="https://pic2.zhimg.com/80/v2-79011ce06e96d9eb7731016b727c0070_720w.jpg?source=1940ef5c" alt="img" style="zoom:45%;" />
 
 - 然后我们移动 i，发现下一位匹配成功。同时给 i 和 j 加一，并填表。
 
-![img](https://pic1.zhimg.com/50/v2-35574577303695f0810e795417a4b9ca_hd.jpg?source=1940ef5c)![img](https://pic1.zhimg.com/80/v2-35574577303695f0810e795417a4b9ca_720w.jpg?source=1940ef5c)
+<img src="https://pic1.zhimg.com/50/v2-35574577303695f0810e795417a4b9ca_hd.jpg?source=1940ef5c" alt="img" style="zoom:45%;" />                              <img src="https://pic1.zhimg.com/80/v2-35574577303695f0810e795417a4b9ca_720w.jpg?source=1940ef5c" alt="img" style="zoom:45%;" />
 
 - 填完表后，我们发现下一位仍然匹配。继续移动 i 和 j。
 
-![img](https://pic1.zhimg.com/50/v2-376e0e1a729c6e32e72cce055ef9b2ef_hd.jpg?source=1940ef5c)![img](https://pic1.zhimg.com/80/v2-376e0e1a729c6e32e72cce055ef9b2ef_720w.jpg?source=1940ef5c)
+<img src="https://pic1.zhimg.com/50/v2-376e0e1a729c6e32e72cce055ef9b2ef_hd.jpg?source=1940ef5c" alt="img" style="zoom:45%;" />                              <img src="https://pic1.zhimg.com/80/v2-376e0e1a729c6e32e72cce055ef9b2ef_720w.jpg?source=1940ef5c" alt="img" style="zoom:45%;" />
 
 （填表）
 
-![img](https://pic1.zhimg.com/50/v2-2a8485d2bf2c55a7f68aac13bec6232a_hd.jpg?source=1940ef5c)![img](https://pic1.zhimg.com/80/v2-2a8485d2bf2c55a7f68aac13bec6232a_720w.jpg?source=1940ef5c)
+<img src="https://pic1.zhimg.com/50/v2-2a8485d2bf2c55a7f68aac13bec6232a_hd.jpg?source=1940ef5c" alt="img" style="zoom:45%;" />                              <img src="https://pic1.zhimg.com/80/v2-2a8485d2bf2c55a7f68aac13bec6232a_720w.jpg?source=1940ef5c" alt="img" style="zoom:45%;" />
 
 （仍然匹配，继续移动 i 和 j）
 
 - 仍然匹配成功，继续重复上面的操作。
 
-![img](https://pic1.zhimg.com/50/v2-0445944025c4c8795beb35fec3bd0c93_hd.jpg?source=1940ef5c)![img](https://pic1.zhimg.com/80/v2-0445944025c4c8795beb35fec3bd0c93_720w.jpg?source=1940ef5c)
+<img src="https://pic1.zhimg.com/50/v2-0445944025c4c8795beb35fec3bd0c93_hd.jpg?source=1940ef5c" alt="img" style="zoom:45%;" />                              <img src="https://pic1.zhimg.com/80/v2-0445944025c4c8795beb35fec3bd0c93_720w.jpg?source=1940ef5c" alt="img" style="zoom:45%;" />
 
-![img](https://pic2.zhimg.com/50/v2-95b611f6a6a8fe9b36de36dd8bd456fb_hd.jpg?source=1940ef5c)![img](https://pic2.zhimg.com/80/v2-95b611f6a6a8fe9b36de36dd8bd456fb_720w.jpg?source=1940ef5c)
+<img src="https://pic2.zhimg.com/50/v2-95b611f6a6a8fe9b36de36dd8bd456fb_hd.jpg?source=1940ef5c" alt="img" style="zoom:45%;" />                              <img src="https://pic2.zhimg.com/80/v2-95b611f6a6a8fe9b36de36dd8bd456fb_720w.jpg?source=1940ef5c" alt="img" style="zoom:45%;" />
 
-![img](https://pic1.zhimg.com/50/v2-f0624e7f871aec1f758e10077153175c_hd.jpg?source=1940ef5c)![img](https://pic1.zhimg.com/80/v2-f0624e7f871aec1f758e10077153175c_720w.jpg?source=1940ef5c)
+<img src="https://pic1.zhimg.com/50/v2-f0624e7f871aec1f758e10077153175c_hd.jpg?source=1940ef5c" alt="img" style="zoom:45%;" />                              <img src="https://pic1.zhimg.com/80/v2-f0624e7f871aec1f758e10077153175c_720w.jpg?source=1940ef5c" alt="img" style="zoom:45%;" />
 
 - 注意，**到这里开始匹配失败了**。上面说了，如果没有匹配成功，**把 j 回溯到 j 当前指向的前一个位置的 index 处**。在这里，也就是 2 。
 
-![img](https://pic2.zhimg.com/50/v2-b4d9bf0df7d3d5b085f5cc5bd5f6124f_hd.jpg?source=1940ef5c)![img](https://pic2.zhimg.com/80/v2-b4d9bf0df7d3d5b085f5cc5bd5f6124f_720w.jpg?source=1940ef5c)
+<img src="https://pic2.zhimg.com/50/v2-b4d9bf0df7d3d5b085f5cc5bd5f6124f_hd.jpg?source=1940ef5c" alt="img" style="zoom:45%;" />                              <img src="https://pic2.zhimg.com/80/v2-b4d9bf0df7d3d5b085f5cc5bd5f6124f_720w.jpg?source=1940ef5c" alt="img" style="zoom:45%;" />
 
-![img](https://pic1.zhimg.com/50/v2-27f722b97b4e75e41ac02b39d81ca17f_hd.jpg?source=1940ef5c)![img](https://pic1.zhimg.com/80/v2-27f722b97b4e75e41ac02b39d81ca17f_720w.jpg?source=1940ef5c)
+<img src="https://pic1.zhimg.com/50/v2-27f722b97b4e75e41ac02b39d81ca17f_hd.jpg?source=1940ef5c" alt="img" style="zoom:45%;" />                              <img src="https://pic1.zhimg.com/80/v2-27f722b97b4e75e41ac02b39d81ca17f_720w.jpg?source=1940ef5c" alt="img" style="zoom:45%;" />
 
 （j 的前一个位置的 index）
 
-![img](https://pic1.zhimg.com/50/v2-d69be84ad5c8d46cb62bc1bc78a8d369_hd.jpg?source=1940ef5c)![img](https://pic1.zhimg.com/80/v2-d69be84ad5c8d46cb62bc1bc78a8d369_720w.jpg?source=1940ef5c)
+<img src="https://pic1.zhimg.com/50/v2-d69be84ad5c8d46cb62bc1bc78a8d369_hd.jpg?source=1940ef5c" alt="img" style="zoom:45%;" />                              <img src="https://pic1.zhimg.com/80/v2-d69be84ad5c8d46cb62bc1bc78a8d369_720w.jpg?source=1940ef5c" alt="img" style="zoom:45%;" />
 
 （回溯完成后，我们发现仍然不匹配）
 
 - 继续这个回溯的过程。。。（这一步是整个 next表 构建的核心）
 
-![img](https://pic2.zhimg.com/50/v2-5fe58feb5b5be755bc45ccce624ce2c1_hd.jpg?source=1940ef5c)![img](https://pic2.zhimg.com/80/v2-5fe58feb5b5be755bc45ccce624ce2c1_720w.jpg?source=1940ef5c)
+<img src="https://pic2.zhimg.com/50/v2-5fe58feb5b5be755bc45ccce624ce2c1_hd.jpg?source=1940ef5c" alt="img" style="zoom: 67%;" />                              <img src="https://pic2.zhimg.com/80/v2-5fe58feb5b5be755bc45ccce624ce2c1_720w.jpg?source=1940ef5c" alt="img" style="zoom: 67%;" />
 
 （这个蓝色的小标是下次的回溯位置）
 
-![img](https://pic1.zhimg.com/50/v2-4fdac37af5c526f59e6e9685e38fa1e1_hd.jpg?source=1940ef5c)![img](https://pic1.zhimg.com/80/v2-4fdac37af5c526f59e6e9685e38fa1e1_720w.jpg?source=1940ef5c)
+<img src="https://pic1.zhimg.com/50/v2-4fdac37af5c526f59e6e9685e38fa1e1_hd.jpg?source=1940ef5c" alt="img" style="zoom: 67%;" />                              <img src="https://pic1.zhimg.com/80/v2-4fdac37af5c526f59e6e9685e38fa1e1_720w.jpg?source=1940ef5c" alt="img" style="zoom: 67%;" />
 
 （回溯后，我们发现匹配成功了）
 
-![img](https://pic4.zhimg.com/50/v2-93810b939533a0c5545c4d29af145720_hd.jpg?source=1940ef5c)![img](https://pic4.zhimg.com/80/v2-93810b939533a0c5545c4d29af145720_720w.jpg?source=1940ef5c)
+<img src="https://pic4.zhimg.com/50/v2-93810b939533a0c5545c4d29af145720_hd.jpg?source=1940ef5c" alt="img" style="zoom: 67%;" />                              <img src="https://pic4.zhimg.com/80/v2-93810b939533a0c5545c4d29af145720_720w.jpg?source=1940ef5c" alt="img" style="zoom: 67%;" />
 
 （然后我们可以填表了）
 
@@ -288,27 +288,24 @@ public int kmpSearch(String haystack, String needle, int[] next){
 
 细心的读者，估计到这里发现一点问题。我们把填完后的表拿出来：
 
-![img](https://pic4.zhimg.com/50/v2-0564a477f5fa09d6a158d107c8c7e42e_hd.jpg?source=1940ef5c)![img](https://pic4.zhimg.com/80/v2-0564a477f5fa09d6a158d107c8c7e42e_720w.jpg?source=1940ef5c)
+<img src="https://pic4.zhimg.com/50/v2-0564a477f5fa09d6a158d107c8c7e42e_hd.jpg?source=1940ef5c" alt="img" style="zoom: 67%;" />                              <img src="https://pic4.zhimg.com/80/v2-0564a477f5fa09d6a158d107c8c7e42e_720w.jpg?source=1940ef5c" alt="img" style="zoom: 67%;" />
 
 我们发现这个表和我们最上面说的不太一样，我们最上面说的 next表 的首位是 -1，并且要记录哪一个 index 位置的 next 值，是去看该元素前面所有子串的真前缀和真后缀的最大长度。这句话有点拗口，我们还是看到下面这个。
 
-![img](https://pic1.zhimg.com/50/v2-97ad4d519ef7e81e3b4044ad6e12d6a7_hd.jpg?source=1940ef5c)![img](https://pic1.zhimg.com/80/v2-97ad4d519ef7e81e3b4044ad6e12d6a7_720w.jpg?source=1940ef5c)
+<img src="https://pic1.zhimg.com/50/v2-97ad4d519ef7e81e3b4044ad6e12d6a7_hd.jpg?source=1940ef5c" alt="img" style="zoom:50%;" />                              <img src="https://pic1.zhimg.com/80/v2-97ad4d519ef7e81e3b4044ad6e12d6a7_720w.jpg?source=1940ef5c" alt="img" style="zoom:50%;" />
 
 比如 index 为 5 时，此时next的值是看 ABCEA 的最大长度（真后缀A，真前缀A，所以为1）。**但是在我们下面这个表中，我们发现我们是记录的当前索引位置处的最大长度**。其实我这里要说一下，下面这个表，其实我们一般称为**部分匹配表**，或者pmt。
 
-![img](https://pic1.zhimg.com/50/v2-0564a477f5fa09d6a158d107c8c7e42e_hd.jpg?source=1940ef5c)![img](https://pic1.zhimg.com/80/v2-0564a477f5fa09d6a158d107c8c7e42e_720w.jpg?source=1940ef5c)
+<img src="https://pic1.zhimg.com/50/v2-0564a477f5fa09d6a158d107c8c7e42e_hd.jpg?source=1940ef5c" alt="img" style="zoom: 50%;" />                              <img src="https://pic1.zhimg.com/80/v2-0564a477f5fa09d6a158d107c8c7e42e_720w.jpg?source=1940ef5c" alt="img" style="zoom: 50%;" />
 
 那这个表和我们的 next 表有什么关系吗，我们发现把这个表往后串一位，就得到了我们最终的 next 表。
 
-![img](https://pic1.zhimg.com/50/v2-d4b950298c0150fa17c9398faff2acb8_hd.jpg?source=1940ef5c)![img](https://pic1.zhimg.com/80/v2-d4b950298c0150fa17c9398faff2acb8_720w.jpg?source=1940ef5c)
+<img src="https://pic1.zhimg.com/50/v2-d4b950298c0150fa17c9398faff2acb8_hd.jpg?source=1940ef5c" alt="img" style="zoom: 50%;" />                              <img src="https://pic1.zhimg.com/80/v2-d4b950298c0150fa17c9398faff2acb8_720w.jpg?source=1940ef5c" alt="img" style="zoom: 50%;" />
 
 但是但是但是！！！并不是所有讲解 KMP 的地方都会给你提一提部分匹配表的概念，有的地方干脆就直接把这个 pmt 等同于 next 表使用。**这种属于错误讲解吗？其实不是的！**因为我上面也说了，next表 在最初始位置补 -1，或者甚至干脆把 pmt 的第一位补一个 -1 当作 next表，这都统统是可以的。**因为最关键的还是说你到时候怎么去使用！毕竟 next表 的定义也是人们给它赋予的！**
 
 举个例子，假如你 next表 的首位不补 -1，我们其实就可以在前面 KMP 的算法中，去掉 -1 的逻辑。而单独加一个 if 判断来解决上面说的死循环的问题。
 
-KMP上篇到这里就结束了! KMP系列打算分上下两篇来讲，第一讲就是讲明白 KMP 是干嘛的，next 表是干嘛的，pmt 又是干嘛的。第二讲会给大家讲讲关于 next表 的计算，以及 next表 的优化。
-
-总之，我个人认为本篇内容放在全网讲解KMP的文章里，质量都还是可以的。如果是小白，学习本篇文章其实就够了。
 
 
 
@@ -322,8 +319,20 @@ KMP上篇到这里就结束了! KMP系列打算分上下两篇来讲，第一讲
 
 
 
-KMP 是一种由暴力匹配改进的字符串匹配算法。
 
-我看了下网上的 KMP 讲解基本都是由 **next匹配表** 开始讲起。但是说实话，如果是我第一次看这玩意，你给我讲 next匹配表，我肯定一脸懵逼。所以我打算换一种讲法。
 
-上面说了，**KMP 是由暴力匹配改进的字符串匹配算法**。那什么是暴力匹配？假若我们的目标串和模式串如下图。（之前在 Sunday 匹配中讲过，**所有的字符串匹配算法第一步都是对齐**。不管是 暴力匹配，KMP，Sunday，BM 都是一样）
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
