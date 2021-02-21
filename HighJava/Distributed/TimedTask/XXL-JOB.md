@@ -4,8 +4,6 @@
 
 # XXL-JOB
 
-
-
 > 参照文档：[官方文档](https://www.xuxueli.com/xxl-job)
 >
 > ![](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-job/badge.svg)![](https://img.shields.io/github/release/xuxueli/xxl-job.svg) ![](https://img.shields.io/github/stars/xuxueli/xxl-job) ![](https://img.shields.io/docker/pulls/xuxueli/xxl-job-admin) ![](https://img.shields.io/badge/license-GPLv3-blue.svg)
@@ -88,8 +86,6 @@
 
 ### 调度中心
 
-
-
 #### 部署
 
 ##### 单机部署
@@ -136,6 +132,36 @@ docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl_jo
 
 **Tips**：官方暂未提供集群部署示例。
 
+#### 总结
+
+##### 优点
+
+即特性
+
+##### 缺点
+
+- 执行器灰度上线
+
+  > 官方的灰度方案：
+  >
+  > 步骤如下：
+  >
+  > - 1、执行器改为手动注册，下线一半机器列表（A组），线上运行另一半机器列表（B组）；
+  > - 2、等待A组机器任务运行结束并编译上线；执行器注册地址替换为A组；
+  > - 3、等待B组机器任务运行结束并编译上线；执行器注册地址替换为A组+B组；
+  >   操作结束；
+
+  官方的方案需要人工确保操作完成正确，但是我深信只要是人一定会有犯错的时候，所以日常开发定时任务时，我认为一个较好的定时任务，应该具备以下特性：
+
+  - 可重复执行
+  - 可并发执行
+  - 异常可回滚
+  - ...
+
+  那如果有了这些特性，实际上，定时任务跑了一半，我们重发版本后，在此触发重复执行即可，但是为了追求完美，我更推荐执行器项目做好优雅停机，这样在停止应用命令发起时，应用首先拒绝外部请求进入，在持续等待应用线程执行完毕后停机（当然优雅停机需要合理的设置超时时间）。
+
+- 
+
 ### 执行器项目
 
 #### 开发
@@ -178,6 +204,12 @@ public void initDemoJobHandler(){}
 public void destroyDemoJobHandler(){}
 ```
 
+##### GLUE模式
+
+简单来说，就是在线编写代码、配置，实时发布。
+
+**Tips**：见官方文档。
+
 #### 部署
 
 ##### 单机部署
@@ -195,11 +227,7 @@ public void destroyDemoJobHandler(){}
 
 **Tips**：官方暂未提供集群部署示例。
 
-### GLUE模式
 
-简单来说，就是在线编写代码、配置，实时发布。
-
-**Tips**：见官方文档。
 
 
 

@@ -306,7 +306,64 @@ public int kmpSearch(String haystack, String needle, int[] next){
 
 举个例子，假如你 next表 的首位不补 -1，我们其实就可以在前面 KMP 的算法中，去掉 -1 的逻辑。而单独加一个 if 判断来解决上面说的死循环的问题。
 
+## 举一反三
 
+好了，到此为止，相信你对KMP至少了解了一些，那么我们解下来就用KMP来优化引言那道题的解法：
+
+**出自LeetCode的一道题**：
+
+给你两个字符串 haystack 和 needle ，请你在 haystack 字符串中找出 needle 字符串出现的第一个位置（下标从 0 开始）。如果不存在，则返回  -1 。
+
+**解析**：
+
+```java
+	public int strStr(String haystack, String needle) {
+		int n = haystack.length(), m = needle.length();
+		if (m == 0) {
+			return 0;
+		}
+		// NEXT表
+		int[] pi = new int[m];
+		for (int i = 1, j = 0; i < m; i++) {
+			while (j > 0 && needle.charAt(i) != needle.charAt(j)) {
+				j = pi[j - 1];
+			}
+			if (needle.charAt(i) == needle.charAt(j)) {
+				j++;
+			}
+			pi[i] = j;
+		}
+		// 匹配
+		for (int i = 0, j = 0; i < n; i++) {
+			while (j > 0 && haystack.charAt(i) != needle.charAt(j)) {
+				j = pi[j - 1];
+			}
+			if (haystack.charAt(i) == needle.charAt(j)) {
+				j++;
+			}
+			if (j == m) {
+				return i - m + 1;
+			}
+		}
+		return -1;
+	}
+```
+
+**测试**：
+
+```java
+	@Test
+	public void test() {
+		System.out.println(strStr("qqXXYXXYXXX", "XXYXXYXXX"));
+		System.out.println(strStr("mississippi", "issipi"));
+		System.out.println(strStr("babbbbbabb", "bbab"));
+		System.out.println(strStr("mississippi", "sipp"));
+		System.out.println(strStr("hello", "ll"));
+		System.out.println(strStr("aaaaa", "bba"));
+		System.out.println(strStr("", ""));
+		System.out.println(strStr("", "asd"));
+	}
+```
 
 
 
