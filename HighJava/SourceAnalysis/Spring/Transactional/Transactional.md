@@ -8,17 +8,65 @@
 
 飞机票：[Spring事务](../../BaseJava/Spring/Collection/Spring事务.md)
 
-
-
 ### 源码
 
-TransactionInterceptor
+大家都知道Spring的事务是基于AOP完成的，那么我们就从这个AOP说起。
+
+例如：
+
+```java
+// 省去Bean管理
+public class A {
+    
+    @Transactional
+    public void test(){
+    }
+    
+}
+```
+
+假设我们运行以下代码：
+
+```java
+// 省去Bean管理
+public class B {
+ 
+    private A a;
+    
+    public void test(){
+    	a.test();
+    }
+
+}
+```
+
+那么此时调用`a.test()`，会被代理一层，假设代理类为：
+
+```java
 
 ```
 
+最终调用`org.springframework.transaction.interceptor.TransactionInterceptor#invoke`，看到这里终于开始有事务的影子了，我们继续往下看：
+
+```java
+	@Override
+	@Nullable
+	public Object invoke(MethodInvocation invocation) throws Throwable {
+		// Work out the target class: may be {@code null}.
+		// The TransactionAttributeSource should be passed the target class
+		// as well as the method, which may be from an interface.
+		Class<?> targetClass = (invocation.getThis() != null ? AopUtils.getTargetClass(invocation.getThis()) : null);
+
+		// Adapt to TransactionAspectSupport's invokeWithinTransaction...
+		return invokeWithinTransaction(invocation.getMethod(), targetClass, invocation::proceed);
+	}
 ```
 
-TransactionAspectSupport
+这边的代码大家一看就懂，无非就是获取目标Class对象，然后继续调用`invokeWithinTransaction`，在继续往下看之前，我们先看下类图：
+
+![TransactionUml](Transactional.assets/TransactionUml.png)
+
+TransactionInterceptor继承TransactionAspectSupport，而`invokeWithinTransaction`是TransactionAspectSupport的方法。下面，我们继续分析`invokeWithinTransaction`方法：（这个方法有点长，我将大致的代码思路备注在源码中）
 
 ```java
 /**
@@ -38,6 +86,7 @@ protected Object invokeWithinTransaction(Method method, @Nullable Class<?> targe
    // If the transaction attribute is null, the method is non-transactional.
    TransactionAttributeSource tas = getTransactionAttributeSource();
    final TransactionAttribute txAttr = (tas != null ? tas.getTransactionAttribute(method, targetClass) : null);
+   // 根据txAttr决定使用的TransactionManager
    final TransactionManager tm = determineTransactionManager(txAttr);
 
    if (this.reactiveAdapterRegistry != null && tm instanceof ReactiveTransactionManager) {
@@ -58,25 +107,31 @@ protected Object invokeWithinTransaction(Method method, @Nullable Class<?> targe
             method, targetClass, invocation, txAttr, (ReactiveTransactionManager) tm);
    }
 
+   // 将TransactionManager转化为PlatformTransactionManager
    PlatformTransactionManager ptm = asPlatformTransactionManager(tm);
+    // 切点方法名
    final String joinpointIdentification = methodIdentification(method, targetClass, txAttr);
 
    if (txAttr == null || !(ptm instanceof CallbackPreferringPlatformTransactionManager)) {
       // Standard transaction demarcation with getTransaction and commit/rollback calls.
+      // 如果有必要，则开启事务（底层创建事务）
       TransactionInfo txInfo = createTransactionIfNecessary(ptm, txAttr, joinpointIdentification);
 
       Object retVal;
       try {
          // This is an around advice: Invoke the next interceptor in the chain.
          // This will normally result in a target object being invoked.
+         // 调用调用链中下一个interceptor：此时我们的事务方法也在此处链中被执行
          retVal = invocation.proceedWithInvocation();
       }
       catch (Throwable ex) {
          // target invocation exception
+         // 抛异常时，完成事务
          completeTransactionAfterThrowing(txInfo, ex);
          throw ex;
       }
       finally {
+         // 清除事务信息（底层使用ThreadLocal记录的事务信息）
          cleanupTransactionInfo(txInfo);
       }
 
@@ -87,7 +142,7 @@ protected Object invokeWithinTransaction(Method method, @Nullable Class<?> targe
             retVal = VavrDelegate.evaluateTryFailure(retVal, txAttr, status);
          }
       }
-
+      // 提交事务
       commitTransactionAfterReturning(txInfo);
       return retVal;
    }
@@ -98,8 +153,10 @@ protected Object invokeWithinTransaction(Method method, @Nullable Class<?> targe
       // It's a CallbackPreferringPlatformTransactionManager: pass a TransactionCallback in.
       try {
          Object result = ((CallbackPreferringPlatformTransactionManager) ptm).execute(txAttr, status -> {
+            // 准备txInfo
             TransactionInfo txInfo = prepareTransactionInfo(ptm, txAttr, joinpointIdentification, status);
             try {
+               // 调用调用链中下一个interceptor：此时我们的事务方法也在此处链中被执行
                Object retVal = invocation.proceedWithInvocation();
                if (vavrPresent && VavrDelegate.isVavrTry(retVal)) {
                   // Set rollback-only in case of Vavr failure matching our rollback rules...
@@ -124,6 +181,7 @@ protected Object invokeWithinTransaction(Method method, @Nullable Class<?> targe
                }
             }
             finally {
+               // 清除事务信息（底层使用ThreadLocal记录的事务信息）
                cleanupTransactionInfo(txInfo);
             }
          });
@@ -153,6 +211,10 @@ protected Object invokeWithinTransaction(Method method, @Nullable Class<?> targe
    }
 }
 ```
+
+
+
+
 
 AbstractAutoProxyCreator
 
