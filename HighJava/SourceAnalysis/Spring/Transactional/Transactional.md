@@ -300,11 +300,15 @@ TransactionAspectSupport->TransactionAspectSupport: prepareTransactionInfo
 
   数据源，
 
+  
+
+  ![DataSource](Transactional.assets/DataSource.png)
+
  
 
 
 
-
+​	
 
 
 
