@@ -212,6 +212,132 @@ protected Object invokeWithinTransaction(Method method, @Nullable Class<?> targe
 }
 ```
 
+看完了上述的这个方法，对整个事务的流程也有个大致了解，无非就是那套：
+
+````java
+// 以下为伪代码
+
+// 开启事务
+begin transaction
+    
+try{
+   // 业务操作
+   do business   
+} catch(E e){  
+   // 异常后回滚 
+   rollback
+       
+   throw e;
+}
+
+// 提交事务
+commit
+````
+
+此时，我们有以下几个疑问：
+
+- 事务是数据库实现的，开启事务还得依赖数据库，那么操作数据库开启事务的代码在哪里？
+- 数据库有很多种，如何区分的呢？
+
+带着问题我们先看**开启事务**这部分的源码：
+
+```java
+// Standard transaction demarcation with getTransaction and commit/rollback calls.
+TransactionInfo txInfo = createTransactionIfNecessary(ptm, txAttr, joinpointIdentification);
+```
+
+从上述入口开始，为了更清晰的展示事务的核心逻辑，将不在展示调用链中的每一步的代码实现，我们用代码调用链画出源码逻辑：
+
+**Tips：** 数据库连接池选用Druid实现
+
+```sequence
+TransactionAspectSupport->TransactionAspectSupport: createTransactionIfNecessary
+TransactionAspectSupport->DataSourceTransactionManager: getTransaction
+DataSourceTransactionManager->DataSourceTransactionManager: doGetTransaction
+DataSourceTransactionManager->DataSourceTransactionManager: startTransaction
+DataSourceTransactionManager->DataSourceTransactionManager: newTransactionStatus
+DataSourceTransactionManager->DataSourceTransactionManager: doBegin
+DataSourceTransactionManager->DruidDataSource: getConnection
+DataSourceTransactionManager->DataSourceTransactionObject: setConnectionHolder
+DataSourceTransactionManager->DataSourceTransactionObject: setReadOnly(definition.isReadOnly())
+DataSourceTransactionManager->DataSourceTransactionObject: ...
+DataSourceTransactionManager->DataSourceTransactionManager: prepareSynchronization
+
+TransactionAspectSupport->TransactionAspectSupport: prepareTransactionInfo
+```
+
+上图中主要展示了TransactionAspectSupport、DataSourceTransactionManager、DataSource、DataSourceTransactionObject这4个类：
+
+- TransactionAspectSupport
+
+  主要实现了事务的Aop逻辑，不涉及事务实现的细节
+
+- DataSourceTransactionManager
+
+  继承了AbstractPlatformTransactionManager，实现了接口PlatformTransactionManager，主要封装了事务实现细节，但与数据库的连接等操作，依赖于接口DataSource的实现。
+
+  - AbstractPlatformTransactionManager
+
+    源码介绍：Abstract base class that implements Spring's standard transaction workflow, serving as basis for concrete platform transaction managers 
+
+    翻译：实现Spring的标准事务工作流的抽象基类，用作具体平台事务管理器的基础
+
+  - PlatformTransactionManager
+
+    源码介绍：This is the central interface in Spring's transaction infrastructure. Applications can use this directly, but it is not primarily meant as API: Typically, applications will work with either TransactionTemplate or declarative transaction demarcation through AOP.
+
+    翻译：这是Spring事务基础架构中的中央接口。应用程序可以直接使用它，但是它并不是主要用于API：通常，应用程序可以通过Transaction模板或通过AOP进行声明式事务划分来使用。
+
+  当然，Spring中肯定不会仅仅有DataSourceTransactionManager这一个实现，她还有HibernateTransactionManager、JpaTransactionManager等等实现，我们大致看下类图，至于各自实现的细节，不在本篇文章中描述：
+
+  ![PlatformTransactionManagerImpl](Transactional.assets/PlatformTransactionManagerImpl.png)
+
+- DataSourceTransactionObject
+
+  为DataSourceTransactionManager的静态内部类，被DataSourceTransactionManager所使用，为了保存Connection并操作其方法。
+
+- DataSource
+
+  数据源，
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
