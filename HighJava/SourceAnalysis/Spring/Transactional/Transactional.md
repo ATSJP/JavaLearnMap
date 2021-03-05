@@ -44,7 +44,7 @@ public class B {
 
 那么此时调用`a.test()`，会被代理一层，其中a是代理类，代理类很长，但是目的是代理方法，我们只要关注被代理的方法即可，即：test()。
 
-下面为代理类（代理类如何获得？[飞机票]()）：
+下面为代理类（代理类如何获得？[飞机票](../../Jdk/Class.md)）：
 
 ```java
 import java.lang.reflect.Method;
