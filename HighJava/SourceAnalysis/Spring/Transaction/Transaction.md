@@ -692,7 +692,7 @@ CglibMethodInvocation->TransactionInterceptor: invoke
 
 这边的代码大家一看就懂，无非就是获取目标Class对象，然后继续调用`invokeWithinTransaction`，在继续往下看之前，我们先看下类图：
 
-![TransactionUml](Transactional.assets/TransactionUml.png)
+![TransactionUml](Transaction.assets/TransactionUml.png)
 
 TransactionAspectSupport：实现了Spring事务基础架构，为任何后续的实现提供了基础。
 
@@ -920,7 +920,7 @@ TransactionAspectSupport->TransactionAspectSupport: prepareTransactionInfo
 
   当然，Spring中肯定不会仅仅有DataSourceTransactionManager这一个实现，她还有HibernateTransactionManager、JpaTransactionManager等等实现，我们大致看下类图，至于各自实现的细节，不在本篇文章中描述：
 
-  ![PlatformTransactionManagerImpl](Transactional.assets/PlatformTransactionManagerImpl.png)
+  ![PlatformTransactionManagerImpl](Transaction.assets/PlatformTransactionManagerImpl.png)
 
 - DataSourceTransactionObject
 
@@ -932,7 +932,7 @@ TransactionAspectSupport->TransactionAspectSupport: prepareTransactionInfo
 
   同样，DataSource的实现有很多，我们挑几个常见的，看下类图：
 
-  ![DataSource](Transactional.assets/DataSource.png)
+  ![DataSource](Transaction.assets/DataSource.png)
 
 其中与数据库交互的方法为DataSourceTransactionManager的doBegin：
 
