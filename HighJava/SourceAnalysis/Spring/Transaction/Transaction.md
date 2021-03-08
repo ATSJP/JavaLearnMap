@@ -6,7 +6,7 @@
 
 ### 简介
 
-见[Spring事务](../../../../BaseJava/Spring/Collection/Spring事务.md)
+见[Spring事务](../../../../BaseJava/Spring/Spring事务.md)
 
 ### 源码分析
 
