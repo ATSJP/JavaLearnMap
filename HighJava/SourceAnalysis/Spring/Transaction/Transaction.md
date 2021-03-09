@@ -10,7 +10,7 @@
 
 ### 源码分析
 
-大家都知道Spring的事务是基于AOP完成的，那么我们就从这个AOP说起。
+大家都知道Spring的事务是基于[AOP](../Aop/Aop.md)完成的，那么我们就从这个AOP说起。
 
 假设一个例子：
 
@@ -174,6 +174,33 @@ DynamicAdvisedInterceptor->CglibMethodInvocation: proceed
 CglibMethodInvocation->TransactionInterceptor: invoke
 ```
 
+上图中主要展示了A$$EnhancerBySpringCGLIB$$21771092、DynamicAdvisedInterceptor、CglibMethodInvocation、TransactionInterceptor这4个类：
+
+
+- A$$EnhancerBySpringCGLIB$$21771092
+
+  Aop生成的代理类
+
+- DynamicAdvisedInterceptor
+
+  General purpose AOP callback. Used when the target is dynamic or when the proxy is not frozen.
+
+  通用 AOP 回调。当目标为动态的或者代理不被禁用时使用。为CglibAopProxy的静态内部类。
+
+- CglibMethodInvocation
+
+  Implementation of AOP Alliance MethodInvocation used by this AOP proxy.
+
+  此 AOP 代理使用的 AOP Alliance MethodInvocation 的实现。为CglibAopProxy的静态内部类。
+
+- TransactionInterceptor
+
+  AOP Alliance MethodInterceptor for declarative transaction management using the common Spring transaction infrastructure (PlatformTransactionManager).
+  Derives from the TransactionAspectSupport class which contains the integration with Spring's underlying transaction API. TransactionInterceptor simply calls the relevant superclass methods such as invokeWithinTransaction in the correct order.
+
+  AOP Alliance MethodInterceptor 使用通用 Spring 事务基础结构 (PlatformTransactionManager) 进行声明式事务管理。
+  派生自 TransactionAspectSupport 类，该类包含与 Spring 的底层事务 API 的集成。 TransactionInterceptor 只是以正确的顺序调用相关的超类方法，例如 invokeWithinTransaction。
+
 最终调用`org.springframework.transaction.interceptor.TransactionInterceptor#invoke`，看到这里终于开始有事务的影子了，我们继续往下看：
 
 ```java
@@ -195,7 +222,7 @@ public Object invoke(MethodInvocation invocation) throws Throwable {
 
 ![TransactionUml](Transaction.assets/TransactionUml.png)
 
-TransactionAspectSupport：实现了Spring事务基础架构，为任何后续的实现提供了基础。
+- TransactionAspectSupport：实现了Spring事务基础架构，为任何后续的实现提供了基础。
 
 TransactionInterceptor继承TransactionAspectSupport，而`invokeWithinTransaction`是TransactionAspectSupport的方法。下面，我们继续分析`invokeWithinTransaction`方法：（这个方法有点长，我将大致的代码思路备注在源码中）
 
@@ -418,7 +445,7 @@ TransactionAspectSupport->TransactionAspectSupport: prepareTransactionInfo
 
     翻译：这是Spring事务基础架构中的中央接口。应用程序可以直接使用它，但是它并不是主要用于API：通常，应用程序可以通过Transaction模板或通过AOP进行声明式事务划分来使用。
 
-  当然，Spring中肯定不会仅仅有DataSourceTransactionManager这一个实现，她还有HibernateTransactionManager、JpaTransactionManager等等实现，我们大致看下类图，至于各自实现的细节，不在本篇文章中描述：
+  当然，Spring中肯定不会仅仅有DataSourceTransactionManager这一个实现，她还有HibernateTransactionManager、JpaTransactionManager等等实现，我们大致看下类图，至于各自实现的细节，不在本篇文章中描述(下图中也是部分)：
 
   ![PlatformTransactionManagerImpl](Transaction.assets/PlatformTransactionManagerImpl.png)
 
