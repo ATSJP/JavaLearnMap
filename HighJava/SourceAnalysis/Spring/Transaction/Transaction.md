@@ -177,18 +177,18 @@ CglibMethodInvocation->TransactionInterceptor: invoke
 最终调用`org.springframework.transaction.interceptor.TransactionInterceptor#invoke`，看到这里终于开始有事务的影子了，我们继续往下看：
 
 ```java
-	@Override
-	@Nullable
-	public Object invoke(MethodInvocation invocation) throws Throwable {
-		// Work out the target class: may be {@code null}.
-		// The TransactionAttributeSource should be passed the target class
-		// as well as the method, which may be from an interface.
-		Class<?> targetClass = (invocation.getThis() != null ? AopUtils.getTargetClass(invocation.getThis()) : null);
+@Override
+@Nullable
+public Object invoke(MethodInvocation invocation) throws Throwable {
+    // Work out the target class: may be {@code null}.
+    // The TransactionAttributeSource should be passed the target class
+    // as well as the method, which may be from an interface.
+    Class<?> targetClass = (invocation.getThis() != null ? AopUtils.getTargetClass(invocation.getThis()) : null);
 
-		// Adapt to TransactionAspectSupport's invokeWithinTransaction...
-         // 调用TransactionAspectSupport的invokeWithinTransaction方法
-		return invokeWithinTransaction(invocation.getMethod(), targetClass, invocation::proceed);
-	}
+    // Adapt to TransactionAspectSupport's invokeWithinTransaction...
+    // 调用TransactionAspectSupport的invokeWithinTransaction方法
+    return invokeWithinTransaction(invocation.getMethod(), targetClass, invocation::proceed);
+}
 ```
 
 这边的代码大家一看就懂，无非就是获取目标Class对象，然后继续调用`invokeWithinTransaction`，在继续往下看之前，我们先看下类图：
