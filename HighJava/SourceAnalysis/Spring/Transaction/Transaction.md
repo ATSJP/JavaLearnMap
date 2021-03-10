@@ -405,7 +405,7 @@ TransactionInfo txInfo = createTransactionIfNecessary(ptm, txAttr, joinpointIden
 
 从上述入口开始，为了更清晰的展示事务的核心逻辑，将不在展示调用链中的每一步的代码实现，我们用代码调用链画出源码逻辑：
 
-**Tips：** 数据库连接池选用Druid实现
+**Tips：** 假设数据库连接池选用Druid实现，其他连接池实现大抵相似。
 
 ```sequence
 TransactionAspectSupport->TransactionAspectSupport: createTransactionIfNecessary
@@ -435,15 +435,15 @@ TransactionAspectSupport->TransactionAspectSupport: prepareTransactionInfo
 
   - AbstractPlatformTransactionManager
 
-    源码介绍：Abstract base class that implements Spring's standard transaction workflow, serving as basis for concrete platform transaction managers 
+    Abstract base class that implements Spring's standard transaction workflow, serving as basis for concrete platform transaction managers 
 
-    翻译：实现Spring的标准事务工作流的抽象基类，用作具体平台事务管理器的基础
+    实现Spring的标准事务工作流的抽象基类，用作具体平台事务管理器的基础
 
   - PlatformTransactionManager
 
-    源码介绍：This is the central interface in Spring's transaction infrastructure. Applications can use this directly, but it is not primarily meant as API: Typically, applications will work with either TransactionTemplate or declarative transaction demarcation through AOP.
+    This is the central interface in Spring's transaction infrastructure. Applications can use this directly, but it is not primarily meant as API: Typically, applications will work with either TransactionTemplate or declarative transaction demarcation through AOP.
 
-    翻译：这是Spring事务基础架构中的中央接口。应用程序可以直接使用它，但是它并不是主要用于API：通常，应用程序可以通过Transaction模板或通过AOP进行声明式事务划分来使用。
+    这是Spring事务基础架构中的中央接口。应用程序可以直接使用它，但是它并不是主要用于API：通常，应用程序可以通过Transaction模板或通过AOP进行声明式事务划分来使用。
 
   当然，Spring中肯定不会仅仅有DataSourceTransactionManager这一个实现，她还有HibernateTransactionManager、JpaTransactionManager等等实现，我们大致看下类图，至于各自实现的细节，不在本篇文章中描述(下图中也是部分)：
 
