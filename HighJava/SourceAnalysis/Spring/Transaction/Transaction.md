@@ -279,17 +279,17 @@ protected Object invokeWithinTransaction(Method method, @Nullable Class<?> targe
       try {
          // This is an around advice: Invoke the next interceptor in the chain.
          // This will normally result in a target object being invoked.
-         // 调用调用链中下一个interceptor：此时我们的事务方法也在此处链中被执行
+         // 执行目标方法
          retVal = invocation.proceedWithInvocation();
       }
       catch (Throwable ex) {
          // target invocation exception
-         // 抛异常时，完成事务
+         // 抛异常时，回滚事务
          completeTransactionAfterThrowing(txInfo, ex);
          throw ex;
       }
       finally {
-         // 清除事务信息（底层使用ThreadLocal记录的事务信息）
+         // 清除当前线程的事务信息（底层使用ThreadLocal记录的线程的事务信息）
          cleanupTransactionInfo(txInfo);
       }
 
@@ -393,6 +393,7 @@ commit
 
 此时，我们有以下几个疑问：
 
+- 事务有传播性，这是如何实现的？
 - 事务是数据库实现的，开启事务还得依赖数据库，那么操作数据库开启事务的代码在哪里？
 - 数据库有很多种，如何区分的呢？
 
@@ -403,7 +404,225 @@ commit
 TransactionInfo txInfo = createTransactionIfNecessary(ptm, txAttr, joinpointIdentification);
 ```
 
-从上述入口开始，为了更清晰的展示事务的核心逻辑，将不在展示调用链中的每一步的代码实现，我们用代码调用链画出源码逻辑：
+`createTransactionIfNecessary`方法如下：
+
+```java
+protected TransactionInfo createTransactionIfNecessary(@Nullable PlatformTransactionManager tm,
+      @Nullable TransactionAttribute txAttr, final String joinpointIdentification) {
+
+   // If no name specified, apply method identification as transaction name.
+   if (txAttr != null && txAttr.getName() == null) {
+      txAttr = new DelegatingTransactionAttribute(txAttr) {
+         @Override
+         public String getName() {
+            return joinpointIdentification;
+         }
+      };
+   }
+
+   TransactionStatus status = null;
+   if (txAttr != null) {
+      if (tm != null) {
+         // 获取事务状态 
+         status = tm.getTransaction(txAttr);
+      }
+      else {
+         if (logger.isDebugEnabled()) {
+            logger.debug("Skipping transactional joinpoint [" + joinpointIdentification +
+                  "] because no transaction manager has been configured");
+         }
+      }
+   }
+   // 准备事务信息
+   return prepareTransactionInfo(tm, txAttr, joinpointIdentification, status);
+}
+```
+
+首先来看下获取事务状态，方法位于`AbstractPlatformTransactionManager`中：
+
+```java
+@Override
+public final TransactionStatus getTransaction(@Nullable TransactionDefinition definition)
+      throws TransactionException {
+
+   // Use defaults if no transaction definition given.
+   // 如果未定义，则使用默认值
+   TransactionDefinition def = (definition != null ? definition : TransactionDefinition.withDefaults());
+
+   Object transaction = doGetTransaction();
+   boolean debugEnabled = logger.isDebugEnabled();
+
+   // 是否已经存在事务
+   if (isExistingTransaction(transaction)) {
+      // Existing transaction found -> check propagation behavior to find out how to behave.
+      // 已经存在事务 -> 检查传播行为以了解如何继续
+      return handleExistingTransaction(def, transaction, debugEnabled);
+   }
+
+   // Check definition settings for new transaction.
+   if (def.getTimeout() < TransactionDefinition.TIMEOUT_DEFAULT) {
+      throw new InvalidTimeoutException("Invalid transaction timeout", def.getTimeout());
+   }
+
+   // No existing transaction found -> check propagation behavior to find out how to proceed.
+   // 未找到现有事务 -> 检查传播行为以了解如何继续
+   if (def.getPropagationBehavior() == TransactionDefinition.PROPAGATION_MANDATORY) {
+      // 未找到现有事务，事务传播行为为PROPAGATION_MANDATORY，则抛出异常（因为PROPAGATION_MANDATORY表示，当前方法执行必须在事务内，没有则抛异常）
+      throw new IllegalTransactionStateException(
+            "No existing transaction found for transaction marked with propagation 'mandatory'");
+   }
+   else if (def.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRED ||
+         def.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRES_NEW ||
+         def.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NESTED) {
+      // 挂起资源
+      SuspendedResourcesHolder suspendedResources = suspend(null);
+      if (debugEnabled) {
+         logger.debug("Creating new transaction with name [" + def.getName() + "]: " + def);
+      }
+      try {
+         // 开启事务
+         return startTransaction(def, transaction, debugEnabled, suspendedResources);
+      }
+      catch (RuntimeException | Error ex) {
+         resume(null, suspendedResources);
+         throw ex;
+      }
+   }
+   else {
+      // Create "empty" transaction: no actual transaction, but potentially synchronization.
+      // 创建“空”事务：没有实际事务，但可能是同步的
+      if (def.getIsolationLevel() != TransactionDefinition.ISOLATION_DEFAULT && logger.isWarnEnabled()) {
+         logger.warn("Custom isolation level specified but no actual transaction initiated; " +
+               "isolation level will effectively be ignored: " + def);
+      }
+      boolean newSynchronization = (getTransactionSynchronization() == SYNCHRONIZATION_ALWAYS);
+      return prepareTransactionStatus(def, null, true, newSynchronization, debugEnabled, null);
+   }
+}
+```
+
+从上述方法中，我们发现，Spring的事务传播性在`getTransaction`得到实现，下面继续看**开启事务**方法`startTransaction`，
+
+```java
+private TransactionStatus startTransaction(TransactionDefinition definition, Object transaction,
+      boolean debugEnabled, @Nullable SuspendedResourcesHolder suspendedResources) {
+   boolean newSynchronization = (getTransactionSynchronization() != SYNCHRONIZATION_NEVER);
+   // 根据给定的参数，创建一个TransactionStatus实例
+   DefaultTransactionStatus status = newTransactionStatus(
+         definition, transaction, true, newSynchronization, debugEnabled, suspendedResources);
+   // 开启一个新的事务
+   doBegin(transaction, definition);
+   // 根据需要初始化事务同步
+   prepareSynchronization(status, definition);
+   return status;
+}
+```
+
+很明显`doBegin`是具体开启事务的入口，`doBegin`为抽象类`AbstractPlatformTransactionManager`的抽象方法，我们看看Javadoc的注释：
+
+```java
+	/**
+	 * Begin a new transaction with semantics according to the given transaction
+	 * definition. Does not have to care about applying the propagation behavior,
+	 * as this has already been handled by this abstract manager.
+	 * <p>This method gets called when the transaction manager has decided to actually
+	 * start a new transaction. Either there wasn't any transaction before, or the
+	 * previous transaction has been suspended.
+	 * <p>A special scenario is a nested transaction without savepoint: If
+	 * {@code useSavepointForNestedTransaction()} returns "false", this method
+	 * will be called to start a nested transaction when necessary. In such a context,
+	 * there will be an active transaction: The implementation of this method has
+	 * to detect this and start an appropriate nested transaction.
+	 * @param transaction the transaction object returned by {@code doGetTransaction}
+	 * @param definition a TransactionDefinition instance, describing propagation
+	 * behavior, isolation level, read-only flag, timeout, and transaction name
+	 * @throws TransactionException in case of creation or system errors
+	 * @throws org.springframework.transaction.NestedTransactionNotSupportedException
+	 * if the underlying transaction does not support nesting
+	 */
+	protected abstract void doBegin(Object transaction, TransactionDefinition definition)
+			throws TransactionException;
+```
+
+原文翻译如下：
+
+根据给定的事务定义开始一个具有语义的新事务。不必关心应用传播行为，因为这已经由这个抽象管理器处理了。
+当事务管理器决定实际开始一个新事务时，将调用此方法。要么之前没有任何事务，要么之前的事务已被暂停。
+一个特殊的场景是没有保存点的嵌套事务：如果 useSavepointForNestedTransaction() 返回“false”，则将在必要时调用此方法以启动嵌套事务。在这样的上下文中，将有一个活动事务：此方法的实现必须检测到这一点并启动一个适当的嵌套事务。
+
+白话文：
+
+挑重点看，原文中说会开启一个新的事务，切无需关心底层实现。大致可以猜到此接口将会由不同的事务管理器进行实现，且都内聚了数据库开启事务的具体操作。
+
+大家都知道，咱们用的事务管理器最常见的属`DataSourceTransactionManager`，下面就以它的实现为例，来继续分析：
+
+```java
+@Override
+protected void doBegin(Object transaction, TransactionDefinition definition) {
+    DataSourceTransactionObject txObject = (DataSourceTransactionObject) transaction;
+    Connection con = null;
+
+    try {
+        // 当前线程上下文没有连接器 或者 当前线程上下文的连接器为同步的
+        if (!txObject.hasConnectionHolder() ||
+            txObject.getConnectionHolder().isSynchronizedWithTransaction()) {
+            // 获取DataSource后，在获取Connection对象
+            Connection newCon = obtainDataSource().getConnection();
+            if (logger.isDebugEnabled()) {
+                logger.debug("Acquired Connection [" + newCon + "] for JDBC transaction");
+            }
+            // 设置当前线程连接器上下文
+            txObject.setConnectionHolder(new ConnectionHolder(newCon), true);
+        }
+        // 将资源标记为与事务同步
+        txObject.getConnectionHolder().setSynchronizedWithTransaction(true);
+        // 获取连接
+        con = txObject.getConnectionHolder().getConnection();
+
+        Integer previousIsolationLevel = DataSourceUtils.prepareConnectionForTransaction(con, definition);
+        txObject.setPreviousIsolationLevel(previousIsolationLevel);
+        txObject.setReadOnly(definition.isReadOnly());
+
+        // Switch to manual commit if necessary. This is very expensive in some JDBC drivers,
+        // so we don't want to do it unnecessarily (for example if we've explicitly
+        // configured the connection pool to set it already).
+        if (con.getAutoCommit()) {
+            txObject.setMustRestoreAutoCommit(true);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Switching JDBC Connection [" + con + "] to manual commit");
+            }
+            con.setAutoCommit(false);
+        }
+
+        prepareTransactionalConnection(con, definition);
+        txObject.getConnectionHolder().setTransactionActive(true);
+
+        int timeout = determineTimeout(definition);
+        if (timeout != TransactionDefinition.TIMEOUT_DEFAULT) {
+            txObject.getConnectionHolder().setTimeoutInSeconds(timeout);
+        }
+
+        // Bind the connection holder to the thread.
+        if (txObject.isNewConnectionHolder()) {
+            TransactionSynchronizationManager.bindResource(obtainDataSource(), txObject.getConnectionHolder());
+        }
+    }
+
+    catch (Throwable ex) {
+        if (txObject.isNewConnectionHolder()) {
+            // 释放连接
+            DataSourceUtils.releaseConnection(con, obtainDataSource());
+            // 清空当前线程的连接器上下文
+            txObject.setConnectionHolder(null, false);
+        }
+        throw new CannotCreateTransactionException("Could not open JDBC Connection for transaction", ex);
+    }
+}
+```
+
+核心逻辑` Connection newCon = obtainDataSource().getConnection();`，数据库连接的获取就在此处，由于接口`DataSource`的实现较多，我们不再往下继续展示源码逻辑。
+
+看完了源码，为了更清晰的展示事务的核心逻辑，我们用代码调用链画出源码逻辑：
 
 **Tips：** 假设数据库连接池选用Druid实现，其他连接池实现大抵相似。
 
@@ -461,79 +680,11 @@ TransactionAspectSupport->TransactionAspectSupport: prepareTransactionInfo
 
   ![DataSource](Transaction.assets/DataSource.png)
 
-其中与数据库交互的方法为DataSourceTransactionManager的doBegin：
-
-```java
-/**
- * This implementation sets the isolation level but ignores the timeout.
- */
-@Override
-protected void doBegin(Object transaction, TransactionDefinition definition) {
-   DataSourceTransactionObject txObject = (DataSourceTransactionObject) transaction;
-   Connection con = null;
-
-   try {
-      if (!txObject.hasConnectionHolder() ||
-            txObject.getConnectionHolder().isSynchronizedWithTransaction()) {
-         // 获取数据库连接
-         Connection newCon = obtainDataSource().getConnection();
-         if (logger.isDebugEnabled()) {
-            logger.debug("Acquired Connection [" + newCon + "] for JDBC transaction");
-         }
-         // 维护ConnectionHolder
-         txObject.setConnectionHolder(new ConnectionHolder(newCon), true);
-      }
-
-      txObject.getConnectionHolder().setSynchronizedWithTransaction(true);
-      con = txObject.getConnectionHolder().getConnection();
-
-      // 设置事务隔离级别
-      Integer previousIsolationLevel = DataSourceUtils.prepareConnectionForTransaction(con, definition);
-      txObject.setPreviousIsolationLevel(previousIsolationLevel);
-      // 设置事务是否只读
-      txObject.setReadOnly(definition.isReadOnly());
-
-      // Switch to manual commit if necessary. This is very expensive in some JDBC drivers,
-      // so we don't want to do it unnecessarily (for example if we've explicitly
-      // configured the connection pool to set it already).
-      // 自动提交
-      if (con.getAutoCommit()) {
-         txObject.setMustRestoreAutoCommit(true);
-         if (logger.isDebugEnabled()) {
-            logger.debug("Switching JDBC Connection [" + con + "] to manual commit");
-         }
-         con.setAutoCommit(false);
-      }
-
-      prepareTransactionalConnection(con, definition);
-      txObject.getConnectionHolder().setTransactionActive(true);
-
-      // 设置超时时间
-      int timeout = determineTimeout(definition);
-      if (timeout != TransactionDefinition.TIMEOUT_DEFAULT) {
-         txObject.getConnectionHolder().setTimeoutInSeconds(timeout);
-      }
-
-      // Bind the connection holder to the thread.
-      if (txObject.isNewConnectionHolder()) {
-         TransactionSynchronizationManager.bindResource(obtainDataSource(), txObject.getConnectionHolder());
-      }
-   }
-
-   catch (Throwable ex) {
-      if (txObject.isNewConnectionHolder()) {
-         DataSourceUtils.releaseConnection(con, obtainDataSource());
-         txObject.setConnectionHolder(null, false);
-      }
-      throw new CannotCreateTransactionException("Could not open JDBC Connection for transaction", ex);
-   }
-}
-```
-
  到这里，回顾下我们的问题，看看是不是都得到了解答。
 
 > 此时，我们有以下几个疑问：
 >
+> - 事务有传播性，这是如何实现的？
 > - 事务是数据库实现的，开启事务还得依赖数据库，那么操作数据库开启事务的代码在哪里？
 > - 数据库有很多种，如何区分的呢？
 
