@@ -10,6 +10,8 @@
 
 ### 源码分析
 
+#### 从事务如何生效开始
+
 大家都知道Spring的事务是基于[AOP](../Aop/Aop.md)完成的，那么我们就从这个AOP说起。
 
 假设一个例子：
@@ -397,14 +399,7 @@ commit
 - 事务是数据库实现的，开启事务还得依赖数据库，那么操作数据库开启事务的代码在哪里？
 - 数据库有很多种，如何区分的呢？
 
-带着问题我们先看**开启事务**这部分的源码：
-
-```java
-// Standard transaction demarcation with getTransaction and commit/rollback calls.
-TransactionInfo txInfo = createTransactionIfNecessary(ptm, txAttr, joinpointIdentification);
-```
-
-`createTransactionIfNecessary`方法如下：
+带着问题我们先看**开启事务**这部分的源码`TransactionInfo txInfo = createTransactionIfNecessary(ptm, txAttr, joinpointIdentification);`：
 
 ```java
 protected TransactionInfo createTransactionIfNecessary(@Nullable PlatformTransactionManager tm,
@@ -423,7 +418,7 @@ protected TransactionInfo createTransactionIfNecessary(@Nullable PlatformTransac
    TransactionStatus status = null;
    if (txAttr != null) {
       if (tm != null) {
-         // 获取事务状态 
+         // 获取事务
          status = tm.getTransaction(txAttr);
       }
       else {
@@ -438,7 +433,7 @@ protected TransactionInfo createTransactionIfNecessary(@Nullable PlatformTransac
 }
 ```
 
-首先来看下获取事务状态，方法位于`AbstractPlatformTransactionManager`中：
+首先来看下获取事务，方法位于`AbstractPlatformTransactionManager`中：
 
 ```java
 @Override
@@ -688,6 +683,10 @@ TransactionAspectSupport->TransactionAspectSupport: prepareTransactionInfo
 > - 事务是数据库实现的，开启事务还得依赖数据库，那么操作数据库开启事务的代码在哪里？
 > - 数据库有很多种，如何区分的呢？
 
+- 事务有传播性，这是如何实现的？
+
+  方法为`AbstractPlatformTransactionManager.getTransaction`，根据事务定义的传播级别，来做判断处理。
+
 - 事务是数据库实现的，开启事务还得依赖数据库，那么操作数据库开启事务的代码在哪里？
 
   答案：接口PlatformTransactionManager的抽象实现AbstractPlatformTransactionManager，主要封装了事务的工作流，其中开启事务的核心入口`doBegin`为抽象方法，交由子类实现。以常见的DataSourceTransactionManager为例，`doBegin`方法中依赖了DataSource接口的实现，通过DataSource.getConnection()获取数据库连接Connection对象，并做一系列的数据库事务开启操作。
@@ -697,3 +696,18 @@ TransactionAspectSupport->TransactionAspectSupport: prepareTransactionInfo
   答案：Spring将事务的实现做了抽象。针对事务的工作流，提供了灵活的接口和抽象类，比如：接口PlatformTransactionManager、抽象基类AbstractPlatformTransactionManager，通过实现、继承来完成不同数据库的差异性。针对数据库的交互细节，提供了接口DataSource的定义，不同的数据源都可以进行自己的实现，来完成数据源的实现。
 
 到此，你是不是对Spring事务的实现有所了解了呢？
+
+最后，附上前辈画的一张图，辅助大家对Spring事务源码的理解：
+
+![TransactionInfrastructure](Transaction.assets/TransactionInfrastructure.jpeg)
+
+
+
+
+
+
+
+
+
+
+
