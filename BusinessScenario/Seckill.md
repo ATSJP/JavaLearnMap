@@ -72,7 +72,7 @@
 
 有人说，算法再优秀，那也是需要开发重新造轮子的，毕竟算法不是搬来即用，还需要和业务结合使用。那么是否有开源的框架能干这个事呢？
 
-答案肯定是有的，比如[Sentinel](..\HighJava\Distributed\CircuitBreaker)、[Hystrix](..\HighJava\Distributed\Hystrix)等。
+答案肯定是有的，比如[Sentinel](../HighJava/Distributed/CircuitBreaker)、[Hystrix](../HighJava/Distributed/Hystrix)等。
 
 ##### 服务单一职责
 
