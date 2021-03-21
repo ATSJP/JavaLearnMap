@@ -158,7 +158,12 @@ Java转汇编：
 
 **内存屏障指令**：为了实现 volatile 内存语义（即内存可见性），JMM 会限制特定类型的编译器和处理器重排序。为此，JMM 针对编译器制定了 volatile 重排序规则表，如下所示：
 
-![img](https://pic2.zhimg.com/80/v2-5004d1364ef68f4d71a730f719570dcd_720w.jpg)
+| 是否重排序 | 第二次操作 | 第二次操作 | 第二次操作 |
+| :--------: | :--------: | :--------: | :--------: |
+| 第一次操作 | 普通读/写  | Volatile读 | Volatile写 |
+| 普通读/写  |    YES     |    YES     |     NO     |
+| Volatile读 |     NO     |     NO     |     NO     |
+| Volatile写 |    YES     |     NO     |     NO     |
 
 使用 volatile 修饰变量时，根据 volatile 重排序规则表，Java 编译器在生成字节码时，会在指令序列中插入内存屏障指令来禁止特定类型的处理器重排序。
 
@@ -166,13 +171,13 @@ Java转汇编：
 
 JMM 把内存屏障指令分为下列四类：
 
-![img](https://pic4.zhimg.com/80/v2-a992d2e50fc353edb9027683bf62ee2b_720w.jpg)
+![img](Volatile.assets/v2-a992d2e50fc353edb9027683bf62ee2b_720w.jpg)
 
 > StoreLoad 屏障是一个全能型的屏障，它同时具有其他三个屏障的效果。所以执行该屏障开销会很大，因为它使处理器要把缓存中的数据全部刷新到内存中。
 
 下面我们来看看 volatile 读 / 写时是如何插入内存屏障的，见下图：
 
-![img](https://pic3.zhimg.com/80/v2-fdead3feef1123c1c225826559def686_720w.jpg)
+![img](Volatile.assets/v2-fdead3feef1123c1c225826559def686_720w.jpg)
 
 从上图，我们可以知道 volatile 读 / 写插入内存屏障规则：
 

@@ -43,6 +43,9 @@
 ```java
 public int strStr(String haystack, String needle) {
     int n = haystack.length(), m = needle.length();
+    if(m == 0){
+        return 0;
+    }
     for (int i = 0; i + m <= n; i++) {
         boolean flag = true;
         for (int j = 0; j < m; j++) {
