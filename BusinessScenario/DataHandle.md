@@ -187,8 +187,6 @@
 #### 代码实现
 
 ```java
-package com.focustech.ins.web.appinfo.service;
-
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RBucket;
 import org.redisson.api.RFuture;
@@ -202,6 +200,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -211,7 +210,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * 分段任务处理
  *
- * @author atsjp
+ * @author shijianpeng
  */
 public abstract class AbstractFragmentsService {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -222,6 +221,12 @@ public abstract class AbstractFragmentsService {
 	public void start() {
 		// 获取prefixCacheKey
 		String prefixCacheKey = this.getPrefixCacheKeyNotBlank();
+		// 是否已经完成
+		RBucket<Boolean> fragmentsFinishCache = this.getFragmentsFinishCache();
+		if (fragmentsFinishCache.isExists() && fragmentsFinishCache.get()) {
+			logger.info("finish,prefixCacheKey:{}", prefixCacheKey);
+			return;
+		}
 		// 尝试初始化分段预备数据
 		if (!this.tryInitFragmentsPrepareData()) {
 			logger.info("tryInitFragmentsData fail,prefixCacheKey:{}", prefixCacheKey);
@@ -233,6 +238,8 @@ public abstract class AbstractFragmentsService {
 			logger.info("cannot get fragments,maybe done?,prefixCacheKey:{}", prefixCacheKey);
 			return;
 		}
+		// 尝试标记分段已完成
+		this.trySetFragmentsFinishCache();
 		boolean executeResult = false;
 		try {
 			// 存储当前处理中分段
@@ -259,6 +266,33 @@ public abstract class AbstractFragmentsService {
 	}
 
 	/**
+	 * 修复数据处理进度
+	 */
+	public void repair() {
+		// 将处理中的进度，回退到分段数据中，重新处理
+		RScoredSortedSet<Long> fragmentsInProgressCache = this.getFragmentsInProgressCache();
+		if (fragmentsInProgressCache.isExists()) {
+			Iterator<Long> fragmentsInProgressCacheIterator = fragmentsInProgressCache.iterator();
+			RSet<Long> fragmentsSetCache = this.getFragmentsSetCache();
+			while (fragmentsInProgressCacheIterator.hasNext()) {
+				Long fragmentsInProgress = fragmentsInProgressCacheIterator.next();
+				boolean result = fragmentsSetCache.add(fragmentsInProgress);
+				if (result) {
+					fragmentsInProgressCacheIterator.remove();
+				}
+			}
+		}
+		RSet<Long> fragmentsSetCache = this.getFragmentsSetCache();
+		if (fragmentsSetCache.isExists()) {
+			// 删除完成标记
+			RBucket<Boolean> fragmentsFinishCache = this.getFragmentsFinishCache();
+			if (fragmentsFinishCache.isExists()) {
+				this.deleteFragmentsFinishCache();
+			}
+		}
+	}
+
+	/**
 	 * 获取进度
 	 */
 	public Progress getProgress() {
@@ -266,17 +300,14 @@ public abstract class AbstractFragmentsService {
 		if (!fragmentsSourceBucketCache.isExists()) {
 			return null;
 		}
-		RSet<Long> fragmentsSetCache = this.getFragmentsSetCache();
-		if (!fragmentsSetCache.isExists()) {
-			return null;
-		}
 		FragmentsSourceDto fragmentsSourceDto = fragmentsSourceBucketCache.get();
-		int remainFragmentSize = fragmentsSetCache.size();
+		RSet<Long> fragmentsSetCache = this.getFragmentsSetCache();
+		int remainFragmentSize = fragmentsSetCache.isExists() ? fragmentsSetCache.size() : 0;
 		// 计算进度百分比
 		Long fragmentsMax = FragmentsUtils.getFragmentsMax(fragmentsSourceDto);
 		BigDecimal progressBar = new BigDecimal(fragmentsMax - remainFragmentSize)
-				.divide(new BigDecimal(fragmentsMax), 6, BigDecimal.ROUND_DOWN).multiply(new BigDecimal("100"));
-		String progressBarStr = progressBar.setScale(4, BigDecimal.ROUND_DOWN) + "%";
+				.divide(new BigDecimal(fragmentsMax), 6, RoundingMode.DOWN).multiply(new BigDecimal("100"));
+		String progressBarStr = progressBar.setScale(4, RoundingMode.DOWN) + "%";
 		// 计算当前已处理总数
 		long progressNum = (fragmentsMax - remainFragmentSize) * fragmentsSourceDto.getFragmentsSize();
 		return new Progress(progressBarStr, progressNum);
@@ -288,19 +319,23 @@ public abstract class AbstractFragmentsService {
 	 * @return CacheDetail
 	 */
 	public CacheDetail getCacheDetail() {
+		// 分段源数据缓存
 		RBucket<FragmentsSourceDto> fragmentsSourceBucketCache = this.getFragmentsSourceBucketCache();
 		if (!fragmentsSourceBucketCache.isExists()) {
 			return null;
 		}
+		// 数据处理完成标记缓存
+		RBucket<Boolean> fragmentsFinishCache = this.getFragmentsFinishCache();
+		boolean fragmentsFinish = fragmentsFinishCache.isExists() ? fragmentsFinishCache.get() : false;
+		// 处理中的分段数据缓存
 		RScoredSortedSet<Long> fragmentsInProgressCache = this.getFragmentsInProgressCache();
-		if (!fragmentsInProgressCache.isExists()) {
-			return null;
+		if (fragmentsInProgressCache.isExists()) {
+			// 仅仅返回10个
+			Collection<ScoredEntry<Long>> fragmentsInProgressRank = fragmentsInProgressCache.entryRange(0, 10);
+			return new CacheDetail(fragmentsSourceBucketCache.get(), fragmentsInProgressRank,
+					fragmentsInProgressCache.size(), fragmentsFinish);
 		}
-		FragmentsSourceDto fragmentsSourceDto = fragmentsSourceBucketCache.get();
-		// 仅仅返回10个
-		Collection<ScoredEntry<Long>> fragmentsInProgressRank = fragmentsInProgressCache.entryRange(0, 10);
-		int fragmentsInProgressSize = fragmentsInProgressCache.size();
-		return new CacheDetail(fragmentsSourceDto, fragmentsInProgressRank, fragmentsInProgressSize);
+		return new CacheDetail(fragmentsSourceBucketCache.get(), null, 0, fragmentsFinish);
 	}
 
 	/**
@@ -312,6 +347,7 @@ public abstract class AbstractFragmentsService {
 		this.deleteFragmentsSourceCache();
 		this.deleteFragmentsCache();
 		this.deleteFragmentsInProgressCache();
+		this.deleteFragmentsFinishCache();
 		return true;
 	}
 
@@ -468,24 +504,35 @@ public abstract class AbstractFragmentsService {
 	}
 
 	/**
+	 * 尝试标记分段已完成
+	 */
+	private void trySetFragmentsFinishCache() {
+		RSet<Long> fragmentsSetCache = this.getFragmentsSetCache();
+		if (fragmentsSetCache.size() == 0) {
+			// 标记完成
+			this.setFragmentsFinishCache();
+		}
+	}
+
+	/**
 	 * 存储分段源数据缓存
 	 *
 	 * @param fragmentsSourceDto 分段源数据
 	 */
 	private void setFragmentsSourceCache(FragmentsSourceDto fragmentsSourceDto) {
 		RBucket<FragmentsSourceDto> fragmentsSourceCache = this.getRedissonClientNotNull()
-				.getBucket(getFragmentsSourceCacheKey());
+				.getBucket(this.getFragmentsSourceCacheKey());
 		fragmentsSourceCache.set(fragmentsSourceDto);
 	}
 
 	/**
 	 * 存储分段数据缓存
-	 * 
+	 *
 	 * @param fragments 分段数据
 	 * @return boolean true 成功 false 失败
 	 */
 	private boolean setFragmentsCache(Set<Long> fragments) {
-		RSet<Long> fragmentsCache = this.getRedissonClientNotNull().getSet(getFragmentsCacheKey());
+		RSet<Long> fragmentsCache = this.getRedissonClientNotNull().getSet(this.getFragmentsCacheKey());
 		if (fragmentsCache.isExists()) {
 			fragmentsCache.delete();
 		}
@@ -522,14 +569,22 @@ public abstract class AbstractFragmentsService {
 	}
 
 	/**
+	 * 添加数据处理完成标记缓存
+	 */
+	private void setFragmentsFinishCache() {
+		RBucket<Boolean> fragmentsFinishCache = this.getFragmentsFinishCache();
+		fragmentsFinishCache.set(Boolean.TRUE);
+	}
+
+	/**
 	 * 获取分段源数据缓存
 	 *
 	 * @return FragmentsSourceDto
 	 */
 	private FragmentsSourceDto getFragmentsSourceCache() {
-		RBucket<FragmentsSourceDto> rBucket = this.getFragmentsSourceBucketCache();
-		if (rBucket.isExists()) {
-			return rBucket.get();
+		RBucket<FragmentsSourceDto> fragmentsSourceBucketCache = this.getFragmentsSourceBucketCache();
+		if (fragmentsSourceBucketCache.isExists()) {
+			return fragmentsSourceBucketCache.get();
 		}
 		return null;
 	}
@@ -540,7 +595,7 @@ public abstract class AbstractFragmentsService {
 	 * @return RBucket<FragmentsSourceDto> 分段源数据缓存
 	 */
 	private RBucket<FragmentsSourceDto> getFragmentsSourceBucketCache() {
-		return this.getRedissonClientNotNull().getBucket(getFragmentsSourceCacheKey());
+		return this.getRedissonClientNotNull().getBucket(this.getFragmentsSourceCacheKey());
 	}
 
 	/**
@@ -549,16 +604,25 @@ public abstract class AbstractFragmentsService {
 	 * @return RSet<Long> 分段数据缓存
 	 */
 	private RSet<Long> getFragmentsSetCache() {
-		return this.getRedissonClientNotNull().getSet(getFragmentsCacheKey());
+		return this.getRedissonClientNotNull().getSet(this.getFragmentsCacheKey());
 	}
 
 	/**
 	 * 获取处理中的分段数据缓存
-	 * 
+	 *
 	 * @return RScoredSortedSet<Long> 处理中的分段数据缓存
 	 */
 	private RScoredSortedSet<Long> getFragmentsInProgressCache() {
-		return this.getRedissonClientNotNull().getScoredSortedSet(getFragmentsInProgressCacheKey());
+		return this.getRedissonClientNotNull().getScoredSortedSet(this.getFragmentsInProgressCacheKey());
+	}
+
+	/**
+	 * 获取数据处理完成标记缓存
+	 *
+	 * @return String 数据处理完成标记缓存
+	 */
+	private RBucket<Boolean> getFragmentsFinishCache() {
+		return this.getRedissonClientNotNull().getBucket(this.getFragmentsFinishCacheKey());
 	}
 
 	/**
@@ -566,7 +630,7 @@ public abstract class AbstractFragmentsService {
 	 */
 	private void deleteFragmentsSourceCache() {
 		RBucket<FragmentsSourceDto> fragmentsSourceCache = this.getRedissonClientNotNull()
-				.getBucket(getFragmentsSourceCacheKey());
+				.getBucket(this.getFragmentsSourceCacheKey());
 		if (fragmentsSourceCache.isExists()) {
 			fragmentsSourceCache.delete();
 		}
@@ -576,7 +640,7 @@ public abstract class AbstractFragmentsService {
 	 * 删除分段数据缓存
 	 */
 	private void deleteFragmentsCache() {
-		RSet<Long> fragmentsCache = this.getRedissonClientNotNull().getSet(getFragmentsCacheKey());
+		RSet<Long> fragmentsCache = this.getRedissonClientNotNull().getSet(this.getFragmentsCacheKey());
 		if (fragmentsCache.isExists()) {
 			fragmentsCache.delete();
 		}
@@ -604,8 +668,18 @@ public abstract class AbstractFragmentsService {
 	}
 
 	/**
+	 * 删除数据处理完成标记缓存
+	 */
+	private void deleteFragmentsFinishCache() {
+		RBucket<Boolean> fragmentsFinishCache = this.getFragmentsFinishCache();
+		if (fragmentsFinishCache.isExists()) {
+			fragmentsFinishCache.delete();
+		}
+	}
+
+	/**
 	 * 获取分段源数据缓存Key
-	 * 
+	 *
 	 * @return String 分段源数据缓存Key
 	 */
 	private String getFragmentsSourceCacheKey() {
@@ -614,7 +688,7 @@ public abstract class AbstractFragmentsService {
 
 	/**
 	 * 获取分段数据缓存Key
-	 * 
+	 *
 	 * @return String 分段数据缓存Key
 	 */
 	private String getFragmentsCacheKey() {
@@ -623,7 +697,7 @@ public abstract class AbstractFragmentsService {
 
 	/**
 	 * 获取处理中的分段数据缓存Key
-	 * 
+	 *
 	 * @return String 处理中的分段数据缓存Key
 	 */
 	private String getFragmentsInProgressCacheKey() {
@@ -631,8 +705,17 @@ public abstract class AbstractFragmentsService {
 	}
 
 	/**
+	 * 获取数据处理完成标记缓存Key
+	 *
+	 * @return String 数据处理完成标记缓存Key
+	 */
+	private String getFragmentsFinishCacheKey() {
+		return this.getPrefixCacheKeyNotBlank() + CacheSuffixEnum._FRAGMENTS_FINISH_.name();
+	}
+
+	/**
 	 * 获取RedissonClient, throws Exception when RedissonClient is null
-	 * 
+	 *
 	 * @return RedissonClient
 	 */
 	private RedissonClient getRedissonClientNotNull() {
@@ -671,7 +754,7 @@ public abstract class AbstractFragmentsService {
 
 	/**
 	 * 获取缓存Key的前缀, throws Exception when prefixCacheKey is blank
-	 * 
+	 *
 	 * @return String
 	 */
 	private String getPrefixCacheKeyNotBlank() {
@@ -697,7 +780,7 @@ public abstract class AbstractFragmentsService {
 
 	/**
 	 * 尝试加锁
-	 * 
+	 *
 	 * @param rLock 锁
 	 * @return boolean true 成功 false 失败
 	 */
@@ -731,7 +814,11 @@ public abstract class AbstractFragmentsService {
 		/**
 		 * 处理中的分段数据缓存Key
 		 */
-		_FRAGMENTS_IN_PROGRESS_,;
+		_FRAGMENTS_IN_PROGRESS_,
+		/**
+		 * 数据处理完成标记
+		 */
+		_FRAGMENTS_FINISH_;
 
 		CacheSuffixEnum() {
 		}
@@ -879,12 +966,17 @@ public abstract class AbstractFragmentsService {
 		 * 处理中的分段个数
 		 */
 		private final Integer						inProgressSize;
+		/**
+		 * 数据处理完成标记
+		 */
+		private final Boolean						fragmentsFinish;
 
 		public CacheDetail(FragmentsSourceDto fragmentsSourceDto, Collection<ScoredEntry<Long>> inProgressRank,
-				Integer inProgressSize) {
+				Integer inProgressSize, Boolean fragmentsFinish) {
 			this.fragmentsSourceDto = fragmentsSourceDto;
 			this.inProgressRank = inProgressRank;
 			this.inProgressSize = inProgressSize;
+			this.fragmentsFinish = fragmentsFinish;
 		}
 
 		public FragmentsSourceDto getFragmentsSourceDto() {
@@ -899,10 +991,14 @@ public abstract class AbstractFragmentsService {
 			return inProgressSize;
 		}
 
+		public Boolean getFragmentsFinish() {
+			return fragmentsFinish;
+		}
+
 		@Override
 		public String toString() {
 			return "CacheDetail{" + "fragmentsSourceDto=" + fragmentsSourceDto + ", inProgressRank=" + inProgressRank
-					+ ", inProgressSize=" + inProgressSize + '}';
+					+ ", inProgressSize=" + inProgressSize + ", fragmentsFinish=" + fragmentsFinish + '}';
 		}
 	}
 
