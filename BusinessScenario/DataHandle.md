@@ -421,7 +421,9 @@ public abstract class AbstractFragmentsService {
 			} catch (Exception e) {
 				logger.error("exception,prefixCacheKey:{}", prefixCacheKey, e);
 			} finally {
-				rLock.unlock();
+				if (rLock.isHeldByCurrentThread()) {
+					rLock.unlock();
+				}
 			}
 			return initFragmentsDataResult;
 		}
