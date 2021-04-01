@@ -122,7 +122,7 @@ I/O 多路复用模型使用了 Reactor 设计模式实现了这一机制。
 
 告知内核，当整个过程(包括阶段1和阶段2)全部完成时，通知应用程序来读数据。
 
-##### 各种IO模型对比
+##### 对比
 
 ![img](IO.assets/COMPARE_EN.png)
 
@@ -139,6 +139,79 @@ I/O 多路复用模型使用了 Reactor 设计模式实现了这一机制。
 ##### BIO
 
 在JDK1.4之前，用Java编写网络请求，都是建立一个ServerSocket，然后，客户端建立Socket时就会询问是否有线程可以处理，如果没有，要么等待，要么被拒绝。即：一个连接，要求Server对应一个处理线程。
+
+代码：
+
+Client
+
+```java
+import java.io.*;
+import java.net.Socket;
+
+public class Client {
+    
+    public static final String host = "localhost";
+    public static final int port = 8080;
+
+    public static void main(String[] args) throws IOException {
+        Socket socket = new Socket(host, port);
+        BufferedReader bufferedReader;
+        BufferedWriter bufferedWriter;
+        try {
+            bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            bufferedWriter.write("hello服务器!!!!");
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+            String line = bufferedReader.readLine();
+            System.out.println(Thread.currentThread().getName() + " 从客户端收到内容: " + line);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            socket.close();
+        }
+    }
+
+}
+```
+
+Server
+
+```java
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class Server {
+    
+    public static int port = 8080;
+
+    public static void main(String[] args) throws IOException {
+        ServerSocket serverSocket = new ServerSocket(port);
+        Socket socket = serverSocket.accept();
+        BufferedReader bufferedReader;
+        BufferedWriter bufferedWriter;
+        try {
+            bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            String line = bufferedReader.readLine();
+            System.out.println(Thread.currentThread().getName() + " 从客户端收到内容: " + line);
+            bufferedWriter.write("服务器端传来相应");
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+}
+```
 
 ##### NIO
 
@@ -327,7 +400,7 @@ listen(8, 50)
 
 - 实现网络IO，不是Java的能力，是操作系统内核提供的能力
 
-
+当然了，虽然我们仅仅研究了网络IO，还没有看其他IO操作，但是大抵原理相似，各位可以选择自行探究。
 
 
 
