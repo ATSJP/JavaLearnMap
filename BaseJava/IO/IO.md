@@ -277,7 +277,7 @@ public class BIOServer {
 
 然后咱们看一下文件输出：
 
-![image-20210822223721330](IO.assets/image-20210822223721330.png)
+![image-20210822223721330](IO.assets/out.png)
 
 有点小多，毕竟是跟踪进程干了啥嘛，多是必然的，那么博主充当了工具人，一个个文件、一行行看过去的。但是你可以不用，所以咱们直奔主题：
 
@@ -390,7 +390,7 @@ bind(8, {sa_family=AF_INET6, sin6_port=htons(8080), sin6_flowinfo=htonl(0), inet
 listen(8, 50)
 ```
 
-![IO内容](IO.assets/IO内容.jpg)
+![IO原理](IO.assets/IO原理.jpg)
 
 看完了调用关系图，最后，来个总结：
 
