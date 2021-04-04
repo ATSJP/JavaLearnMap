@@ -6,7 +6,7 @@
 
 ## NIO
 
-在讲[IO](./IO.md)的那一篇笔记里，只是简简单单的提到了NIO，没有过多涉及，所以本篇笔记，咱们研究个透。
+在讲[IO](./IO.md)的那一篇笔记里 ，只是简简单单的提到了NIO，没有过多涉及，所以本篇笔记，咱们研究个透。
 
 ### 怎么用
 
@@ -174,41 +174,112 @@ while (selector.select() > 0) {
 
 #### 三大组件
 
-好了，相信到此，大家都会依葫芦画瓢了，但是你可能还没能知道NIO是个啥。接下来我们就来看看概念部分。NIO重点是把**Channel（通道）**，**Buffer（缓冲区）**，**Selector（选择器）**三个类之间的关系弄清楚。
+好了，相信到此，大家都会依葫芦画瓢了，但是你可能还没能知道NIO是个啥。接下来我们就来看看概念部分。
+
+NIO重点是把**Channel（通道）**，**Buffer（缓冲区）**，**Selector（选择器）**三个类之间的关系弄清楚。
 
 ##### Buffer
 
 顾名思义，Buffer是一个缓存，用来缓存数据的地方。那么Buffer中是如何记录数据的呢？
 
-**三个重要概念（参数）**
+###### 核心属性
+
+Buffer有三个核心属性：
 
 - 容量（Capacity）
 
+  表示缓冲区最大存储数据的容量。
+
 - 界限（Limit）
+
+  表示缓冲区中可以操作数据的大小。
 
 - 位置（Position）
 
-下图展示的读、写模式下的三个参数的值。
+  表示缓冲区中正在操作数据的位置。
 
-![img](NIO.assets/v2-0894899e2dc54b8bb2959b0fdbd0be6e_1440w.jpg)
+一个容易被忽视的属性：
 
-###### 写模式
+- 标记（Mark）
 
-Position：指向当前写入的位置
+  用于记录当前Position的位置
 
-Limit等于Capacity，Limit表示写入最大位置，Capacity表示容量
+说了这么多概念，那么Buffer是如何读、写数据的呢？咱们先来看看写：
 
-###### 读模式
+````java
+  @Test
+  public void test1() throws FileNotFoundException {
+    // 创建一个缓冲区
+    ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+    println(byteBuffer);
+    // 写
+    String s = "testNio";
+    byteBuffer.put(s.getBytes());
+    println(byteBuffer);
+  }
 
-Position：指向当前读取的位置
+  private void println(ByteBuffer byteBuffer) {
+    System.out.println("初始时-->limit--->" + byteBuffer.limit());
+    System.out.println("初始时-->position--->" + byteBuffer.position());
+    System.out.println("初始时-->capacity--->" + byteBuffer.capacity());
+    System.out.println("--------------------------------------");
+  }
+````
 
-Limit：可读的最大位置
+运行结果：
 
-Capacity：容量
+```java
+初始时-->limit--->1024
+初始时-->position--->0
+初始时-->capacity--->1024
+--------------------------------------
+初始时-->limit--->1024
+初始时-->position--->7
+初始时-->capacity--->1024
+--------------------------------------
+```
 
-###### 如何切换
+结合代码演示，大家可以自己理解一下各个属性值的变化。看完了写数据，再来看看读数据：
 
-Flip方法：将Buffer从写模式切换到读模式。具体操作是将Position值重置为0，Limit的值设置为之前Position的值；
+```java
+  @Test
+  public void test1() throws FileNotFoundException {
+    // ...省略上面的写，各位复制写的代码过来即可
+    // 切换成读模式
+    byteBuffer.flip();
+    println(byteBuffer);
+    byte[] bytes = new byte[byteBuffer.limit()];
+    // 读
+    byteBuffer.get(bytes);
+    println(byteBuffer);
+    // 输出数据
+    System.out.println(new String(bytes, 0, bytes.length));
+  }
+```
+
+运行结果：
+
+```
+初始时-->limit--->1024
+初始时-->position--->0
+初始时-->capacity--->1024
+--------------------------------------
+初始时-->limit--->1024
+初始时-->position--->7
+初始时-->capacity--->1024
+--------------------------------------
+初始时-->limit--->7
+初始时-->position--->0
+初始时-->capacity--->1024
+--------------------------------------
+初始时-->limit--->7
+初始时-->position--->7
+初始时-->capacity--->1024
+--------------------------------------
+testNio
+```
+
+其中filp()尤其重要，她完成的Buffer从写模式到读模式的切换，那么她是如何完成切换的呢？咱们看一下源码：
 
 ```java
 public final Buffer flip() {
@@ -219,7 +290,9 @@ public final Buffer flip() {
 }
 ```
 
-Clear方法：将Position置为0，Limit等于Capacity。
+结合参数打印及源码，我们得到这个结论——filp方法：将Buffer从写模式切换到读模式。具体操作是将Position值重置为0，Limit的值设置为之前Position的值，Mark标记位归位。
+
+切换成读模式用filp()，那么切换成写模式怎么做呢？用Clear()。Clear方法（请注意Clear不是清除数据）：将Position置为0，Limit等于Capacity。下面看一下源码：
 
 ```java
 public final Buffer clear() {
@@ -230,10 +303,28 @@ public final Buffer clear() {
 }
 ```
 
-**Clear方法 vs Compact方法：**
-Clear方法清空缓冲区；Compact方法只会清空已读取的数据，而还未读取的数据继续保存在Buffer中；
+> **Clear方法 vs Compact方法：**
+> Clear方法清空缓冲区；Compact方法只会清空已读取的数据，而还未读取的数据继续保存在Buffer中；
 
-Buffer的主要实现有：
+再来个读、写模式下的三个核心属性的示意图，辅助大家理解：
+
+![img](NIO.assets/v2-0894899e2dc54b8bb2959b0fdbd0be6e_1440w.jpg)
+
+**写模式**
+
+Position：指向当前写入的位置
+
+Limit等于Capacity，Limit表示写入最大位置，Capacity表示容量
+
+**读模式**
+
+Position：指向当前读取的位置
+
+Limit：可读的最大位置
+
+Capacity：容量
+
+###### 实现
 
 - ByteBuffer
 - CharBuffer
@@ -251,10 +342,10 @@ Buffer的主要实现有：
 
 特点：
 
-- 通道可以同时进行读写，而流(InputStream/OutputStream)只能读或者只能写
+- 通道可以同时进行读写，而流(Stream)只能读或者只能写
 - 通道可以从缓冲读数据，也可以写数据到缓冲:
 
-Channel的主要实现有：
+###### 实现
 
 - FileChannel
 - DatagramChannel
@@ -312,4 +403,23 @@ key.readyOps();
 ![img](NIO.assets/NIO.jpg)
 
 #### 零拷贝
+
+
+
+#### 直接与非直接缓冲区
+
+- 非直接缓冲区是**需要**经过一个：copy的阶段的(从内核空间copy到用户空间)
+- 直接缓冲区**不需要**经过copy阶段，也可以理解成--->**内存映射文件**
+
+![img](NIO.assets/v2-b75abc108506e1f48abbba0f91b80fdc_720w.jpg)
+
+![img](NIO.assets/v2-51ec191305139e98a3b43d82c8ba17b1_720w.jpg)
+
+#### 文件
+
+##### 内存映射文件
+
+#### 网络
+
+##### 
 
