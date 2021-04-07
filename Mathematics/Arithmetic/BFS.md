@@ -140,8 +140,8 @@ public class TreeNode {
 public static void levelOrder(TreeNode tree) {
     if (tree == null)
         return;
-    // 链表，这里我们可以把它看做队列
-    LinkedList<TreeNode> list = new LinkedList<>();
+    // 队列
+    Queue<TreeNode> list = new LinkedList<>();
     // 相当于把数据加入到队列尾部
     list.add(tree);
     while (!list.isEmpty()) {
@@ -185,6 +185,7 @@ private static void printLevel(TreeNode tree, int level) {
         printLevel(tree.right, level - 1);
     }
 }
+
 ```
 
 **如果想把遍历的结果存放到list中，我们还可以这样写**
@@ -213,4 +214,6 @@ private static void bfs(TreeNode tree, int level, List<List<Integer>> list) {
 }
 ```
 
-##### 
+### 双向 BFS 优化
+
+参照：https://labuladong.github.io/algo/1/5/
