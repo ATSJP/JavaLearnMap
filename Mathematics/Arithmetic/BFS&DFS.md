@@ -95,7 +95,7 @@ BFS（Breath First Search）广度优先搜索。
 
 和图一样，每次所有已经访问过小方格都继续访问其相邻的小方格，直接所有方格都访问过为止。
 
-### BFS应用
+### 应用
 
 那么BFS到底会在哪些情景下，发挥他的作用呢？以树为例，可以按照BFS的方式，遍历树的所有节点；以九宫格为例，可以按照BFS的方式，寻找最短路径。
 
@@ -103,7 +103,7 @@ BFS（Breath First Search）广度优先搜索。
 
 生活中，我们常用到各种导航软件，假如从北京导航到莫斯科，中间我们可能会经过内蒙古、新疆等，下面我们尝试抽象，最小粒度为City，将每一个City都想象成一个节点，我们要完成的任务就是，从A到B中，寻找到可达的路径，提供给用户选择。这不就可以使用BFS的方式完成寻找吗。当然了，实际上，导航的算法绝不止这么简单，但是一定会用到BFS的思想，比如常见的导航/路劲规划算法有：A-Star、Dijkstra等。
 
-### BFS实战
+### 实战
 
 #### 树的遍历
 
@@ -217,3 +217,140 @@ private static void bfs(TreeNode tree, int level, List<List<Integer>> list) {
 ### 双向 BFS 优化
 
 参照：https://labuladong.github.io/algo/1/5/
+
+
+
+
+
+
+
+## DFS
+
+### 何为DFS
+
+DFS（Deep First Search）深度优先搜索。
+
+> 百度百科：
+>
+> 深度优先搜索是一种在开发爬虫早期使用较多的方法。它的目的是要达到被搜索结构的叶结点(即那些不包含任何[超链](https://baike.baidu.com/item/超链/3947966)的[HTML文件](https://baike.baidu.com/item/HTML文件)) 。在一个HTML文件中，当一个[超链](https://baike.baidu.com/item/超链/3947966)被选择后，被链接的HTML文件将执行深度优先搜索，即在搜索其余的超链结果之前必须先完整地搜索单独的一条链。深度优先搜索沿着HTML文件上的[超链](https://baike.baidu.com/item/超链/3947966)走到不能再深入为止，然后返回到某一个HTML文件，再继续选择该HTML文件中的其他超链。当不再有其他[超链](https://baike.baidu.com/item/超链/3947966)可选择时，说明搜索已经结束。
+
+单从百度百科的解释来看，我们还很难彻底理解DFS，来吧，继续上图：
+
+![Tree_DFS_0](BFS.assets/Tree_DFS_0.jpg)
+
+上图一共有8个节点，假设，现在从编号为1的节点开始，我们的目的是为了找到7号节点，那么的DFS的访问顺序如下：
+
+![Tree_DFS_1](BFS.assets/Tree_DFS_1.jpg)
+
+首先肯定是从1号节点开始，下一步，DFS开始选择，可以选择2或者3任一节点，作为下一步，我们暂且选择2号节点
+
+![Tree_DFS_2](BFS.assets/Tree_DFS_2.jpg)
+
+下一步仅能选择4号节点，因为没有其他可达节点可选
+
+![Tree_DFS_3](BFS.assets/Tree_DFS_3.jpg)
+
+此时，4号节点的可达节点，有6、7号节点可选，我们选择6号节点
+
+![Tree_DFS_4](BFS.assets/Tree_DFS_4.jpg)
+
+到达6号节点之后，发现无任何可达节点可选，我们选择**回溯**，回到4号节点，发现还有7号节点可选
+
+![Tree_DFS_5](BFS.assets/Tree_DFS_5.jpg)
+
+最终，通过DFS，成功找到了终点7号节点。
+
+下面我们做一个总结：
+
+**深度优先，则是以深度为准则，先一条路走到底，直到达到目标。这里称之为递归下去。**但是往往一条路会遇到走不通的情况，则需要**回溯到上一个节点，重新选择其他的节点**。那么，你会发现**深度优先搜索的步骤分为：1.递归下去 2.回溯上来。**
+
+### 实战
+
+#### 树的遍历
+
+树的定义：
+
+```java
+public class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+
+    TreeNode() {
+    }
+
+    TreeNode(int val) {
+        this.val = val;
+    }
+
+    TreeNode(int val, TreeNode left, TreeNode right) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
+}
+```
+
+遍历顺序：
+
+![Tree_DFS](BFS.assets/Tree_DFS.jpg)
+
+代码如下：
+
+```java
+public void dfs(TreeNode root) {
+    Stack<TreeNode> stack = new Stack<>();
+    stack.add(root);
+    while (!stack.empty()) {
+        TreeNode node = stack.pop();
+        System.out.println(node.val);
+        if (node.right != null) {
+            stack.push(node.right);
+        }
+        if (node.left != null) {
+            stack.push(node.left);
+        }
+    }
+}
+```
+
+递归的写法：
+
+```java
+public void dfs(TreeNode root) {
+    if (root == null)
+        return;
+    System.out.println(root.val);
+    treeDFS(root.left);
+    treeDFS(root.right);
+}
+```
+
+
+
+## 对比
+
+DFS（深度优先搜索）和BFS（广度优先搜索），都是图形搜索算法。
+
+### 数据结构
+
+BFS通常使用**队列**这种数据结构，而DFS通常是使用**栈**这种数据结构。（注意一下通常，也就是说BFS不是不可以使用栈去做，只是不常用）
+
+### 空间复杂度
+
+BFS由于使用队列，一个节点会在队列中在保存一份，属于典型的空间换时间的做法，空间复杂度大于DFS。
+
+### 最短路径
+
+BFS找到的路径一定是最短的。因为每次遍历的深度增加一次，队列中所有的节点都向下访问一次，保证了所有路径都在齐头并进，这保证了第一次到达终点的时候，步数是最少的。
+
+DFS则是一条路径走到底，不行了，在回溯回去，换一条路尝试，这样虽然可以找到终点，但是因为仅仅是找到了一条路径到达终点，无法确保此路径是最短路径。
+
+扩展：有人会说，DFS找到一条路径，记录下来，在寻找其他路径，最终对比一下，不就可以找到最短路径了吗。是的，这样逻辑上没问题，但是你想，为了找到最短路径，DFS需要探索完整棵树，而BFS借助队列齐头并进，在到达终点后，不用在将树的剩余节点探索完，这样效率肯定高了不少。
+
+
+
+
+
+
+
