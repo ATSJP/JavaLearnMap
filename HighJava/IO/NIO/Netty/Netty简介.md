@@ -6,7 +6,8 @@
 
 题外话：在开始了解Netty之前，请务必完全知晓IO的基本概念，这将助于你更好的学习Netty。
 
-飞机票：[IO](../../../../BaseJava/IO/IO.md)   [NIO](../../../../BaseJava/IO/NIO.md)
+飞机票：[IO](../../../../BaseJava/IO/IO.md)、[NIO](../../../../BaseJava/IO/NIO.md)
+
 
 ### 什么是Netty？
 
@@ -84,7 +85,12 @@ PS：自己总结的再好有官方的解释精准吗？废话少说，直接搬
 #### 社区
 
 - Release early, release often
+
+  早发布，经常发布
+
 - The author has been writing similar frameworks since 2003 and he still finds your feed back precious!
+
+  作者自 2003 年以来一直在编写类似的框架，他仍然认为您的反馈很宝贵！
 
 ### 系统架构
 
@@ -97,6 +103,16 @@ PS：自己总结的再好有官方的解释精准吗？废话少说，直接搬
 #### Channel
 
 Channel是 Java NIO 的一个基本构造。可以看作是传入或传出数据的载体。因此，它可以被打开或关闭，连接或者断开连接。
+
+与channel相关的概念有以下四个，上一张图让你了解Netty里面的Channel。
+
+![img](Netty简介.assets/webp.webp)
+
+- ChannelHandler，核心处理业务就在这里，用于处理业务请求。
+
+- ChannelHandlerContext，用于传输业务数据。
+
+- ChannelPipeline，用于保存处理过程需要用到的ChannelHandler和ChannelHandlerContext。
 
 #### EventLoop & EventLoopGroup
 
@@ -126,5 +142,25 @@ Netty 中所有的 I/O 操作都是异步的，即操作不会立即得到返回
 
 Netty 的异步编程模型都是建立在 Future 与回调概念之上的。
 
+### 为什么
 
+#### Netty为什么封装好
+
+上代码
+
+#### Netty为什么并发高
+
+NIO
+
+#### Netty为什么快
+
+零拷贝
+
+### 对比
+
+#### Netty  & Tomcat
+
+Netty和Tomcat最大的区别就在于通信协议，Tomcat是基于Http协议的，他的实质是一个基于http协议的web容器，但是Netty不一样，他能通过编程自定义各种协议，因为netty能够通过codec自己来编码/解码字节流，完成类似redis访问的功能，这就是netty和tomcat最大的不同。
+
+有人说netty的性能就一定比tomcat性能高，其实不然，tomcat从6.x开始就支持了nio模式，并且后续还有APR模式——一种通过jni调用apache网络库的模式，相比于旧的bio模式，并发性能得到了很大提高，特别是APR模式，而netty是否比tomcat性能更高，则要取决于netty程序作者的技术实力了。
 
