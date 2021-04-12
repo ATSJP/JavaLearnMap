@@ -15,6 +15,9 @@
 
 > Netty is *an asynchronous event-driven network application framework*
 > for rapid development of maintainable high performance protocol servers & clients.
+>
+> Netty 是一个异步事件驱动的网络应用程序框架
+> 用于快速开发可维护的高性能协议服务器和客户端。
 
 再来看看百度百科：
 
@@ -24,7 +27,7 @@
 >
 > “快速”和“简单”并不用产生维护性或性能上的问题。Netty 是一个吸收了多种协议（包括FTP、SMTP、HTTP等各种二进制文本协议）的实现经验，并经过相当精心设计的项目。最终，Netty 成功的找到了一种方式，在保证易于开发的同时还保证了其应用的性能，稳定性和伸缩性
 
-咱们自己总结一下：Netty是一个基于NIO的网络编程框架，他具有异步、以事件为驱动的特性，同时高性能。
+咱们自己总结一下：Netty是一个基于NIO的网络编程框架，他具有异步、以事件为驱动的特性，同时高性能和可扩展。
 
 ### 特性
 
@@ -86,7 +89,7 @@ PS：自己总结的再好有官方的解释精准吗？废话少说，直接搬
 
 - Release early, release often
 
-  早发布，经常发布
+  发布的更早和更频繁
 
 - The author has been writing similar frameworks since 2003 and he still finds your feed back precious!
 
@@ -98,15 +101,15 @@ PS：自己总结的再好有官方的解释精准吗？废话少说，直接搬
 
 ![图片](Netty简介.assets/components.jpg)
 
-### 核心组件
+### 构成部分
 
 #### Channel
 
 Channel是 Java NIO 的一个基本构造。可以看作是传入或传出数据的载体。因此，它可以被打开或关闭，连接或者断开连接。
 
-与channel相关的概念有以下四个，上一张图让你了解Netty里面的Channel。
+与Channel相关的概念有以下四个，上一张图让你了解Netty里面的Channel。
 
-![img](Netty简介.assets/webp.webp)
+![img](Netty简介.assets/Channel.jpg)
 
 - ChannelHandler，核心处理业务就在这里，用于处理业务请求。
 
@@ -114,35 +117,100 @@ Channel是 Java NIO 的一个基本构造。可以看作是传入或传出数据
 
 - ChannelPipeline，用于保存处理过程需要用到的ChannelHandler和ChannelHandlerContext。
 
-#### EventLoop & EventLoopGroup
+#### CallBack
 
-EventLoop 定义了Netty的核心抽象，用来处理连接的生命周期中所发生的事件，在内部，将会为每个Channel分配一个EventLoop。
+CallBack通常被称为回调，提供给另一个方法作为引用，这样后者就可以在某个合适的时间调用前者。
 
-EventLoopGroup 是一个 EventLoop 池，包含很多的 EventLoop。
+#### Future
 
-Netty 为每个 Channel 分配了一个 EventLoop，用于处理用户连接请求、对用户请求的处理等所有事件。EventLoop 本身只是一个线程驱动，在其生命周期内只会绑定一个线程，让该线程处理一个 Channel 的所有 IO 事件。
+Netty 中所有的 I/O 操作都是异步的，即操作不会立即得到返回结果，所以 Netty 中定义了一个 ChannelFuture 对象作为这个异步操作的“代言人”，表示异步操作本身。如果想获取到该异步操作的返回值，可以通过该异步操作对象的addListener() 方法为该异步操作添加监听器，为其注册回调：当结果出来后马上调用执行。
 
-一个 Channel 一旦与一个 EventLoop 相绑定，那么在 Channel 的整个生命周期内是不能改变的。一个 EventLoop 可以与多个 Channel 绑定。即 Channel 与 EventLoop 的关系是 n:1，而 EventLoop 与线程的关系是 1:1。
+Netty 的异步编程模型都是建立在 Future 与 Callback 概念之上的。
 
-#### ServerBootstrap & Bootstrap
+#### Event 和 Handler
 
-Bootstarp 和 ServerBootstrap 被称为引导类，指对应用程序进行配置，并使他运行起来的过程。Netty处理引导的方式是使你的应用程序和网络层相隔离。
+Netty 使用不同的事件来通知我们更改的状态或操作的状态，这使我们能够根据发生的事件触发适当的行为。
+
+### 核心组件
+
+#### Bootstrap相关
+
+Bootstarp 和 ServerBootstrap 被称为引导类，指对应用程序进行配置，并使他运行起来的过程。
+
+##### Bootstrap
 
 Bootstrap 是客户端的引导类，Bootstrap 在调用 bind()（连接UDP）和 connect()（连接TCP）方法时，会新创建一个 Channel，仅创建一个单独的、没有父 Channel 的 Channel 来实现所有的网络交换。
 
+##### ServerBootstrap
+
 ServerBootstrap 是服务端的引导类，ServerBootstarp 在调用 bind() 方法时会创建一个 ServerChannel 来接受来自客户端的连接，并且该 ServerChannel 管理了多个子 Channel 用于同客户端之间的通信。
 
-#### ChannelHandler & ChannelPipeline
+#### Channel相关
+
+##### Channel
+
+底层网络传输 API 必须提供给应用 I/O操作的接口，如读，写，连接，绑定等等。对于我们来说，这是结构几乎总是会成为一个“Socket”。 Netty 中的接口 Channel 定义了与 Socket 丰富交互的操作集：bind、 close、 config、connect、isActive、 isOpen、isWritable、 read、write 等等。 
+
+Netty 提供大量的 Channel 实现来专门使用。这些包括 AbstractChannel，AbstractNioByteChannel，AbstractNioChannel，EmbeddedChannel， LocalServerChannel，NioSocketChannel 等等。
+
+##### ChannelHandler
 
 ChannelHandler 是对 Channel 中数据的处理器，这些处理器可以是系统本身定义好的编解码器，也可以是用户自定义的。这些处理器会被统一添加到一个 ChannelPipeline 的对象中，然后按照添加的顺序对 Channel 中的数据进行依次处理。
 
-#### ChannelFuture
+##### ChannelPipeline
 
-Netty 中所有的 I/O 操作都是异步的，即操作不会立即得到返回结果，所以 Netty 中定义了一个 ChannelFuture 对象作为这个异步操作的“代言人”，表示异步操作本身。如果想获取到该异步操作的返回值，可以通过该异步操作对象的addListener() 方法为该异步操作添加监 NIO 网络编程框架 Netty 听器，为其注册回调：当结果出来后马上调用执行。
+ChannelPipeline 提供了一个容器给 ChannelHandler 链，并提供了一个API 用于管理沿着链入站和出站事件的流动。每个 Channel 都有自己的ChannelPipeline，当 Channel 创建时自动创建的。
 
-Netty 的异步编程模型都是建立在 Future 与回调概念之上的。
+##### ChannelFuture
+
+Netty 中所有的 I/O 操作都是异步的，即操作不会立即得到返回结果，所以 Netty 中定义了一个 ChannelFuture 对象作为这个异步操作的“代言人”，表示异步操作本身。如果想获取到该异步操作的返回值，可以通过该异步操作对象的addListener() 方法为该异步操作添加监听器，为其注册回调：当结果出来后马上调用执行。
+
+##### ByteBuf
+
+- ByteBuf是一个存储字节的容器，最大特点就是**使用方便**，它既有自己的读索引和写索引，方便你对整段字节缓存进行读写，也支持get/set，方便你对其中每一个字节进行读写，他的数据结构如下图所示：
+
+![img](Netty简介.assets/Buffer.jpg)
+
+他有三种使用模式：
+
+1. Heap Buffer 堆缓冲区
+    堆缓冲区是ByteBuf最常用的模式，他将数据存储在堆空间。
+
+2. Direct Buffer 直接缓冲区
+
+   直接缓冲区是ByteBuf的另外一种常用模式，他的内存分配都不发生在堆，jdk1.4引入的nio的ByteBuffer类允许jvm通过本地方法调用分配内存，这样做有两个好处
+
+   - 通过免去中间交换的内存拷贝, 提升IO处理速度; 直接缓冲区的内容可以驻留在垃圾回收扫描的堆区以外。
+   - DirectBuffer 在 -XX:MaxDirectMemorySize=xxM大小限制下, 使用 Heap 之外的内存, GC对此”无能为力”,也就意味着规避了在高负载下频繁的GC过程对应用线程的中断影响。
+
+3. Composite Buffer 复合缓冲区
+    复合缓冲区相当于多个不同ByteBuf的视图，这是netty提供的，jdk不提供这样的功能。
+
+除此之外，他还提供一大堆api方便你使用，在这里我就不一一列出了。
+
+##### Codec
+
+Netty中的编码/解码器，通过他你能完成字节与实体Bean的相互转换，从而达到自定义协议的目的。 在Netty里面最有名的就是HttpRequestDecoder和HttpResponseEncoder了。
+
+#### Event相关
+
+##### EventLoop
+
+EventLoop 定义了Netty的核心抽象，用于处理 Channel 的 I/O 操作。在内部，将会为每个Channel分配一个EventLoop，用于处理用户连接请求、对用户请求的处理等所有事件。EventLoop 本身只是一个线程驱动，在其生命周期内只会绑定一个线程，让该线程处理一个 Channel 的所有 IO 事件。
+
+一个 Channel 一旦与一个 EventLoop 相绑定，那么在 Channel 的整个生命周期内是不能改变的。
+
+一个 EventLoop 可以与多个 Channel 绑定。即 Channel 与 EventLoop 的关系是 n:1，而 EventLoop 与线程的关系是 1:1。
+
+#####  EventLoopGroup
+
+EventLoopGroup 是一个 EventLoop 池，包含很多的 EventLoop。
 
 ### 为什么
+
+#### 为什么要有Netty
+
+
 
 #### Netty为什么封装好
 

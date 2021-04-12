@@ -308,7 +308,7 @@ public final Buffer clear() {
 
 再来个读、写模式下的三个核心属性的示意图，辅助大家理解：
 
-![img](NIO.assets/v2-0894899e2dc54b8bb2959b0fdbd0be6e_1440w.jpg)
+![img](NIO.assets/Buffer.jpg)
 
 **写模式**
 
@@ -357,7 +357,7 @@ Capacity：容量
 
 可以检测多个NIO Channel，看看读或者写事件是否就绪。多个Channel以事件的方式可以注册到同一个Selector，从而达到用一个线程处理多个请求成为可能。
 
-![img](NIO.assets/v2-092382125d13983b0c91a168e2b35c77_1440w.jpg)
+![img](NIO.assets/CSC.jpg)
 
 ###### 创建
 
