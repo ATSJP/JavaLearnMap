@@ -107,23 +107,13 @@ PS：自己总结的再好有官方的解释精准吗？废话少说，直接搬
 
 Channel是 Java NIO 的一个基本构造。可以看作是传入或传出数据的载体。因此，它可以被打开或关闭，连接或者断开连接。
 
-与Channel相关的概念有以下四个，上一张图让你了解Netty里面的Channel。
-
-![img](Netty简介.assets/Channel.jpg)
-
-- ChannelHandler，核心处理业务就在这里，用于处理业务请求。
-
-- ChannelHandlerContext，用于传输业务数据。
-
-- ChannelPipeline，用于保存处理过程需要用到的ChannelHandler和ChannelHandlerContext。
-
 #### CallBack
 
 CallBack通常被称为回调，提供给另一个方法作为引用，这样后者就可以在某个合适的时间调用前者。
 
 #### Future
 
-Netty 中所有的 I/O 操作都是异步的，即操作不会立即得到返回结果，所以 Netty 中定义了一个 ChannelFuture 对象作为这个异步操作的“代言人”，表示异步操作本身。如果想获取到该异步操作的返回值，可以通过该异步操作对象的addListener() 方法为该异步操作添加监听器，为其注册回调：当结果出来后马上调用执行。
+Future 提供了另外一种通知应用操作已经完成的方式。这个对象作为一个异步操作结果的占位符,它将在将来的某个时候完成并提供结果。
 
 Netty 的异步编程模型都是建立在 Future 与 Callback 概念之上的。
 
@@ -135,7 +125,7 @@ Netty 使用不同的事件来通知我们更改的状态或操作的状态，�
 
 #### Bootstrap相关
 
-Bootstarp 和 ServerBootstrap 被称为引导类，指对应用程序进行配置，并使他运行起来的过程。
+Bootstarp（客户端） 和 ServerBootstrap（服务端） 被称为引导类，指对应用程序进行配置，并使他运行起来的过程。
 
 ##### Bootstrap
 
@@ -149,9 +139,17 @@ ServerBootstrap 是服务端的引导类，ServerBootstarp 在调用 bind() 方�
 
 ##### Channel
 
-底层网络传输 API 必须提供给应用 I/O操作的接口，如读，写，连接，绑定等等。对于我们来说，这是结构几乎总是会成为一个“Socket”。 Netty 中的接口 Channel 定义了与 Socket 丰富交互的操作集：bind、 close、 config、connect、isActive、 isOpen、isWritable、 read、write 等等。 
+底层网络传输 API 必须提供给应用 I/O操作的接口，如read()，write()，connenct()，bind()等等。对于我们来说，这是结构几乎总是会成为一个“Socket”。 Netty 中的接口 Channel 定义了与 Socket 丰富交互的操作集：bind、 close、 config、connect、isActive、 isOpen、isWritable、 read、write 等等。 
 
 Netty 提供大量的 Channel 实现来专门使用。这些包括 AbstractChannel，AbstractNioByteChannel，AbstractNioChannel，EmbeddedChannel， LocalServerChannel，NioSocketChannel 等等。
+
+与Channel相关的概念有以下四个：
+
+![img](Netty简介.assets/Channel.jpg)
+
+- ChannelHandler，核心处理业务就在这里，用于处理业务请求。
+- ChannelHandlerContext，用于传输业务数据。
+- ChannelPipeline，用于保存处理过程需要用到的ChannelHandler和ChannelHandlerContext。
 
 ##### ChannelHandler
 
@@ -174,19 +172,19 @@ Netty 中所有的 I/O 操作都是异步的，即操作不会立即得到返回
 他有三种使用模式：
 
 1. Heap Buffer 堆缓冲区
-    堆缓冲区是ByteBuf最常用的模式，他将数据存储在堆空间。
+    堆缓冲区是ByteBuf最常用的模式，他将数据存储在JVM的堆空间。
 
 2. Direct Buffer 直接缓冲区
 
-   直接缓冲区是ByteBuf的另外一种常用模式，他的内存分配都不发生在堆，jdk1.4引入的nio的ByteBuffer类允许jvm通过本地方法调用分配内存，这样做有两个好处
+   直接缓冲区是ByteBuf的另外一种常用模式，他的内存分配都不发生在堆，JDK1.4引入的NIO的ByteBuffer类，允许jvm通过本地方法调用分配内存，这样做有两个好处
 
-   - 通过免去中间交换的内存拷贝, 提升IO处理速度; 直接缓冲区的内容可以驻留在垃圾回收扫描的堆区以外。
-   - DirectBuffer 在 -XX:MaxDirectMemorySize=xxM大小限制下, 使用 Heap 之外的内存, GC对此”无能为力”,也就意味着规避了在高负载下频繁的GC过程对应用线程的中断影响。
+   - 通过免去中间交换的内存拷贝，提升IO处理速度；直接缓冲区的内容可以驻留在垃圾回收扫描的堆区以外。
+   - DirectBuffer 在 -XX:MaxDirectMemorySize=xxM大小限制下，使用 Heap 之外的内存，GC对此”无能为力”，也就意味着规避了在高负载下频繁的GC过程对应用线程的中断影响。
 
 3. Composite Buffer 复合缓冲区
-    复合缓冲区相当于多个不同ByteBuf的视图，这是netty提供的，jdk不提供这样的功能。
+    复合缓冲区相当于多个不同ByteBuf的视图，这是Netty提供的，Jdk不提供这样的功能。
 
-除此之外，他还提供一大堆api方便你使用，在这里我就不一一列出了。
+除此之外，他还提供一大堆Api方便你使用，在这里我就不一一列出了。
 
 ##### Codec
 
