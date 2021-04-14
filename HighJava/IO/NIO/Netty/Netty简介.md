@@ -208,11 +208,47 @@ EventLoopGroup 是一个 EventLoop 池，包含很多的 EventLoop。
 
 #### 为什么要有Netty
 
-
+先说
 
 #### Netty为什么封装好
 
-上代码
+
+
+```java
+public class NettyServer {
+    public static void main(String[] args) throws InterruptedException {
+        EventLoopGroup parentGroup = new NioEventLoopGroup();
+        EventLoopGroup childGroup = new NioEventLoopGroup();
+        try {
+
+            ServerBootstrap bootstrap = new ServerBootstrap();
+            bootstrap.group(parentGroup, childGroup)
+                     .channel(NioServerSocketChannel.class)
+                     .childHandler(new ChannelInitializer<SocketChannel>() {
+
+                        @Override
+                        protected void initChannel(SocketChannel ch) throws Exception {
+
+                            ChannelPipeline pipeline = ch.pipeline();
+                            pipeline.addLast(new StringDecoder());
+                            pipeline.addLast(new StringEncoder());
+                            pipeline.addLast(new SomeSocketServerHandler());
+                         }
+                    });
+
+            ChannelFuture future = bootstrap.bind(8888).sync();
+            System.out.println("服务器已启动。。。");
+
+            future.channel().closeFuture().sync();
+        } finally {
+            parentGroup.shutdownGracefully();
+            childGroup.shutdownGracefully();
+        }
+    }
+}
+```
+
+
 
 #### Netty为什么并发高
 
