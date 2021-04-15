@@ -206,11 +206,119 @@ EventLoopGroup 是一个 EventLoop 池，包含很多的 EventLoop。
 
 ### 为什么
 
-#### 为什么要有Netty
+为什么要有Netty？
 
-先说
+先假设没有Netty，我们怎们实现网络编程：
+
+远古：
+
+- java.net + java.io
+
+近代：
+
+- java.nio
+
+其他：
+
+- Mina，Grizzly等（未来可能会有其他）
+
+其中Mina和Grizzly，我们后续放到对比在仔细研究。远古时代的Net和IO想必大家都知道
+
+#### 为什么要用Netty
+
+- 统一的 API，支持多种传输类型，阻塞和非阻塞的。
+- 简单而强大的线程模型。
+- 自带编解码器解决 TCP 粘包/拆包问题。
+- 自带各种协议栈。
+- 真正的无连接数据包套接字支持。
+- 比直接使用 Java 核心 API 有更高的吞吐量、更低的延迟、更低的资源消耗和更少的内存复制。
+- 安全性不错，有完整的 SSL/TLS 以及 StartTLS 支持。
+- 社区活跃
+- 成熟稳定，经历了大型项目的使用和考验，而且很多开源项目都使用到了 Netty， 比如我们经常接触的 Dubbo、RocketMQ 等等。
+- ......
 
 #### Netty为什么封装好
+
+假如我们要完成客户端-服务端通信，在Socket时代一个简单的Demo是这样的：
+
+客户端：
+
+```java
+import java.io.*;
+import java.net.Socket;
+
+public class Client {
+
+    public static final String host = "localhost";
+    public static final int port = 8080;
+
+    public static void main(String[] args) throws IOException {
+        Socket socket = new Socket(host, port);
+        BufferedReader bufferedReader;
+        BufferedWriter bufferedWriter;
+        try {
+            bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            bufferedWriter.write("hello服务器!!!!");
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+            String line = bufferedReader.readLine();
+            System.out.println(Thread.currentThread().getName() + " 从客户端收到内容: " + line);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            socket.close();
+        }
+    }
+
+}
+```
+
+服务端：
+
+```java
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class Server {
+
+    public static int port = 8080;
+
+    public static void main(String[] args) throws IOException {
+        ServerSocket serverSocket = new ServerSocket(port);
+        Socket socket = serverSocket.accept();
+        BufferedReader bufferedReader;
+        BufferedWriter bufferedWriter;
+        try {
+            bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            String line = bufferedReader.readLine();
+            System.out.println(Thread.currentThread().getName() + " 从客户端收到内容: " + line);
+            bufferedWriter.write("服务器端传来相应");
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+}
+```
+
+到了近代呢，再看看NIO如何实现客户端-服务端通信：
+
+
+
+
+
+
 
 
 
@@ -258,6 +366,8 @@ NIO
 
 零拷贝
 
+### 线程模型
+
 ### 对比
 
 #### Netty  & Tomcat
@@ -265,4 +375,6 @@ NIO
 Netty和Tomcat最大的区别就在于通信协议，Tomcat是基于Http协议的，他的实质是一个基于Http协议的Web容器，但是Netty不一样，他能通过编程自定义各种协议，因为Netty能够通过Codec自己来编码/解码字节流，完成类似Redis访问的功能，这就是Netty和Tomcat最大的不同。
 
 有人说Netty的性能就一定比Tomcat性能高，其实不然，Tomcat从6.x开始就支持了NIO模式，并且后续还有APR模式——一种通过JNI调用Apache网络库的模式，相比于旧的BIO模式，并发性能得到了很大提高，特别是APR模式，而Netty是否比Tomcat性能更高，则要取决于Netty程序作者的技术实力了。
+
+Mina 
 
