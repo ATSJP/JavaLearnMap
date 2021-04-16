@@ -206,7 +206,7 @@ EventLoopGroup 是一个 EventLoop 池，包含很多的 EventLoop。
 
 ### 为什么
 
-为什么要有Netty？
+#### 为什么要有Netty？
 
 先假设没有Netty，我们怎们实现网络编程：
 
@@ -222,7 +222,7 @@ EventLoopGroup 是一个 EventLoop 池，包含很多的 EventLoop。
 
 - Mina，Grizzly等（未来可能会有其他）
 
-其中Mina和Grizzly，我们后续放到对比在仔细研究。远古时代的Net和IO想必大家都知道
+其中Mina和Grizzly，我们后续放到对比在仔细研究。远古时代的Net和IO想必大家都知道，BIO在高并发时存在性能问题。于是NIO应运而生，虽到但是总感觉缺点什么，复杂的API（有多少同学至今还区分不了ByteBuffer的flip()、clear()、rewind()、compact()？），同时为了编写高质量的NIO代码，你需要足够了解多线程编程、网络编程，甚至你还得知道Reactor模式。另外，NIO只帮我们做了“功能”，但是没有做全“功能”。一个没有BUG的代码，绝不不仅仅包含正常的逻辑分支，他还包含各种异常的情况。在网络编程中，客户端断连重连、网络闪断、半包读写、失败缓存、网络拥塞和异常码流等等情况更是家常便饭，NIO并没有提供完整的解决方案。
 
 #### 为什么要用Netty
 
@@ -239,7 +239,7 @@ EventLoopGroup 是一个 EventLoop 池，包含很多的 EventLoop。
 
 #### Netty为什么封装好
 
-假如我们要完成客户端-服务端通信，在Socket时代一个简单的Demo是这样的：
+假如我们要完成客户端-服务端SayHello这样的通信，在Socket时代一个简单的Demo是这样的：
 
 客户端：
 
@@ -312,51 +312,358 @@ public class Server {
 }
 ```
 
-到了近代呢，再看看NIO如何实现客户端-服务端通信：
+到了近代呢，再看看NIO如何实现：
 
-
-
-
-
-
-
-
+客户端：
 
 ```java
-public class NettyServer {
-    public static void main(String[] args) throws InterruptedException {
-        EventLoopGroup parentGroup = new NioEventLoopGroup();
-        EventLoopGroup childGroup = new NioEventLoopGroup();
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
+import java.nio.charset.StandardCharsets;
+
+public class EchoClient {
+  public static final String host = "localhost";
+  public static final int port = 8080;
+
+  public static void main(String[] args) {
+    SocketChannel socketChannel = null;
+    try {
+      socketChannel = SocketChannel.open();
+      socketChannel.connect(new InetSocketAddress(host, port));
+      // write
+      String newData = "hello i'm client" + System.currentTimeMillis();
+      byte[] data = newData.getBytes(StandardCharsets.UTF_8);
+      ByteBuffer lenBuf = ByteBuffer.wrap(int2byte(data.length));
+      ByteBuffer textBuf = ByteBuffer.wrap(data);
+      ByteBuffer[] byteBuffer = new ByteBuffer[] {lenBuf, textBuf};
+      socketChannel.write(byteBuffer);
+      // read
+      lenBuf.clear();
+      textBuf.clear();
+      socketChannel.read(byteBuffer);
+      System.out.println("from server:" + new String(textBuf.array()));
+    } catch (IOException e) {
+      e.printStackTrace();
+    } finally {
+      if (socketChannel != null) {
         try {
-
-            ServerBootstrap bootstrap = new ServerBootstrap();
-            bootstrap.group(parentGroup, childGroup)
-                     .channel(NioServerSocketChannel.class)
-                     .childHandler(new ChannelInitializer<SocketChannel>() {
-
-                        @Override
-                        protected void initChannel(SocketChannel ch) throws Exception {
-
-                            ChannelPipeline pipeline = ch.pipeline();
-                            pipeline.addLast(new StringDecoder());
-                            pipeline.addLast(new StringEncoder());
-                            pipeline.addLast(new SomeSocketServerHandler());
-                         }
-                    });
-
-            ChannelFuture future = bootstrap.bind(8888).sync();
-            System.out.println("服务器已启动。。。");
-
-            future.channel().closeFuture().sync();
-        } finally {
-            parentGroup.shutdownGracefully();
-            childGroup.shutdownGracefully();
+          socketChannel.close();
+        } catch (IOException e) {
+          e.printStackTrace();
         }
+      }
     }
+  }
+
+  public static byte[] int2byte(int len) {
+    byte[] b = new byte[4];
+    b[0] = (byte) (len >> 24);
+    b[1] = (byte) (len >> 16 & 0XFF);
+    b[2] = (byte) (len >> 8 & 0XFF);
+    b[3] = (byte) (len & 0XFF);
+    return b;
+  }
 }
 ```
 
+服务端：
 
+```java
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.*;
+import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
+import java.util.Set;
+
+public class EchoServer {
+  public static final String host = "localhost";
+  public static final int port = 8080;
+
+  public static void main(String[] args) {
+    ServerSocketChannel serverSocketChannel = null;
+    Selector selector;
+    try {
+      serverSocketChannel = ServerSocketChannel.open();
+      serverSocketChannel.configureBlocking(false);
+      serverSocketChannel.socket().bind(new InetSocketAddress(host, port));
+      selector = Selector.open();
+      serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+
+      while (selector.select() > 0) {
+        Set<SelectionKey> selectionKeySet = selector.selectedKeys();
+        Iterator<SelectionKey> selectionKeyIterator = selectionKeySet.iterator();
+        while (selectionKeyIterator.hasNext()) {
+          SelectionKey selectionKey = selectionKeyIterator.next();
+          if (selectionKey.isValid()) {
+            if (selectionKey.isAcceptable()) {
+              ServerSocketChannel serverChannel = (ServerSocketChannel) selectionKey.channel();
+              SocketChannel clientChannel = serverChannel.accept();
+              clientChannel.configureBlocking(false);
+              clientChannel.register(selector, SelectionKey.OP_READ, new MessageInfo());
+            }
+            if (selectionKey.isReadable()) {
+              SocketChannel clientChannel = (SocketChannel) selectionKey.channel();
+              MessageInfo messageInfo = (MessageInfo) selectionKey.attachment();
+              if (messageInfo.getLenBuf() == null) {
+                messageInfo.setLenBuf(ByteBuffer.allocate(4));
+              }
+              // 消息长度
+              int len = messageInfo.getLen();
+              // 判断消息长度是否读取完成
+              if (len != -1) {
+                if (messageInfo.contentBuf == null) {
+                  // 创建指定消息长度的buf
+                  messageInfo.contentBuf = ByteBuffer.allocate(len);
+                }
+                // 如果消息未读取完成，继续读取
+                if (messageInfo.contentBuf.position() < len) {
+                  if (clientChannel.read(messageInfo.contentBuf) == -1) {
+                    clientChannel.register(selector, SelectionKey.OP_WRITE, messageInfo);
+                  }
+                }
+
+                if (len == 0) {
+                  System.out.println("空消息");
+                  selectionKey.cancel();
+                  selectionKey.channel().close();
+                } else if (messageInfo.contentBuf.position() == len) {
+                  messageInfo.contentBuf.flip();
+                  System.out.println(new String(messageInfo.contentBuf.array()));
+                  clientChannel.register(selector, SelectionKey.OP_WRITE, messageInfo);
+                }
+              }
+              // 消息长度未读取完成
+              else {
+                int i = clientChannel.read(messageInfo.getLenBuf());
+                if (i == -1) {
+                  System.out.println("消息异常:" + messageInfo.getLenBuf());
+                  break;
+                }
+                if (messageInfo.getLenBuf().position() == 4) {
+                  messageInfo.getLenBuf().flip();
+                  messageInfo.setLen(messageInfo.getLenBuf().getInt());
+                }
+              }
+            }
+            if (selectionKey.isWritable()) {
+              SocketChannel clientChannel = (SocketChannel) selectionKey.channel();
+              String newData = "hello i'm server" + System.currentTimeMillis();
+              ByteBuffer byteBuffer = ByteBuffer.wrap(newData.getBytes(StandardCharsets.UTF_8));
+              clientChannel.write(byteBuffer);
+              selectionKey.cancel();
+              selectionKey.channel().close();
+            }
+          }
+          selectionKeySet.remove(selectionKey);
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    } finally {
+      if (serverSocketChannel != null) {
+        try {
+          serverSocketChannel.close();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+    }
+  }
+
+  /** 消息对象 */
+  static class MessageInfo {
+    private int len = -1;
+    private ByteBuffer lenBuf;
+    private ByteBuffer contentBuf;
+
+    public int getLen() {
+      return len;
+    }
+
+    public void setLen(int len) {
+      this.len = len;
+    }
+
+    public ByteBuffer getLenBuf() {
+      return lenBuf;
+    }
+
+    public void setLenBuf(ByteBuffer lenBuf) {
+      this.lenBuf = lenBuf;
+    }
+
+    public ByteBuffer getContentBuf() {
+      return contentBuf;
+    }
+
+    public void setContentBuf(ByteBuffer contentBuf) {
+      this.contentBuf = contentBuf;
+    }
+  }
+}
+```
+
+最后，我们再来看看Netty如何实现：
+
+客户端：
+
+```java
+import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.CharsetUtil;
+
+import java.net.InetSocketAddress;
+
+public class EchoClient {
+
+  private final String host;
+  private final int port;
+
+  public EchoClient(String host, int port) {
+    this.host = host;
+    this.port = port;
+  }
+
+  public void start() throws Exception {
+    EventLoopGroup group = new NioEventLoopGroup();
+    try {
+      Bootstrap b = new Bootstrap(); 
+      b.group(group) 
+          .channel(NioSocketChannel.class) 
+          .remoteAddress(new InetSocketAddress(host, port)) 
+          .handler(
+              new ChannelInitializer<SocketChannel>() { 
+                @Override
+                public void initChannel(SocketChannel ch) throws Exception {
+                  ch.pipeline().addLast(new EchoClientHandler());
+                }
+              });
+
+      ChannelFuture f = b.connect().sync(); 
+      f.channel().closeFuture().sync(); 
+    } finally {
+      group.shutdownGracefully().sync(); 
+    }
+  }
+
+  public static void main(String[] args) throws Exception {
+    final String host = "127.0.0.1";
+    final int port = 8080;
+    new EchoClient(host, port).start();
+  }
+
+  @ChannelHandler.Sharable 
+  public static class EchoClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) {
+      ctx.writeAndFlush(
+          Unpooled.copiedBuffer(
+              "Netty rocks!", 
+              CharsetUtil.UTF_8));
+    }
+
+    @Override
+    public void channelRead0(ChannelHandlerContext ctx, ByteBuf in) {
+      System.out.println("Client received: " + in.toString(CharsetUtil.UTF_8));
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) { 
+      cause.printStackTrace();
+      ctx.close();
+    }
+  }
+}
+```
+
+服务端：
+
+```java
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.util.CharsetUtil;
+
+import java.net.InetSocketAddress;
+
+public class EchoServer {
+
+  private final int port;
+
+  public EchoServer(int port) {
+    this.port = port;
+  }
+
+  public static void main(String[] args) throws Exception {
+    int port = 8080; 
+    new EchoServer(port).start(); 
+  }
+
+  public void start() throws Exception {
+    NioEventLoopGroup group = new NioEventLoopGroup();
+    try {
+      ServerBootstrap b = new ServerBootstrap();
+      b.group(group) 
+          .channel(NioServerSocketChannel.class) 
+          .localAddress(new InetSocketAddress(port)) 
+          .childHandler(
+              new ChannelInitializer<SocketChannel>() { 
+                @Override
+                public void initChannel(SocketChannel ch) throws Exception {
+                  System.out.println("initChannel ch:" + ch);
+                  ch.pipeline().addLast(new EchoServerHandler());
+                }
+              });
+      ChannelFuture f = b.bind().sync();
+      System.out.println(
+          EchoServer.class.getName() + " started and listen on " + f.channel().localAddress());
+      f.channel().closeFuture().sync(); 
+    } finally {
+      group.shutdownGracefully().sync();
+    }
+  }
+
+
+  @ChannelHandler.Sharable 
+  public static class EchoServerHandler extends ChannelInboundHandlerAdapter {
+
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+      ByteBuf in = (ByteBuf) msg;
+      System.out.println("Server received: " + in.toString(CharsetUtil.UTF_8)); 
+      ctx.write(in); 
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+      ctx.writeAndFlush(Unpooled.EMPTY_BUFFER) 
+          .addListener(ChannelFutureListener.CLOSE);
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+      cause.printStackTrace(); 
+      ctx.close(); 
+    }
+  }
+}
+```
+
+到此可见，BIO代码虽少，但是开发需要了解API。NIO的代码实现最为复杂。Netty则是提供流式编程，针对数据的处理，专门提供 ChannelHandler处理，你大可以放心的在Handler干自己想干的事。
 
 #### Netty为什么并发高
 
