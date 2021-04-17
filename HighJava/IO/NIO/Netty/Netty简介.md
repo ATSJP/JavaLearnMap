@@ -667,13 +667,21 @@ public class EchoServer {
 
 #### Netty为什么并发高
 
-NIO
+Netty是一款基于NIO（Nonblocking I/O，非阻塞IO）开发的网络通信框架，对比于BIO（Blocking I/O，阻塞IO），他的并发性能得到了很大提高。下图展示了BIO和NIO的工作模式。相比BIO，NIO的特点有：1、不阻塞、2、单线程能处理更多的连接
+
+![BIO&NIO](Netty简介.assets/BIO&NIO.png)
 
 #### Netty为什么快
 
-零拷贝
+零拷贝，
 
 ### 线程模型
+
+#### Reactor模式
+
+
+
+
 
 ### 对比
 
@@ -683,5 +691,5 @@ Netty和Tomcat最大的区别就在于通信协议，Tomcat是基于Http协议�
 
 有人说Netty的性能就一定比Tomcat性能高，其实不然，Tomcat从6.x开始就支持了NIO模式，并且后续还有APR模式——一种通过JNI调用Apache网络库的模式，相比于旧的BIO模式，并发性能得到了很大提高，特别是APR模式，而Netty是否比Tomcat性能更高，则要取决于Netty程序作者的技术实力了。
 
-Mina 
+#### Netty  & Mina 
 
