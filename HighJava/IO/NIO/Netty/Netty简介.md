@@ -673,7 +673,31 @@ Netty是一款基于NIO（Nonblocking I/O，非阻塞IO）开发的网络通信�
 
 #### Netty为什么快
 
-零拷贝，
+零拷贝。在操作系统层面上，零拷贝是指避免在用户态与内核态之间来回拷贝数据的技术。在Netty中，零拷贝与操作系统层面上的零拷贝不完全一样，Netty的零拷贝完全是在用户态（Java层面）的，更多是数据操作的优化。 
+
+主要体现在以下几个方面：
+
+- ByteBuffer
+
+  Netty发送和接收消息主要使用ByteBuffer，ByteBuffer使用直接内存（DirectMemory）直接进行Socket读写。
+
+  原因：如果使用传统的堆内存进行Socket读写，JVM会将堆内存Buffer拷贝一份到直接内存中，然后再写入Socket，多了一次缓冲区的内存拷贝。DirectMemory可以直接通过DMA发送到网卡接口。
+
+- Composite Buffers
+
+  传统的ByteBuffer，如果需要将两个ByteBuffer中的数据组合到一起，我们需要首先创建一个size=size1+size2大小的新的数组，然后将两个数组中的数据拷贝到新的数组中。但是使用Netty提供的组合ByteBuf，就可以避免这样的操作，因为CompositeByteBuf并没有真正将多个Buffer组合起来，而是保存了它们的引用，从而避免了数据的拷贝，实现了零拷贝。
+
+- 对于FileChannel.transferTo的使用
+
+  Netty中使用了FileChannel的transferTo方法，该方法依赖于操作系统实现零拷贝。
+
+- 通过wrap操作实现零拷贝
+
+  通过wrap操作，我们可以将byte[]数组、ByteBuf、ByteBuffer等包装成一个Netty ByteBuf对象， 进而避免拷贝操作。
+
+- 通过slice操作实现零拷贝
+
+  ByteBuf支持slice操作，可以将ByteBuf分解为多个共享同一个存储区域的ByteBuf，避免内存的拷贝。
 
 ### 线程模型
 
