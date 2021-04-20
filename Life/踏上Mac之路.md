@@ -10,7 +10,7 @@
 
 不用说啦，支持M1的Jdk版本也就zulu jdk了吧，[Zulu](https://www.azul.com/downloads/?package=jdk)，
 
-![截屏2021-10-30 14.51.24](/Users/atsjp/Library/Application Support/typora-user-images/截屏2021-10-30 14.51.24.png)
+![截屏2021-10-30 14.51.24](踏上Mac之路.assets/截屏2021-10-30 14.51.24.png)
 
 #### 环境变量
 
