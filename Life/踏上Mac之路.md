@@ -10,7 +10,7 @@
 
 不用说啦，支持M1的Jdk版本也就zulu jdk了吧，[Zulu](https://www.azul.com/downloads/?package=jdk)，
 
-![截屏2021-10-30 14.51.24](踏上Mac之路.assets/截屏2021-10-30 14.51.24.png)
+![zulujdk](踏上Mac之路.assets/zulujdk.png)
 
 #### 环境变量
 
@@ -50,7 +50,7 @@ java
 
 去哪里下载？官方入口直接下载：https://maven.apache.org/download.cgi
 
-![截屏2021-10-30 15.03.45](踏上Mac之路.assets/截屏2021-10-30 15.03.45.png)
+![maven](踏上Mac之路.assets/maven.png)
 
 #### 环境变量
 
@@ -143,7 +143,7 @@ Mac M1 最新系统自带Git，版本还不低，我就不重复装了。
 
 放个官方的图，让你感受一下
 
-![截屏2021-10-30 15.37.13](踏上Mac之路.assets/截屏2021-10-30 15.37.13.png)
+![sublimetext](踏上Mac之路.assets/sublimetext.png)
 
 ### Unix
 
@@ -176,13 +176,13 @@ colorscheme molokai
 
 ###### 效果
 
-![截屏2021-10-30 15.45.09](踏上Mac之路.assets/截屏2021-10-30 15.45.09.png)
+![vim](踏上Mac之路.assets/vim.png)
 
 #### Item2
 
 还没折腾，看看别人的效果吧：
 
-![img](踏上Mac之路.assets/v2-9ff85ace3795f64eaad71d07ea036259_1440w-20211030154625809.png)
+![img](踏上Mac之路.assets/item2.png)
 
 #### Osx Terminal
 
@@ -190,7 +190,7 @@ colorscheme molokai
 
 打开偏好设置，即可在描述文件中配置不同的配色方案。
 
-[<img src="踏上Mac之路.assets/截屏2021-10-30 15.48.28.png" alt="截屏2021-10-30 15.48.28" style="zoom: 50%;" />
+[<img src="踏上Mac之路.assets/terminal.png" alt="terminal" style="zoom: 50%;" />
 
 我们可以选择自己配置，也可以选择别人的方案，下面安利一个项目：[iTerm2-Color-Schemes](https://github.com/mbadolato/iTerm2-Color-Schemes)，下载好项目后，在项目路径下/terminal/存在大量的配置方法，其中文件为 *.terminal 的文件，我们可以直接在Mac下打开，就可以预览（另外，在打开的同时，偏好设置中的描述文件已经有了你打开过的配色方案，惊不惊喜），然后挑选一款适合自己的，在偏好设置-描述文件中设置为默认即可。
 
