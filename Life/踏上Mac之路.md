@@ -10,6 +10,12 @@
 >
 > - 说在最前面，所有配置均涉及到路径，各自可以直接选择和博主放在一个地方，也可以自己改地方，全文采用`${your_path}`代替大家选择的根路径，涉及到根路径的地方，博主会上方写上博主的地址。
 
+### 基本操作
+
+#### 快捷键
+
+[Apple官方](https://support.apple.com/zh-cn/HT201236)
+
 ### Jdk
 
 不用说啦，支持M1的Jdk版本也就zulu jdk了吧，[Zulu](https://www.azul.com/downloads/?package=jdk)，
