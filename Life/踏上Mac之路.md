@@ -16,6 +16,17 @@
 
 [Apple官方](https://support.apple.com/zh-cn/HT201236)
 
+#### 终端
+
+##### 快速使用App
+
+大家知道，Mac的Finder用起来对于我们，太难受了，总感觉不如终端寻找文件自由，但是呢终端找到了目标，又想用某些软件打开，怎么办呢？
+
+解决方案：
+
+- `open .`会打开Finder，然后再去用软件打开（显然不够优雅）
+- `${app_path} ${file_path}`，哦豁，举个例子，`/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl settings.xml `，这样就可以使用Sublime Text打开settings.xml文件啦，但是每次这么用，这路径也太长了吧。咋办呢？详情见Unix#Alias使用。
+
 ### Jdk
 
 不用说啦，支持M1的Jdk版本也就zulu jdk了吧，[Zulu](https://www.azul.com/downloads/?package=jdk)，
@@ -203,6 +214,42 @@ colorscheme molokai
 [<img src="踏上Mac之路.assets/terminal.png" alt="terminal" style="zoom: 50%;" />
 
 我们可以选择自己配置，也可以选择别人的方案，下面安利一个项目：[iTerm2-Color-Schemes](https://github.com/mbadolato/iTerm2-Color-Schemes)，下载好项目后，在项目路径下/terminal/存在大量的配置方法，其中文件为 *.terminal 的文件，我们可以直接在Mac下打开，就可以预览（另外，在打开的同时，偏好设置中的描述文件已经有了你打开过的配色方案，惊不惊喜），然后挑选一款适合自己的，在偏好设置-描述文件中设置为默认即可。
+
+#### Alias
+
+别名，顾名思义，就是给一个Name重新起个名字，那这玩意就是起个名字吗？当然不是，这玩意配合其他功能一起玩会非常Happy
+
+##### 终端
+
+1. 如何在终端快速使用XXApp打开XX文件
+
+   举个例子：
+
+   ​	App：Sublime Text
+
+   ​    文件： settings.xml
+
+   正常使用：
+
+   ```shell
+   /Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl settings.xml 
+   ```
+
+   别名使用：
+
+   在~/.zprofile文件中加入下面的别名定义，然后`source ~/.zprofile`。
+
+   ```properties
+   alias sublime="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl"
+   ```
+
+   配置完成之后，我们使用以下命令直接打开：
+
+   ```shell
+   sublime settings.xml
+   ```
+
+   
 
 
 
