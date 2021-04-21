@@ -42,7 +42,7 @@ source ~/.zprofile
 
 ```shell
 java -version
-java
+javac
 java
 ```
 
