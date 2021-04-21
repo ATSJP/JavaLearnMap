@@ -1,3 +1,7 @@
+[TOC]
+
+
+
 ## 踏上Mac之路
 
 > 时间：2021.10.30
@@ -178,7 +182,7 @@ colorscheme molokai
 
 ![vim](踏上Mac之路.assets/vim.png)
 
-#### Item2
+#### Iterm2
 
 还没折腾，看看别人的效果吧：
 
