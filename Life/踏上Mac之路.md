@@ -6,6 +6,10 @@
 
 > 时间：2021.10.30
 >
+> 系统：Monterey 
+>
+> 版本：12
+>
 > 说明：
 >
 > - 说在最前面，所有配置均涉及到路径，各自可以直接选择和博主放在一个地方，也可以自己改地方，全文采用`${your_path}`代替大家选择的根路径，涉及到根路径的地方，博主会上方写上博主的地址。
@@ -14,18 +18,19 @@
 
 #### 快捷键
 
-[Apple官方](https://support.apple.com/zh-cn/HT201236)
+[Apple官方](https://support.apple.com/zh-cn/HT201236)，官方快捷键介绍挺详细的了，一开始可以先看一遍，留个印象，不然都不知道Apple到底有多少快捷方式，反正我是惊呆了，再看看Windows，哎，算了算了，那是给人做的吗。
 
 #### 终端
 
-##### 快速使用App
+##### 打开App
 
-大家知道，Mac的Finder用起来对于我们，太难受了，总感觉不如终端寻找文件自由，但是呢终端找到了目标，又想用某些软件打开，怎么办呢？
+大家知道，Mac的Finder用起来对于Windows重度使用者，太难受了，找个系统文件，门都没有（当然了，还有有其他方式直达目标文件的，比如桌面下使用command+shift+g，不过这个又不是Finder的功能）。Finder的无奈，导致大部分时间宁可使用终端，但是呢终端找到了目标，又想用某些软件打开，怎么办呢？
 
 解决方案：
 
-- `open .`会打开Finder，然后再去用软件打开（显然不够优雅）
-- `${app_path} ${file_path}`，哦豁，举个例子，`/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl settings.xml `，这样就可以使用Sublime Text打开settings.xml文件啦，但是每次这么用，这路径也太长了吧。咋办呢？详情见Unix#Alias使用。
+第一种：使用命令`open ${path}`，这样一个Path路径的Finder窗口就打开了，最后再去用软件打开，显然此方法不够优雅。
+
+第二种：使用命令`${app_path} ${file_path}`，哦豁，举个例子，`/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl settings.xml `，这样就可以使用Sublime Text打开settings.xml文件啦，但是每次这么用，这路径也太长了吧。咋办呢？详情见Unix#Alias使用。
 
 ### Jdk
 
@@ -35,7 +40,15 @@
 
 #### 环境变量
 
-目前环境变量文件配置在 ~/.zprofile 即可，最后别忘了`source ~/.zprofile`。
+环境变量文件配置在 ~/.zprofile 即可，最后别忘了`source ~/.zprofile`。
+
+> 有一件事大家得知道，环境变量文件不是所有Mac系统都是一样的，环境变量文件名称取决于Shell，何为Shell，这里就不赘述了，大家自行百度。常见的Shell有：bash、zsh、oh-my-zsh。通常他们的环境变量文件如下：
+>
+> | Shell     | 环境变量文件  |
+> | --------- | ------------- |
+> | bash      | .bash_profile |
+> | Zsh       | .zprofile     |
+> | Oh-my-zsh | .zshrc        |
 
 ```properties
 # Java
@@ -168,7 +181,11 @@ Mac M1 最新系统自带Git，版本还不低，我就不重复装了。
 
 ### Unix
 
-再来看看Terminal吧
+再来看看一些硬核的吧
+
+#### Brew
+
+通常基于Linux的Ubuntu、Centos都有自带的软件安装神奇，分别是apt-get、yum，然而Mac没有辜负你的期望，她系统不自带。此时，Brew出现了，她很开心的胜任了这份工作。怎么安装？[官方](https://brew.sh/)
 
 #### Vim
 
@@ -199,9 +216,9 @@ colorscheme molokai
 
 ![vim](踏上Mac之路.assets/vim.png)
 
-#### Iterm2
+#### ITerm2
 
-还没折腾，看看别人的效果吧：
+还没折腾，看看别人的效果吧（大致就是Oh-My-Zsh主题+字体+各种配色方案，本人讲究大道至简，搞点配色方案护护眼得了，排查BUG的时候，你还有心情看这玩意？）：
 
 ![img](踏上Mac之路.assets/item2.png)
 
