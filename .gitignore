@@ -25,4 +25,9 @@ target
 .idea
 *.iml
 
+# nodeJs
+package-lock.json
+node_modules
 
+# book
+_book
