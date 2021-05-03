@@ -10,6 +10,10 @@
 
 ***
 
+* [Cache]()
+  * [JetCahce](BaseJava/Cache/JetCahce.md)
+  * [MemCache](BaseJava/Cache/MemCache.md)
+  
 * [DataStructure]()
   * [SingleLinkedList](BaseJava/DataStructure/SingleLinkedList.md)
   * [TreeNode](BaseJava/DataStructure/TreeNode.md)
@@ -35,13 +39,8 @@
 * [Nosql]()
   * [Redis](BaseJava/Nosql/Redis.md)
 
-***
-
 * [RepositoryManager]()
   * [Maven](BaseJava/RepositoryManager/Maven.md)
-
-***
-    
 * [Security]()
   * [Cors](BaseJava/Security/Cors.md)
   * [SSH](BaseJava/Security/SSH.md)
