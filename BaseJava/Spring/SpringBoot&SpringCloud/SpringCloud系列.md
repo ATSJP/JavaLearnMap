@@ -11,7 +11,7 @@
 
 推荐文章：https://blog.csdn.net/zrl0506/article/details/80165477
 
-![1548589316026](./assets/20170918114736747.png)
+![1548589316026](./SpringCloud系列.assets/20170918114736747.png)
 
 推荐文章：https://blog.csdn.net/qq_37170583/article/details/80704904
 
@@ -80,7 +80,7 @@ SpringCloud 版本为 Edgware 以上，eureka包改为netflix：
 
 #### 项目整体结构：
 
-![1548589316026](./assets/1548589316026.png)
+![1548589316026](./SpringCloud系列.assets/1548589316026.png)
 
 #### eureka-server入门
 
@@ -187,7 +187,7 @@ eureka:
 
 http://localhost:9001/
 
-![1548158001871](./assets/1548158001871.png)
+![1548158001871](./SpringCloud系列.assets/1548158001871.png)
 
 #### eureka-api 入门
 
@@ -195,7 +195,7 @@ http://localhost:9001/
 
 ##### 模块结构
 
-![1548340246457](./assets/1548340246457.png)
+![1548340246457](./SpringCloud系列.assets/1548340246457.png)
 
 ##### 一、导入jar
 
@@ -233,7 +233,7 @@ public interface VideoService {
 
 ##### 模块结构
 
-![1548340282069](./assets/1548340282069.png)
+![1548340282069](./SpringCloud系列.assets/1548340282069.png)
 
 ##### 一、导入jar
 
@@ -405,7 +405,7 @@ eureka:
 
 http://localhost:9001/
 
-![1548331878651](./assets/1548331878651.png)
+![1548331878651](./SpringCloud系列.assets/1548331878651.png)
 
 
 
@@ -413,7 +413,7 @@ http://localhost:9001/
 
 ##### 模块结构
 
-![1548340368984](./assets/1548340368984.png)
+![1548340368984](./SpringCloud系列.assets/1548340368984.png)
 
 ##### 一、导入jar
 
@@ -547,7 +547,7 @@ eureka:
 
 http://localhost:9001/
 
-![1548339679969](./assets/1548339679969.png)
+![1548339679969](./SpringCloud系列.assets/1548339679969.png)
 
 
 
@@ -744,7 +744,7 @@ eureka:
 
 http://localhost:9001/
 
-![1548339679969](./assets/1548339679969.png)
+![1548339679969](./SpringCloud系列.assets/1548339679969.png)
 
 坑：
 
@@ -916,7 +916,7 @@ public class LemonConfigApplication {
 
 全部配置好后，启动应用，访问 http://localhost:9000/admin/dev （http://localhost:9000/admin-dev.json，http://localhost:9000/admin-dev.properties）
 
-![1561601935481](./assets/1561601935481.png)
+![1561601935481](./SpringCloud系列.assets/1561601935481.png)
 
 注：配置文件的访问规则如下：
 
