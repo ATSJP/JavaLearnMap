@@ -77,9 +77,9 @@ Linux的内核将所有外部设备都可以看做一个文件来操作，那么
 
 阻塞 I/O的特点就是**在 IO 执行的两个阶段都被 block 了**。
 
-![img](IO.assets/Blocking IO_EN.jpg)
+![img](IO.assets/BlockingIO_EN.jpg)
 
-![img](IO.assets/Blocking IO_CN.png)
+![img](IO.assets/BlockingIO_CN.png)
 
 #####  非阻塞 I/O 
 
@@ -96,9 +96,9 @@ Linux的内核将所有外部设备都可以看做一个文件来操作，那么
 
 I/O 多路复用会用到 UNIX/Linux 下的 select、poll、epoll（epoll 比 poll、select 效率高，做的事情是一样的）。这几个函数也会使进程阻塞，但是和阻塞 I/O 所不同的的，这两个函数可以同时阻塞多个 I/O 操作，而且可以同时对多个读操作、多个写操作的 I/O 函数进行检测，直到有数据可读或可写时，才真正调用recvfrom。
 
-![img](IO.assets/IO multiplexing_EN.jpg)
+![img](IO.assets/IOMultiplexing_EN.jpg)
 
-![img](IO.assets/IO multiplexing_CN.png)
+![img](IO.assets/IOMultiplexing_CN.png)
 
 从流程上来看，使用 select 函数进行 I/O 请求和同步阻塞模型没有太大的区别，甚至还多了添加监视 socket，以及调用 select 函数的额外操作，效率更差。但是，使用 select 以后最大的优势是用户可以在一个线程内同时处理多个 socket 的 I/O 请求。用户可以注册多个 socket，然后不断地调用 select 读取被激活的 socket，即可达到在同一个线程内同时处理多个 I/O 请求的目的。而在同步阻塞模型中，必须通过多线程的方式才能达到这个目的。
 
@@ -150,9 +150,9 @@ I/O 多路复用模型使用了 Reactor 设计模式实现了这一机制。
 
 首先我们允许 socket 进行信号驱动 I/O，并安装一个信号处理函数，进程继续运行并不阻塞。当数据准备好时，进程会收到一个 SIGIO 信号，可以在信号处理函数中调用 I/O 操作函数处理数据。
 
-![img](IO.assets/Signal driven IO_EN.jpg)
+![img](IO.assets/SignalDriven IO_EN.jpg)
 
-![img](IO.assets/Signal driven IO_CN.png)
+![img](IO.assets/SignalDriven IO_CN.png)
 
 #####  异步 I/O
 
@@ -164,9 +164,9 @@ I/O 多路复用模型使用了 Reactor 设计模式实现了这一机制。
 - 同步非阻塞模型允许处理和 IO 操作重叠进行，但是这需要应用程序根据重现的规则来检查 IO 操作的状态。
 - 这样就剩下异步非阻塞 IO 了，它允许处理和 IO 操作重叠进行，包括 IO 操作完成的通知。
 
-![img](IO.assets/Asynchronous IO_EN.jpg)
+![img](IO.assets/AsynchronousIO_EN.jpg)
 
-![img](IO.assets/Asynchronous IO_CN.png)
+![img](IO.assets/AsynchronousIO_CN.png)
 
 异步 I/O 模型使用了 Proactor 设计模式实现了这一机制。
 
