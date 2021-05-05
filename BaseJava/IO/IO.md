@@ -88,9 +88,9 @@ Linux的内核将所有外部设备都可以看做一个文件来操作，那么
 
 整个 I/O 请求的过程中，虽然用户进程每次发起 I/O 请求后可以立即返回，但是为了等到数据，仍需要不断地轮询、重复请求，消耗了大量的 CPU 的资源。
 
-![img](IO.assets/Non-Blocking IO_EN.jpg)
+![img](IO.assets/Non-BlockingIO_EN.jpg)
 
-![img](IO.assets/Non-Blocking IO_CN.png)
+![img](IO.assets/Non-BlockingIO_CN.png)
 
 #####  I/O多路复用
 
@@ -150,9 +150,9 @@ I/O 多路复用模型使用了 Reactor 设计模式实现了这一机制。
 
 首先我们允许 socket 进行信号驱动 I/O，并安装一个信号处理函数，进程继续运行并不阻塞。当数据准备好时，进程会收到一个 SIGIO 信号，可以在信号处理函数中调用 I/O 操作函数处理数据。
 
-![img](IO.assets/SignalDriven IO_EN.jpg)
+![img](IO.assets/SignalDrivenIO_EN.jpg)
 
-![img](IO.assets/SignalDriven IO_CN.png)
+![img](IO.assets/SignalDrivenIO_CN.png)
 
 #####  异步 I/O
 
