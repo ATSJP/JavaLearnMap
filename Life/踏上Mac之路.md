@@ -1,30 +1,4 @@
--   [踏上Mac之路](#踏上mac之路)
-    -   [基本操作](#基本操作)
-        -   [快捷键](#快捷键)
-        -   [终端](#终端)
-    -   [Jdk](#jdk)
-        -   [环境变量](#环境变量)
-        -   [验证](#验证)
-    -   [Maven](#maven)
-        -   [环境变量](#环境变量-1)
-        -   [验证](#验证-1)
-        -   [附件](#附件)
-    -   [Git](#git)
-    -   [Docker](#docker)
-        -   [如何启动](#如何启动)
-    -   [IED](#ied)
-        -   [Idea](#idea)
-        -   [Sublime Text](#sublime-text)
-    -   [Unix](#unix)
-        -   [Brew](#brew)
-        -   [Vim](#vim)
-        -   [ITerm2](#iterm2)
-        -   [Osx Terminal](#osx-terminal)
-        -   [Alias](#alias)
-
-
-
-## 踏上Mac之路
+# 踏上Mac之路
 
 > 时间：2021.10.30
 >
@@ -36,15 +10,15 @@
 >
 > -   说在最前面，所有配置均涉及到路径，各自可以直接选择和博主放在一个地方，也可以自己改地方，全文采用`${your_path}`代替大家选择的根路径，涉及到根路径的地方，博主会上方写上博主的地址。
 
-### 基本操作
+## 基本操作
 
-#### 快捷键
+### 快捷键
 
 [Apple官方](https://support.apple.com/zh-cn/HT201236)，官方快捷键介绍挺详细的了，一开始可以先看一遍，留个印象，不然都不知道Apple到底有多少快捷方式，反正我是惊呆了，再看看Windows，哎，算了算了。
 
-#### 终端
+### 终端
 
-##### 打开App
+#### 打开App
 
 大家知道，Mac的Finder用起来对于Windows重度使用者，太难受了，找个系统文件，门都没有（当然了，还有有其他方式直达目标文件的，比如桌面下使用command+shift+g，不过这个又不是Finder的功能）。Finder的无奈，导致大部分时间宁可使用终端，但是呢终端找到了目标，又想用某些软件打开，怎么办呢？
 
@@ -55,14 +29,14 @@
 第二种：使用命令`${app_path} ${file_path}`，哦豁，举个例子，`/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl settings.xml`，这样就可以使用Sublime
 Text打开settings.xml文件啦，但是每次这么用，这路径也太长了吧。咋办呢？详情见Unix#Alias使用。
 
-### Jdk
+## Jdk
 
 不用说啦，支持M1的Jdk版本也就zulu
 jdk了吧，[Zulu](https://www.azul.com/downloads/?package=jdk)，
 
 ![zulujdk](踏上Mac之路.assets/zulujdk.png)
 
-#### 环境变量
+### 环境变量
 
 环境变量文件配置在 \~/.zprofile 即可，最后别忘了`source ~/.zprofile`。
 
@@ -94,7 +68,7 @@ echo "export CLASSPATH=." >> ~/.zprofile
 source ~/.zprofile
 ```
 
-#### 验证
+### 验证
 
 以下命令全部输出OK，即可
 
@@ -104,13 +78,13 @@ javac
 java
 ```
 
-### Maven
+## Maven
 
 去哪里下载？官方入口直接下载：https://maven.apache.org/download.cgi
 
 ![maven](踏上Mac之路.assets/maven.png)
 
-#### 环境变量
+### 环境变量
 
 目前环境变量文件配置在 \~/.zprofile
 即可，最后别忘了`source ~/.zprofile`。
@@ -133,7 +107,7 @@ echo "export PATH=\$MAVEN_HOME/bin:\$PATH" >> ~/.zprofile
 source ~/.zprofile
 ```
 
-#### 验证
+### 验证
 
 以下命令全部输出OK，即可
 
@@ -141,9 +115,9 @@ source ~/.zprofile
 mvn -v
 ```
 
-#### 附件
+### 附件
 
-##### Settings.xml
+#### Settings.xml
 
 ``` xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -186,11 +160,11 @@ mvn -v
 </settings>
 ```
 
-### Git
+## Git
 
 Mac M1 最新系统自带Git，版本还不低，我就不重复装了。
 
-### Docker
+## Docker
 
 Mac上安装Docker方式各式各样，这边仅仅介绍一下Docker官网介绍的方式：https://docs.docker.com/desktop/mac/install/。
 
@@ -198,17 +172,17 @@ Mac上安装Docker方式各式各样，这边仅仅介绍一下Docker官网介�
 
 下载下来是个dmg文件，直接无脑安装即可。
 
-#### 如何启动
+### 如何启动
 
 正常打开应用即可，应用会启动DockerEngie，然后就可以直接在终端或应用里进行操作了。但是显然没有Linux下的`service或systemctl`来的快，所以Mac上还有一个工具可以等效他们------`launchctl`，可以配置Docker的注册表，然后直接使用`launchctl`打开Docker，网上大多有教程，我这里不在赘述，至少目前对于我打开个应用的时间还是有的，实在不行，设置开机就启动Docker。
 
-### IED
+## IED
 
-#### Idea
+### Idea
 
 选择了Idea社区版本，为啥呢，因为大部分情况够用，但是如果你选择安装旗舰版，Windows上的Idea激活方式，仍然适合Mac。我说的就是那个使用无限重制试用时间的插件。
 
-#### Sublime Text
+### Sublime Text
 
 用过的都说好用，至少我觉得超级好看。[Macwk](https://www.macwk.com/soft/sublime-text)上有现成的破解版，据说挺干净的（不会偷偷摸摸干坏事），但是这傻货的安装包，Mac不认，非得给安装包开启一堆权限才可以。最终我选择临时安装了[Sublime
 Text](https://www.sublimetext.com/)官方版，先用着吧，后面在想法子破解。哦，最后的最后，Windows上之前都是利用修改16进制代码改的，我试过了，Mac的16进制代码不同于Windows，网上暂时也没有大神指出来怎么搞，我就不瞎折腾了。
@@ -217,19 +191,19 @@ Text](https://www.sublimetext.com/)官方版，先用着吧，后面在想法子
 
 ![sublimetext](踏上Mac之路.assets/sublimetext.png)
 
-### Unix
+## Unix
 
 再来看看一些硬核的吧
 
-#### Brew
+### Brew
 
 通常基于Linux的Ubuntu、Centos都有自带的软件安装神奇，分别是apt-get、yum，然而Mac没有辜负你的期望，她系统不自带。此时，Brew出现了，她很开心的胜任了这份工作。怎么安装？[官方](https://brew.sh/)
 
-#### Vim
+### Vim
 
-##### Theme
+#### Theme
 
-###### 下载安装
+##### 下载安装
 
 ``` bash
 git clone https://github.com/tomasr/molokai.git
@@ -239,7 +213,7 @@ cp /usr/share/vim/vimrc ~/.vimrc
 vim ~/.vimrc
 ```
 
-###### 配置
+##### 配置
 
 将下面几行添加到\~/.vimrc配置文件中即可
 
@@ -250,19 +224,19 @@ set background=dark
 colorscheme molokai
 ```
 
-###### 效果
+##### 效果
 
 ![vim](踏上Mac之路.assets/vim.png)
 
-#### ITerm2
+### ITerm2
 
 还没折腾，看看别人的效果吧（大致就是Oh-My-Zsh主题+字体+各种配色方案，本人讲究大道至简，搞点配色方案护护眼得了，排查BUG的时候，你还有心情看这玩意？）：
 
 ![img](踏上Mac之路.assets/item2.png)
 
-#### Osx Terminal
+### Osx Terminal
 
-###### Theme
+##### Theme
 
 打开偏好设置，即可在描述文件中配置不同的配色方案。
 
@@ -272,11 +246,11 @@ colorscheme molokai
 \*.terminal
 的文件，我们可以直接在Mac下打开，就可以预览（另外，在打开的同时，偏好设置中的描述文件已经有了你打开过的配色方案，惊不惊喜），然后挑选一款适合自己的，在偏好设置-描述文件中设置为默认即可。
 
-#### Alias
+### Alias
 
 别名，顾名思义，就是给一个Name重新起个名字，那这玩意就是起个名字吗？当然不是，这玩意配合其他功能一起玩会非常Happy
 
-##### 终端
+#### 终端
 
 1.  如何在终端快速使用XXApp打开XX文件
 
