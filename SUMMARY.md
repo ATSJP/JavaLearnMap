@@ -84,7 +84,7 @@
 
     - [CircuitBreaker](HighJava/Distributed/CircuitBreaker/README.md)
         - [Hystrix](HighJava/Distributed/CircuitBreaker/Hystrix.md)
-        - [Sentinel Vs Hystrix](HighJava/Distributed/CircuitBreaker/Sentinel vs Hystrix.md)
+        - [SentinelVsHystrix](HighJava/Distributed/CircuitBreaker/SentinelVsHystrix.md)
         - [Sentinel](HighJava/Distributed/CircuitBreaker/Sentinel.md)
     - [FileStorageSystem](HighJava/Distributed/FileStorageSystem/README.md)
 
