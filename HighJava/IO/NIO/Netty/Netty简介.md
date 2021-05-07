@@ -2,6 +2,8 @@
 
 
 
+
+
 ## Netty
 
 题外话：在开始了解Netty之前，请务必完全知晓IO的基本概念，这将助于你更好的学习Netty。
@@ -204,9 +206,15 @@ EventLoop 定义了Netty的核心抽象，用于处理 Channel 的 I/O 操作。
 
 EventLoopGroup 是一个 EventLoop 池，包含很多的 EventLoop。
 
+### 线程模型
+
+#### Reactor模式
+
+未完待续...
+
 ### 为什么
 
-#### 为什么要有Netty？
+#### 为什么要有Netty
 
 先假设没有Netty，我们怎们实现网络编程：
 
@@ -237,7 +245,7 @@ EventLoopGroup 是一个 EventLoop 池，包含很多的 EventLoop。
 - 成熟稳定，经历了大型项目的使用和考验，而且很多开源项目都使用到了 Netty， 比如我们经常接触的 Dubbo、RocketMQ 等等。
 - ......
 
-#### Netty为什么封装好
+#### 为什么封装好
 
 假如我们要完成客户端-服务端SayHello这样的通信，在Socket时代一个简单的Demo是这样的：
 
@@ -665,13 +673,17 @@ public class EchoServer {
 
 到此可见，BIO代码虽少，但是开发需要了解API。NIO的代码实现最为复杂。Netty则是提供流式编程，针对数据的处理，专门提供 ChannelHandler处理，你大可以放心的在Handler干自己想干的事。
 
-#### Netty为什么并发高
+#### 为什么性能高
+
+##### 非阻塞
 
 Netty是一款基于NIO（Nonblocking I/O，非阻塞IO）开发的网络通信框架，对比于BIO（Blocking I/O，阻塞IO），他的并发性能得到了很大提高。下图展示了BIO和NIO的工作模式。相比BIO，NIO的特点有：1、不阻塞、2、单线程能处理更多的连接
 
 ![BIO&NIO](Netty简介.assets/BIO&NIO.png)
 
-#### Netty为什么快
+
+
+##### 零拷贝
 
 零拷贝。在操作系统层面上，零拷贝是指避免在用户态与内核态之间来回拷贝数据的技术。在Netty中，零拷贝与操作系统层面上的零拷贝不完全一样，Netty的零拷贝完全是在用户态（Java层面）的，更多是数据操作的优化。 
 
@@ -699,11 +711,17 @@ Netty是一款基于NIO（Nonblocking I/O，非阻塞IO）开发的网络通信�
 
   ByteBuf支持slice操作，可以将ByteBuf分解为多个共享同一个存储区域的ByteBuf，避免内存的拷贝。
 
-### 线程模型
+##### Reactor线程模型
 
-#### Reactor模式
+Netty服务端采用Reactor主从多线程模型
 
-未完待续...
+1. 主线程：Acceptor 线程池用于监听Client 的TCP 连接请求
+2. 从线程：Client 的IO 操作都由一个特定的NIO 线程池负责，负责消息的读取、解码、编码和发送
+3. Client连接有很多，但是NIO 线程数是比较少的，一个NIO 线程可以同时绑定到多个Client，同时一个Client只能对应一个线程，避免出现线程安全问题
+
+##### 无锁化串行设计
+
+串行设计：数据的处理尽可能在一个线程内完成，期间不进行线程切换，避免了多线程竞争和同步锁的使用
 
 ### 对比
 

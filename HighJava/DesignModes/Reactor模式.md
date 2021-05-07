@@ -2,13 +2,17 @@
 
 
 
-## Reactor模式
+# Reactor模式
 
-Reactor模式是事件驱动模型，有一个或多个并发输入源，有一个Service Handler，有多个Request Handlers；这个Service Handler会同步的将输入的请求（Event）多路复用的分发给相应的Request Handler。从结构上，这有点类似生产者消费者模式，即有一个或多个生产者将事件放入一个Queue中，而一个或多个消费者主动的从这个Queue中Poll事件来处理；而Reactor模式则并没有Queue来做缓冲，每当一个Event输入到Service Handler之后，该Service Handler会主动的根据不同的Event类型将其分发给对应的Request Handler来处理。
+## 概念
 
-Reactor模式(反应器模式)是一种处理一个或多个客户端并发交付服务请求的事件设计模式。当请求抵达后，服务处理程序使用I/O多路复用策略，然后同步地派发这些请求至相关的请求处理程序。
+> 来自于百度百科：
+>
+> 反应器设计模式(Reactorpattern)是一种为处理服务请求并发提交到一个或者多个服务处理程序的事件设计模式。当请求抵达后，服务处理程序使用解多路分配策略，然后同步地派发这些请求至相关的请求处理程序。
 
-### Reactor类图
+Reactor模式是事件驱动模型，换句话说，内部因外部事件到达而产生的一系列行为。在Reactor模型中，通常由2个角色，一个是Reactor（姑且认为是反应器/分发器），主要负责监听和分发事件，事件类型包含连接事件、读写事件。另一个是Handler（处理器），主要负责事件的处理，如`Read`->业务逻辑->`Write`。当事件/请求到达时，由Reactor负责按照类型进行分发，Handler负责处理事件。
+
+### 类图
 
 ![4720632-772107bb22dac4a0](Reactor模式.assets/4720632-772107bb22dac4a0.png)
 
@@ -19,7 +23,7 @@ Reactor模式(反应器模式)是一种处理一个或多个客户端并发交�
 - Concrete Event Handler(具体事件处理器)：是事件处理器的实现。它本身实现了事件处理器所提供的各种回调方法，从而实现了特定于业务的逻辑。它本质上就是我们所编写的一个个的处理器实现。
 - Initiation Dispatcher(初始分发器)：实际上就是Reactor角色。它本身定义了一些规范，这些规范用于控制事件的调度方式，同时又提供了应用进行事件处理器的注册、删除等设施。它本身是整个事件处理器的核心所在，Initiation Dispatcher会通过Synchronous Event Demultiplexer来等待事件的发生。一旦事件发生，Initiation Dispatcher首先会分离出每一个事件，然后调用事件处理器，最后调用相关的回调方法来处理这些事件。Netty中ChannelHandler里的一个个回调方法都是由bossGroup或workGroup中的某个EventLoop来调用的。
 
-### Reactor时序图
+### 时序图
 
 ![4720632-9146b59382d59ebf](Reactor模式.assets/4720632-9146b59382d59ebf.png)
 
@@ -30,11 +34,32 @@ Reactor模式(反应器模式)是一种处理一个或多个客户端并发交�
 -  Initiation Dispatcher会触发事件处理器的回调方法，从而响应这个处于ready状态的Handle。当事件发生时，Initiation Dispatcher会将被事件源激活的Handle作为『key』来寻找并分发恰当的事件处理器回调方法。
 -  Initiation Dispatcher会回调事件处理器的handle_event(type)回调方法来执行特定于应用的功能(开发者自己所编写的功能)，从而相应这个事件。所发生的事件类型可以作为该方法参数并被该方法内部使用来执行额外的特定于服务的分离与分发
 
+## 模式
 
+在概念中我们已经得知Reactor模式中有2个核心角色：Reactor、Handler，那么如何将这2个核心角色组合在一起使用呢？
 
-##### 单线程Reactor模式
+根据并发编程的思想，理论上可以有以下组合：
 
-![img](https:////upload-images.jianshu.io/upload_images/4235178-4047d3c78bb467c9.png?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp)
+（Tips：单-单进程/线程，多-多进程/线程，具体是进程还是线程，由具体的平台和编程语言决定。）
+
+- 单Reactor、单Handler
+- 单Reactor、多Handler
+- 多Reactor、单Handler
+- 多Reactor、多Handler
+
+其中，「多Reactor、单Handler」实现方案相比「单Reactor、单Handler」方案，不仅复杂而且也没有性能优势，因此实际中并没有应用。
+
+所以实际使用中有以下组合：
+
+- 单Reactor、单Handler
+- 单Reactor、多Handler
+- 多Reactor、多Handler
+
+下面我们来一一相看每个组合的特点。
+
+### 单线程Reactor模式
+
+<img src="https://mmbiz.qpic.cn/mmbiz_png/J0g14CUwaZcvaLVakREneqAvT5K3bknhx9Rl8jEhn0sLY5qEFPz7wNkLIkIu4fxEWrZcx2N8hpXOd23ZtfkyibA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="img" style="zoom:67%;" />
 
 
 
@@ -48,7 +73,7 @@ Reactor模式(反应器模式)是一种处理一个或多个客户端并发交�
 
 但在目前的单线程Reactor模式中，不仅I/O操作在该Reactor线程上，连非I/O的业务操作也在该线程上进行处理了，这可能会大大延迟I/O请求的响应。所以我们应该将非I/O的业务逻辑操作从Reactor线程上卸载，以此来加速Reactor线程对I/O请求的响应。
 
-###### 改进：使用工作者线程池
+### 改进：使用工作者线程池
 
 ![img](https:////upload-images.jianshu.io/upload_images/4235178-d570de7505817605.png?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp)
 
@@ -65,7 +90,7 @@ Reactor模式(反应器模式)是一种处理一个或多个客户端并发交�
  ② 当NIO线程负载过重之后，处理速度将变慢，这会导致大量客户端连接超时，超时之后往往会进行重发，这更加重了NIO线程的负载，最终会导致大量消息积压和处理超时，成为系统的性能瓶颈；
 
 
-##### 多Reactor线程模式
+### 多Reactor线程模式
 
 ![img](https:////upload-images.jianshu.io/upload_images/4235178-929a4d5e00c5e779.png?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp)
 
@@ -83,7 +108,9 @@ Reactor线程池中的每一Reactor线程都会有自己的Selector、线程和�
 多Reactor线程模式将“接受客户端的连接请求”和“与该客户端的通信”分在了两个Reactor线程来完成。mainReactor完成接收客户端连接请求的操作，它不负责与客户端的通信，而是将建立好的连接转交给subReactor线程来完成与客户端的通信，这样一来就不会因为read()数据量太大而导致后面的客户端连接请求得不到即时处理的情况。并且多Reactor线程模式在海量的客户端并发请求的情况下，还可以通过实现subReactor线程池来将海量的连接分发给多个subReactor线程，在多核的操作系统中这能大大提升应用的负载和吞吐量。
 
 
-### Netty 与 Reactor模式
+
+
+# Netty 与 Reactor模式
 
 Netty的线程模式就是一个实现了Reactor模式的经典模式。
 
@@ -104,6 +131,3 @@ Netty的线程模式就是一个实现了Reactor模式的经典模式。
    ③ 当有客户端向服务器端发起连接请求时，NioEventLoop的事件循环监听到该ACCEPT事件，Netty底层会接收这个连接，通过accept()方法得到与这个客户端的连接(SocketChannel)，然后触发ChannelRead事件(即，ChannelHandler中的channelRead方法会得到回调)，该事件会在ChannelPipeline中的ChannelHandler链中执行、传播。
    ④ ServerBootstrapAcceptor的readChannel方法会该SocketChannel(客户端的连接)注册到workerGroup(NioEventLoopGroup) 中的某个NioEventLoop的Selector上，并注册READ事件为SocketChannel所感兴趣的事件。启动SocketChannel所在NioEventLoop的事件循环，接下来就可以开始客户端和服务器端的通信了。
 
-
-
-​	  本文参考：https://www.jianshu.com/p/1ccbc6a348db
