@@ -681,11 +681,21 @@ public class EchoServer {
 
 ##### 异步非阻塞
 
-Netty是一款基于NIO（Nonblocking I/O，非阻塞IO）开发的网络通信框架，对比于BIO（Blocking I/O，阻塞IO），他的并发性能得到了很大提高。下图展示了BIO和NIO的工作模式。相比BIO，NIO的特点有：1、不阻塞、2、单线程能处理更多的连接
+###### 非阻塞
+
+Netty是一款基于NIO（Nonblocking I/O，非阻塞IO）开发的网络通信框架，对比于BIO（Blocking I/O，阻塞IO），他的并发性能得到了很大提高。下图展示了BIO和NIO的工作模式。相比BIO，NIO的特点有：1、不阻塞、2、单线程能处理更多的连接。
 
 ![BIO&NIO](Netty简介.assets/BIO&NIO.png)
 
 
+
+Netty的I/O线程NioEventLoop由于聚合了多路复用器Selector，可以同时并发处理成百上千个客户端的SocketChannel。由于读写操作都是非阻塞的，这就可以充分提升I/O线程的运行效率，避免由频繁的I/O阻塞导致的线程挂起。
+
+> IO多路复用技术通过把多个IO的阻塞复用到同一个Select的阻塞上，从而使得系统在单线程的情况下可以同时处理多个客户端请求。
+
+###### 异步
+
+另外，由于Netty采用了异步通信模式，一个I/O线程可以并发处理N个客户端连接和读写操作，这从根本上解决了传统同步阻塞I/O一连接一线程模型，架构的性能、弹性伸缩能力和可靠性都得到了极大的提升。
 
 ##### 高效的Reactor线程模型
 
