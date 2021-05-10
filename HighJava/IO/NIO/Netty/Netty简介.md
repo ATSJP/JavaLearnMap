@@ -757,12 +757,12 @@ Netty服务端采用Reactor主从多线程模型
 
 ## 对比
 
-### Netty  & Tomcat
+### Netty&Tomcat
 
 Netty和Tomcat最大的区别就在于通信协议，Tomcat是基于Http协议的，他的实质是一个基于Http协议的Web容器，但是Netty不一样，他能通过编程自定义各种协议，因为Netty能够通过Codec自己来编码/解码字节流，完成类似Redis访问的功能，这就是Netty和Tomcat最大的不同。
 
 有人说Netty的性能就一定比Tomcat性能高，其实不然，Tomcat从6.x开始就支持了NIO模式，并且后续还有APR模式——一种通过JNI调用Apache网络库的模式，相比于旧的BIO模式，并发性能得到了很大提高，特别是APR模式，而Netty是否比Tomcat性能更高，则要取决于Netty程序作者的技术实力了。
 
-### Netty  & Mina 
+### Netty&Mina 
 
 未完待续...
