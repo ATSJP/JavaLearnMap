@@ -176,7 +176,7 @@ Mac上安装Docker方式各式各样，这边仅仅介绍一下Docker官网介�
 
 正常打开应用即可，应用会启动DockerEngie，然后就可以直接在终端或应用里进行操作了。但是显然没有Linux下的`service或systemctl`来的快，所以Mac上还有一个工具可以等效他们------`launchctl`，可以配置Docker的注册表，然后直接使用`launchctl`打开Docker，网上大多有教程，我这里不在赘述，至少目前对于我打开个应用的时间还是有的，实在不行，设置开机就启动Docker。
 
-## IED
+## IDE
 
 ### Idea
 
