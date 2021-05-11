@@ -242,7 +242,7 @@ colorscheme molokai
 
 
 
-<img src="踏上Mac之路.assets/terminal.png" alt="img" style="zoom:50%;" />
+<img src="踏上Mac之路.assets/terminal.png" alt="img"  />
 
 
 
