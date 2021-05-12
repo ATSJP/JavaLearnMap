@@ -32,7 +32,7 @@ Text打开settings.xml文件啦，但是每次这么用，这路径也太长了�
 ## Jdk
 
 不用说啦，支持M1的Jdk版本也就zulu
-jdk了吧，[Zulu](https://www.azul.com/downloads/?package=jdk)，
+jdk了吧，[Zulu](https://www.azul.com/downloads/?package=jdk)
 
 ![zulujdk](踏上Mac之路.assets/zulujdk.png)
 
@@ -281,3 +281,52 @@ colorscheme molokai
     ``` shell
     sublime settings.xml
     ```
+
+## NodeJs
+
+### 安装
+
+Tips：说在最前面，由于M1架构的特殊性，所以常规去NodeJs官网找包，手动安装的方式，比较麻烦，因为你必须要找到正确的Arm架构的包，不然就得转义，然而所有转义都是有代价的，会有一定的性能损耗，各位看官看看怎么选择？A、直装Arm架构的包 B、官网x86转义
+
+博主由于喜欢Brew，所以直接用Brew来上手安装，避免遇到包不对的情况，还得转义，下面动手开干。
+
+打开终端，执行`	brew install nvm`: 
+
+![nvm_install](踏上Mac之路.assets/nvm_install.png)
+
+
+
+### 环境变量
+
+如果得到以上图中的执行结果，基本上是大功告成了，下面按照Brew的提示，继续完成环境变量配置：
+
+第一步：`mkdir ~/.nvm`
+
+第二步：`mkdir ~/.zshrc`
+
+第三步：
+
+```shell
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && . "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+```
+
+第四步：`source ~/.zshrc`
+
+### 验证
+
+![nvm_v](踏上Mac之路.assets/nvm_v.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
