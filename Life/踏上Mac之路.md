@@ -284,11 +284,17 @@ colorscheme molokai
 
 ## NodeJs
 
-### 安装
-
 Tips：说在最前面，由于M1架构的特殊性，所以常规去NodeJs官网找包，手动安装的方式，比较麻烦，因为你必须要找到正确的Arm架构的包，不然就得转义，然而所有转义都是有代价的，会有一定的性能损耗，各位看官看看怎么选择？A、直装Arm架构的包 B、官网x86转义
 
-博主由于喜欢Brew，所以直接用Brew来上手安装，避免遇到包不对的情况，还得转义，下面动手开干。
+
+
+由于NodeJs版本的更新换代十分的快速，有些老项目必须使用低版本的Node，这样本地需要不停的切换不同版本的NodeJs，麻烦且容易错误，故Nvm出现了，所以我们首选Nvm来管理NodeJs。
+
+### Nvm
+
+#### 安装
+
+Mac上Brew是个好东西，所以直接用Brew来上手安装，避免遇到包不对的情况，还得转义，下面动手开干。
 
 打开终端，执行`	brew install nvm`: 
 
@@ -296,7 +302,7 @@ Tips：说在最前面，由于M1架构的特殊性，所以常规去NodeJs官�
 
 
 
-### 环境变量
+#### 环境变量
 
 如果得到以上图中的执行结果，基本上是大功告成了，下面按照Brew的提示，继续完成环境变量配置：
 
@@ -314,17 +320,21 @@ Tips：说在最前面，由于M1架构的特殊性，所以常规去NodeJs官�
 
 第四步：`source ~/.zshrc`
 
-### 验证
+#### 验证
 
 ![nvm_v](踏上Mac之路.assets/nvm_v.png)
 
+### NodeJs
 
+#### 安装
 
+执行命令：`nvm install node`，默认安装最新的版本，更改`Node`为版本号既可以指定版本：`nvm install 16.13.0`
 
+![node_install](踏上Mac之路.assets/node_install.png)
 
+#### 验证
 
-
-
+![node_v](踏上Mac之路.assets/node_v.png)
 
 
 
