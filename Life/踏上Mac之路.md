@@ -304,11 +304,23 @@ Mac上Brew是个好东西，所以直接用Brew来上手安装，避免遇到包
 
 #### 环境变量
 
-如果得到以上图中的执行结果，基本上是大功告成了，下面按照Brew的提示，继续完成环境变量配置：
+如果得到以上图中的执行结果，基本上是大功告成了，下面按照Brew的提示，继续完成环境变量配置，这边注意一下，虽然提示是修改`.zshrc`文件，但是咱么也不用着急直接照搬，看下下面的引言：
+
+> 有一件事大家得知道，环境变量文件不是所有Mac系统都是一样的，环境变量文件名称取决于Shell，何为Shell，这里就不赘述了，大家自行百度。常见的Shell有：bash、zsh、oh-my-zsh。通常他们的环境变量文件如下：
+>
+> Shell       环境变量文件
+>
+> ----------- ---------------
+>
+> bash        .bash_profile
+> Zsh         .zprofile
+> Oh-my-zsh   .zshrc
+
+所以根据Brew的提示，大概是让我们去配置环境变量，那环境变量文件是哪一个完全取决于，我们使用的是什么Shell，因为博主是新Mac，默认的终端是用的zsh，所以咱么直接配置`.zprofile`文件即可，开干：
 
 第一步：`mkdir ~/.nvm`
 
-第二步：`mkdir ~/.zshrc`
+第二步：`mkdir ~/.zprofile`
 
 第三步：
 
@@ -318,7 +330,7 @@ Mac上Brew是个好东西，所以直接用Brew来上手安装，避免遇到包
   [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 ```
 
-第四步：`source ~/.zshrc`
+第四步：`source ~/.zprofile`
 
 #### 验证
 
