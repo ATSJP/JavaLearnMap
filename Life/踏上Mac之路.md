@@ -284,17 +284,17 @@ colorscheme molokai
 
 ## NodeJs
 
-Tips：说在最前面，由于M1架构的特殊性，所以常规去NodeJs官网找包，手动安装的方式，比较麻烦，因为你必须要找到正确的Arm架构的包，不然就得转义，然而所有转义都是有代价的，会有一定的性能损耗，各位看官看看怎么选择？A、直装Arm架构的包 B、官网x86转义
+Tips：说在最前面，由于M1架构的特殊性，所以常规去NodeJs官网找包，手动安装的方式，比较麻烦，因为你必须要找到正确的Arm架构的包，不然就得转义，然而所有转义都是有代价的，会有一定的性能损耗，各位看官看看怎么选择？A、直装Arm架构的包 B、官网x86转义 C、使用第三方装软件的助手帮忙。博主选择C。
 
 
 
-由于NodeJs版本的更新换代十分的快速，有些老项目必须使用低版本的Node，这样本地需要不停的切换不同版本的NodeJs，麻烦且容易错误，故Nvm出现了，所以我们首选Nvm来管理NodeJs。
+另外由于NodeJs版本的更新换代十分的快速，有些老项目必须使用低版本的Node，这样本地需要不停的切换不同版本的NodeJs，麻烦且容易错误，故Nvm出现了，所以我们首选Nvm来管理NodeJs，而不是直接安装NodeJs。
 
 ### Nvm
 
 #### 安装
 
-Mac上Brew是个好东西，所以直接用Brew来上手安装，避免遇到包不对的情况，还得转义，下面动手开干。
+Mac上HomeBrew是个好东西，所以直接用HomeBrew来上手安装，避免遇到包不对的情况，还得转义，下面动手开干。
 
 打开终端，执行`	brew install nvm`: 
 
@@ -320,14 +320,18 @@ Mac上Brew是个好东西，所以直接用Brew来上手安装，避免遇到包
 
 第一步：`mkdir ~/.nvm`
 
-第二步：`mkdir ~/.zprofile`
+第二步（如果本地有则无需创建啦）：`mkdir ~/.zprofile`
 
-第三步：
+第三步：`vim ~/.zprofile`
+
+然后输入下面的配置
 
 ```shell
   export NVM_DIR="$HOME/.nvm"
-  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && . "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+  # This loads nvm
+  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && . "/opt/homebrew/opt/nvm/nvm.sh"  
+  # This loads nvm bash_completion
+  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  
 ```
 
 第四步：`source ~/.zprofile`
@@ -340,7 +344,7 @@ Mac上Brew是个好东西，所以直接用Brew来上手安装，避免遇到包
 
 #### 安装
 
-执行命令：`nvm install node`，默认安装最新的版本，更改`Node`为版本号既可以指定版本：`nvm install 16.13.0`
+执行命令：`nvm install node`，默认安装最新的版本，更改`Node`为版本号既可以指定版本：`nvm use 16.13.0`，`nvm install 16.13.0`
 
 ![node_install](踏上Mac之路.assets/node_install.png)
 
