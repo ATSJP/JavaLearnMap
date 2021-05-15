@@ -346,7 +346,9 @@ Mac上HomeBrew是个好东西，所以直接用HomeBrew来上手安装，避免�
 
 执行命令：`nvm install node`，默认安装最新的版本，更改`Node`为版本号既可以指定版本：`nvm use 16.13.0`，`nvm install 16.13.0`
 
-![node_install](踏上Mac之路.assets/node_install.png)
+
+
+![install node](踏上Mac之路.assets/node_install.png)
 
 #### 验证
 

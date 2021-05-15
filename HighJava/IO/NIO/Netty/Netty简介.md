@@ -101,7 +101,7 @@ PS：自己总结的再好有官方的解释精准吗？废话少说，直接搬
 
 这是官网的系统架构图：
 
-![图片](Netty简介.assets/components.jpg)
+![System Architecture](Netty简介.assets/components.jpg)
 
 ## 构成部分
 
@@ -147,7 +147,7 @@ Netty 提供大量的 Channel 实现来专门使用。这些包括 AbstractChann
 
 与Channel相关的概念有以下四个：
 
-![img](Netty简介.assets/Channel.jpg)
+![ChannelPipeline](Netty简介.assets/Channel.jpg)
 
 - ChannelHandler，核心处理业务就在这里，用于处理业务请求。
 - ChannelHandlerContext，用于传输业务数据。
@@ -169,7 +169,9 @@ Netty 中所有的 I/O 操作都是异步的，即操作不会立即得到返回
 
 - ByteBuf是一个存储字节的容器，最大特点就是**使用方便**，它既有自己的读索引和写索引，方便你对整段字节缓存进行读写，也支持get/set，方便你对其中每一个字节进行读写，他的数据结构如下图所示：
 
-![img](Netty简介.assets/Buffer.jpg)
+![ByteBuf](Netty简介.assets/Buffer.jpg)
+
+
 
 他有三种使用模式：
 
@@ -713,11 +715,11 @@ Netty服务端采用Reactor主从多线程模型
 
 #### 高效的并发编程
 
-
+未完待续...
 
 #### 高性能的序列化框架
 
-
+未完待续...
 
 #### 零拷贝
 
