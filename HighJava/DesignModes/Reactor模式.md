@@ -95,7 +95,7 @@ Redis 是由 C 语言实现的，它采用的正是「单 Reactor 单进程」�
 
 ### 使用工作者线程池
 
-![单Reactor多Handler](Reactor模式.assets/单Reactor多Handler-7249720.png)
+![单Reactor多Handler](Reactor模式.assets/单Reactor多Handler.png)
 
 
 
@@ -114,9 +114,7 @@ Redis 是由 C 语言实现的，它采用的正是「单 Reactor 单进程」�
 
 ### 多Reactor线程模式
 
-![单Reactor多Handler](Reactor模式.assets/单Reactor多Handler.png)
-
-
+![多Reactor多Handler](Reactor模式.assets/多Reactor多Handler.png)
 
 Reactor线程池中的每一Reactor线程都会有自己的事件处理逻辑。MainReactor可以只有一个，但SubReactor一般会有多个。MainReactor线程主要负责接收客户端的连接请求，然后将接收到的SocketChannel传递给SubReactor，由SubReactor来完成和客户端的通信。
 
