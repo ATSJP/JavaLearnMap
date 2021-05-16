@@ -63,9 +63,7 @@ Reactor模式是事件驱动模型，换句话说，内部因外部事件到达�
 
 ### 单线程Reactor模式
 
-
-
-<img src="https://mmbiz.qpic.cn/mmbiz_png/J0g14CUwaZcvaLVakREneqAvT5K3bknhx9Rl8jEhn0sLY5qEFPz7wNkLIkIu4fxEWrZcx2N8hpXOd23ZtfkyibA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="img"  />
+![单Reactor](Reactor模式.assets/单Reactor.png)
 
 可以看到线程里有 **Reactor、Acceptor、Handler** 这三个对象：
 
@@ -97,7 +95,7 @@ Redis 是由 C 语言实现的，它采用的正是「单 Reactor 单进程」�
 
 ### 使用工作者线程池
 
-![图片](Reactor模式.assets/640)
+![单Reactor多Handler](Reactor模式.assets/单Reactor多Handler-7249720.png)
 
 
 
@@ -116,7 +114,7 @@ Redis 是由 C 语言实现的，它采用的正是「单 Reactor 单进程」�
 
 ### 多Reactor线程模式
 
-![图片](Reactor模式.assets/640-20211118222251064)
+![单Reactor多Handler](Reactor模式.assets/单Reactor多Handler.png)
 
 
 
