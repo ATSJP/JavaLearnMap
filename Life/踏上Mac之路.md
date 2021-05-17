@@ -78,6 +78,28 @@ javac
 java
 ```
 
+## Jprofiler
+
+Jprogiler对于Java开发者，作用无须多言，建议各位从官方下载：[官方](https://www.ej-technologies.com/products/jprofiler/overview.html)
+
+
+
+![Jprofiler](踏上Mac之路.assets/Jprofiler_Download.png)
+
+目前Jprofiler12的Mac版本，已经同时支持了Intel和M1的架构，所以我们下载直接安装即可，如果只想玩一玩的话，10天的试用事件足够你玩的了，后面这一段话，就与你无关了。
+
+
+
+![Jprofiler](踏上Mac之路.assets/Jprofiler_12.png)
+
+
+
+除了试用，软件还支持买断，标准版$499。😮‍💨博主比较穷，又得知大家都爱学习，好像发现了一个可以无限重制试用时间的方法。大家都知道10天试用期都是根据你的安装时间算的，只要你重新安装，就永远都还有10天，不是吗，除非Jprofiler联网记住你的mac地址，对于后者，我不太信，Jprofiler会干这么个事，所以我相信前者。但是博主啊，你不会是每次到期，重新安装Jprofiler吧，这谁都可以想出来呀，当然不是啦，博主发现每次删除`~/.jprofiler12`文件，重新打开Jprofiler之后，都会触发试用/激活码这个步骤，这说明什么？Jprofiler认为你是第一次重新安装。哦豁，是不是很神奇，似乎可以这么永久试用下去。如果这个猜想成立，博主会写个重制脚本，最好能写出PDRunner那样的启动软件（只存在期待中，因为博主不会IOS编程，哈哈），那么就等个10天，博主来验证这个猜想吧。
+
+
+
+**最后的最后**，不管猜想是否成立，请各位大力支持正版，以上任何方案仅供学习。
+
 ## Maven
 
 去哪里下载？官方入口直接下载：https://maven.apache.org/download.cgi
@@ -294,7 +316,7 @@ Tips：说在最前面，由于M1架构的特殊性，所以常规去NodeJs官�
 
 #### 安装
 
-Mac上HomeBrew是个好东西，所以直接用HomeBrew来上手安装，避免遇到包不对的情况，还得转义，下面动手开干。
+Mac上Brew是个好东西，所以直接用Brew来上手安装，避免遇到包不对的情况，还得转义，下面动手开干。
 
 打开终端，执行`	brew install nvm`: 
 
