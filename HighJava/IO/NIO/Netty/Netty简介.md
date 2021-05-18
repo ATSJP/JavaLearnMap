@@ -212,7 +212,7 @@ EventLoopGroup 是一个 EventLoop 池，包含很多的 EventLoop。
 
 ### Reactor模式
 
-详细见[Reactor模式](../../DesignModes/Reactor模式.md)
+详细见[Reactor模式](../../../DesignModes/Reactor模式.md)
 
 ### Netty线程模型
 
