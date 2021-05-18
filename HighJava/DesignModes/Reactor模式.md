@@ -17,11 +17,13 @@ Reactor模式是事件驱动模型，换句话说，内部因外部事件到达�
 ![4720632-772107bb22dac4a0](Reactor模式.assets/4720632-772107bb22dac4a0.png)
 
 该图为Reactor模型，实现Reactor模式需要实现以下几个类：
-- Handle(句柄或描述符，在Windows下称为句柄，在Linux下称为描述符，也可以理解为事件)：本质上表示一种资源(比如说文件描述符，或是针对网络编程中的socket描述符)，是由操作系统提供的；该资源用于表示一个个的事件，事件既可以来自于外部，也可以来自于内部；外部事件比如说客户端的连接请求，客户端发送过来的数据等；内部事件比如说操作系统产生的定时事件等。它本质上就是一个文件描述符，Handle是事件产生的发源地。
+
+- Initiation Dispatcher(初始分发器)：实际上就是Reactor角色。它本身定义了一些规范，这些规范用于控制事件的调度方式，同时又提供了应用进行事件处理器的注册、删除等设施。它本身是整个事件处理器的核心所在，Initiation Dispatcher会通过Synchronous Event Demultiplexer来等待事件的发生。一旦事件发生，Initiation Dispatcher首先会分离出每一个事件，然后调用事件处理器，最后调用相关的回调方法来处理这些事件。Netty中ChannelHandler里的一个个回调方法都是由bossGroup或workGroup中的某个EventLoop来调用的。
+
 - Synchronous Event Demultiplexer(同步事件分离器)：它本身是一个系统调用，用于等待事件（Handle）的发生(事件可能是一个，也可能是多个)。调用方在调用它的时候会被阻塞，一直阻塞到同步事件分离器上有事件产生为止。对于Linux来说，同步事件分离器指的就是常用的I/O多路复用机制，比如说select、poll、epoll等。在Java NIO领域中，同步事件分离器对应的组件就是Selector；对应的阻塞方法就是select方法。
 - Event Handler(事件处理器)：本身由多个回调方法构成，这些回调方法构成了与应用相关的对于某个事件的反馈机制。在Java NIO领域中并没有提供事件处理器机制让我们调用或去进行回调，是由我们自己编写代码完成的。Netty相比于Java NIO来说，在事件处理器这个角色上进行了一个升级，它为我们开发者提供了大量的回调方法，供我们在特定事件产生时实现相应的回调方法进行业务逻辑的处理，即，ChannelHandler。ChannelHandler中的方法对应的都是一个个事件的回调。
+- Handle(句柄或描述符，在Windows下称为句柄，在Linux下称为描述符，也可以理解为事件)：本质上表示一种资源(比如说文件描述符，或是针对网络编程中的socket描述符)，是由操作系统提供的；该资源用于表示一个个的事件，事件既可以来自于外部，也可以来自于内部；外部事件比如说客户端的连接请求，客户端发送过来的数据等；内部事件比如说操作系统产生的定时事件等。它本质上就是一个文件描述符，Handle是事件产生的发源地。
 - Concrete Event Handler(具体事件处理器)：是事件处理器的实现。它本身实现了事件处理器所提供的各种回调方法，从而实现了特定于业务的逻辑。它本质上就是我们所编写的一个个的处理器实现。
-- Initiation Dispatcher(初始分发器)：实际上就是Reactor角色。它本身定义了一些规范，这些规范用于控制事件的调度方式，同时又提供了应用进行事件处理器的注册、删除等设施。它本身是整个事件处理器的核心所在，Initiation Dispatcher会通过Synchronous Event Demultiplexer来等待事件的发生。一旦事件发生，Initiation Dispatcher首先会分离出每一个事件，然后调用事件处理器，最后调用相关的回调方法来处理这些事件。Netty中ChannelHandler里的一个个回调方法都是由bossGroup或workGroup中的某个EventLoop来调用的。
 
 ### 时序图
 
@@ -125,31 +127,9 @@ Reactor线程池中的每一Reactor线程都会有自己的事件处理逻辑。
 3. SubReactor线程池分配一个SubReactor线程给这个SocketChannel，即将SocketChannel关注的READ事件以及对应的READ事件处理器注册到SubReactor线程中。当然你也注册WRITE事件以及WRITE事件处理器到SubReactor线程中以完成I/O写操作。
 4. 当有I/O事件就绪时，相关的SubReactor就将事件派发给响应的Handler处理。注意，这里SubReactor线程只负责完成I/O的read()操作，在读取到数据后将业务逻辑的处理放入到线程池中完成，若完成业务逻辑后需要返回数据给客户端，则相关的I/O的write操作还是会被提交回SubReactor线程来完成。
 
-注意，所以的I/O操作(包括，I/O的accept()、read()、write()以及connect()操作)依旧还是在Reactor线程(mainReactor线程 或 subReactor线程)中完成的。Thread Pool(线程池)仅用来处理非I/O操作的逻辑。
+注意，所以的I/O操作(包括，I/O的accept()、read()、write()以及connect()操作)依旧还是在Reactor线程(MainReactor线程 或 SubReactor线程)中完成的。Thread Pool(线程池)仅用来处理非I/O操作的逻辑。
 
 多Reactor线程模式将“接受客户端的连接请求”和“与该客户端的通信”分在了两个Reactor线程来完成。MainReactor完成接收客户端连接请求的操作，它不负责与客户端的通信，而是将建立好的连接转交给SubReactor线程来完成与客户端的通信，这样一来就不会因为read()数据量太大而导致后面的客户端连接请求得不到即时处理的情况。并且多Reactor线程模式在海量的客户端并发请求的情况下，还可以通过实现SubReactor线程池来将海量的连接分发给多个SubReactor线程，在多核的操作系统中这能大大提升应用的负载和吞吐量。
 
 
-
-
-# Netty 与 Reactor模式
-
-Netty的线程模式就是一个实现了Reactor模式的经典模式。
-
-- 结构对应：
-   NioEventLoop ———— Initiation Dispatcher
-   Synchronous EventDemultiplexer ———— Selector
-   Evnet Handler ———— ChannelHandler
-   ConcreteEventHandler ———— 具体的ChannelHandler的实现
-- 模式对应：
-   Netty服务端使用了“多Reactor线程模式”
-   mainReactor ———— bossGroup(NioEventLoopGroup) 中的某个NioEventLoop
-   subReactor ———— workerGroup(NioEventLoopGroup) 中的某个NioEventLoop
-   acceptor ———— ServerBootstrapAcceptor
-   ThreadPool ———— 用户自定义线程池
-- 流程：
-   1. 当服务器程序启动时，会配置ChannelPipeline，ChannelPipeline中是一个ChannelHandler链，所有的事件发生时都会触发Channelhandler中的某个方法，这个事件会在ChannelPipeline中的ChannelHandler链里传播。然后，从bossGroup事件循环池中获取一个NioEventLoop来现实服务端程序绑定本地端口的操作，将对应的ServerSocketChannel注册到该NioEventLoop中的Selector上，并注册ACCEPT事件为ServerSocketChannel所感兴趣的事件。
-   2. NioEventLoop事件循环启动，此时开始监听客户端的连接请求。
-   3. 当有客户端向服务器端发起连接请求时，NioEventLoop的事件循环监听到该ACCEPT事件，Netty底层会接收这个连接，通过accept()方法得到与这个客户端的连接(SocketChannel)，然后触发ChannelRead事件(即，ChannelHandler中的channelRead方法会得到回调)，该事件会在ChannelPipeline中的ChannelHandler链中执行、传播。
-   4. ServerBootstrapAcceptor的readChannel方法会该SocketChannel(客户端的连接)注册到workerGroup(NioEventLoopGroup) 中的某个NioEventLoop的Selector上，并注册READ事件为SocketChannel所感兴趣的事件。启动SocketChannel所在NioEventLoop的事件循环，接下来就可以开始客户端和服务器端的通信了。
 

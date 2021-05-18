@@ -212,7 +212,33 @@ EventLoopGroup 是一个 EventLoop 池，包含很多的 EventLoop。
 
 ### Reactor模式
 
-未完待续...
+详细见[Reactor模式](../../DesignModes/Reactor模式.md)
+
+### Netty线程模型
+
+Netty的线程模型就是一个实现了Reactor模式的经典模式。
+
+#### 结构对应
+NioEventLoop ———— Initiation Dispatcher
+Synchronous EventDemultiplexer ———— Selector
+Evnet Handler ———— ChannelHandler
+ConcreteEventHandler ———— 具体的ChannelHandler的实现
+
+#### 模式对应
+Netty服务端使用了“多Reactor线程模式”
+MainReactor ———— bossGroup(NioEventLoopGroup) 中的某个NioEventLoop
+SubReactor ———— workerGroup(NioEventLoopGroup) 中的某个NioEventLoop
+Acceptor ———— ServerBootstrapAcceptor
+ThreadPool ———— 用户自定义线程池
+
+#### 流程
+
+1. 当服务器程序启动时，会配置ChannelPipeline，ChannelPipeline中是一个ChannelHandler链，所有的事件发生时都会触发Channelhandler中的某个方法，这个事件会在ChannelPipeline中的ChannelHandler链里传播。然后，从bossGroup事件循环池中获取一个NioEventLoop来现实服务端程序绑定本地端口的操作，将对应的ServerSocketChannel注册到该NioEventLoop中的Selector上，并注册ACCEPT事件为ServerSocketChannel所感兴趣的事件。
+2. NioEventLoop事件循环启动，此时开始监听客户端的连接请求。
+3. 当有客户端向服务器端发起连接请求时，NioEventLoop的事件循环监听到该ACCEPT事件，Netty底层会接收这个连接，通过accept()方法得到与这个客户端的连接(SocketChannel)，然后触发ChannelRead事件(即，ChannelHandler中的channelRead方法会得到回调)，该事件会在ChannelPipeline中的ChannelHandler链中执行、传播。
+4. ServerBootstrapAcceptor的readChannel方法会该SocketChannel(客户端的连接)注册到workerGroup(NioEventLoopGroup) 中的某个NioEventLoop的Selector上，并注册READ事件为SocketChannel所感兴趣的事件。启动SocketChannel所在NioEventLoop的事件循环，接下来就可以开始客户端和服务器端的通信了。
+
+
 
 ## 为什么
 
@@ -715,11 +741,9 @@ Netty服务端采用Reactor主从多线程模型
 
 #### 高效的并发编程
 
-未完待续...
-
 #### 高性能的序列化框架
 
-未完待续...
+内部默认支持了Google的Protobuf，当然不仅如此，Netty还支持用户自定义序列化框架，以便实现更高的性能。
 
 #### 零拷贝
 
