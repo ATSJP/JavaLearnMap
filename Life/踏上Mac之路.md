@@ -56,8 +56,7 @@ Text打开settings.xml文件啦，但是每次这么用，这路径也太长了�
 
 ### Jdk
 
-不用说啦，支持M1的Jdk版本也就zulu
-jdk了吧，[Zulu](https://www.azul.com/downloads/?package=jdk)
+不用说啦，支持M1的Jdk版本也就[zulujdk](https://www.azul.com/downloads/?package=jdk)了吧
 
 ![zulujdk](踏上Mac之路.assets/zulujdk.png)
 
