@@ -165,13 +165,16 @@ mvn -v
 
 ##### Settings.xml
 
+下面是阿里云镜像仓库的配置方式
+
 ``` xml
 <?xml version="1.0" encoding="UTF-8"?>
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
 
-    <localRepository>cd</localRepository>
+  	<!-- 改成你想放的位置 -->
+    <localRepository>/repo</localRepository>
 
     <pluginGroups>
     </pluginGroups>
