@@ -60,7 +60,7 @@ Text打开settings.xml文件啦，但是每次这么用，这路径也太长了�
 
 ### Jdk
 
-不用说啦，支持M1的Jdk版本也就[zulujdk](https://www.azul.com/downloads/?package=jdk)了吧
+不用说啦，支持M1的Jdk版本也就[zulujdk](https://www.azul.com/downloads/?package=jdk)了吧。这边建议下载tar.gz或者zip，下载下来解压即可。便于移动zulujdk的位置至你想放置的目录，而Dmg可能会将Jdk放在Applications下，然后自动配置环境变量，由于我也没试过，只是猜测哈。
 
 ![zulujdk](踏上Mac之路.assets/zulujdk.png)
 
