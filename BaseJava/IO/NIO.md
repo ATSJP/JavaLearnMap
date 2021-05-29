@@ -4,15 +4,15 @@
 
 
 
-## NIO
+# NIO
 
 在讲[IO](./IO.md)的那一篇笔记里 ，只是简简单单的提到了NIO，没有过多涉及，所以本篇笔记，咱们研究个透。
 
-### 怎么用
+## 使用
 
-#### 文件
+### 文件
 
-##### 读
+#### 读
 
 ```java
     @Test
@@ -48,7 +48,7 @@
     }
 ```
 
-##### 写
+#### 写
 
 ```java
     @Test
@@ -79,7 +79,7 @@
 
 ```
 
-##### 读和写
+#### 读和写
 
 ```java
     @Test
@@ -129,7 +129,7 @@
     }
 ```
 
-#### 网络
+### 网络
 
 相对于传统的Socket编程来说，NIO要完成网络编程，大致分为这几步骤：
 
@@ -170,19 +170,34 @@ while (selector.select() > 0) {
 
 到此一个简单的NIO网络编程即完成。
 
-### 概念
+## 概念
 
-#### 三大组件
+### 三大组件
 
 好了，相信到此，大家都会依葫芦画瓢了，但是你可能还没能知道NIO是个啥。接下来我们就来看看概念部分。
 
 NIO重点是把**Channel（通道）**，**Buffer（缓冲区）**，**Selector（选择器）**三个类之间的关系弄清楚。
 
-##### Buffer
+#### Channel
+
+特点：
+
+- 通道可以同时进行读写，而流(Stream)只能读或者只能写
+- 通道可以从缓冲读数据，也可以写数据到缓冲:
+
+##### 实现
+
+- FileChannel
+- DatagramChannel
+- SocketChannel
+- ServerSocketChannel
+- ...
+
+#### Buffer
 
 顾名思义，Buffer是一个缓存，用来缓存数据的地方。那么Buffer中是如何记录数据的呢？
 
-###### 核心属性
+##### 核心属性
 
 Buffer有三个核心属性：
 
@@ -324,7 +339,7 @@ Limit：可读的最大位置
 
 Capacity：容量
 
-###### 实现
+##### 实现
 
 - ByteBuffer
 - CharBuffer
@@ -338,32 +353,17 @@ Capacity：容量
 - DirectByteBuffer
 - ...
 
-##### Channel
-
-特点：
-
-- 通道可以同时进行读写，而流(Stream)只能读或者只能写
-- 通道可以从缓冲读数据，也可以写数据到缓冲:
-
-###### 实现
-
-- FileChannel
-- DatagramChannel
-- SocketChannel
-- ServerSocketChannel
-- ...
-
-##### Selector 
+#### Selector 
 
 可以检测多个NIO Channel，看看读或者写事件是否就绪。多个Channel以事件的方式可以注册到同一个Selector，从而达到用一个线程处理多个请求成为可能。
 
-![img](NIO.assets/CSC.jpg)
+![Selector](NIO.assets/CSC.jpg)
 
-###### 创建
+##### 创建
 
 通过调用Selector.open()方法创建一个Selector对象
 
-###### 注册Channel
+##### 注册Channel
 
 ```java
 channel.configureBlocking(false);
@@ -396,13 +396,13 @@ key.interestOps();
 key.readyOps(); 
 ```
 
-##### 总结
+#### 总结
 
 最后我们来总结一下，这三个组件：
 
 ![img](NIO.assets/NIO.jpg)
 
-#### 零拷贝
+### 零拷贝
 
 
 
@@ -415,13 +415,13 @@ key.readyOps();
 
 ![img](NIO.assets/v2-51ec191305139e98a3b43d82c8ba17b1_720w.jpg)
 
-#### 文件
+### 文件
 
 ##### 内存映射文件
 
 
 
-#### 网络
+### 网络
 
 
 
