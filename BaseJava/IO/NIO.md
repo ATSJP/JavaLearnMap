@@ -24,14 +24,14 @@
             FileChannel channel = fin.getChannel();
             int capacity = 1024;
             ByteBuffer bf = ByteBuffer.allocate(capacity);
-            System.out.println("限制是：" + bf.limit() + "容量是：" + bf.capacity() + "位置是：" + bf.position());
+            System.out.println("limit：" + bf.limit() + "capacity：" + bf.capacity() + "position：" + bf.position());
             int length;
             while ((length = channel.read(bf)) != -1) {
                 bf.clear();
                 byte[] bytes = bf.array();
                 System.out.write(bytes, 0, length);
                 System.out.println();
-                System.out.println("限制是：" + bf.limit() + "容量是：" + bf.capacity() + "位置是：" + bf.position());
+                System.out.println("limit：" + bf.limit() + "capacity：" + bf.capacity() + "position：" + bf.position());
             }
             channel.close();
         } catch (IOException e) {
@@ -59,10 +59,10 @@
             fos = new FileOutputStream(pathname);
             FileChannel channel = fos.getChannel();
             ByteBuffer src = StandardCharsets.UTF_8.encode("你好你好你好你好你好");
-            System.out.println("初始化容量和limit：" + src.capacity() + "," + src.limit());
+            System.out.println("capacity,limit：" + src.capacity() + "," + src.limit());
             int length;
             while ((length = channel.write(src)) != 0) {
-                System.out.println("写入长度:" + length);
+                System.out.println("length:" + length);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -94,7 +94,7 @@
             // 字节
             int capacity = 100;
             ByteBuffer bf = ByteBuffer.allocate(capacity);
-            System.out.println("限制是：" + bf.limit() + "容量是：" + bf.capacity() + "位置是：" + bf.position());
+            System.out.println("limit：" + bf.limit() + "capacity：" + bf.capacity() + "position：" + bf.position());
             int length;
             fos = new FileOutputStream(filename);
             FileChannel outchannel = fos.getChannel();
@@ -103,7 +103,7 @@
                 bf.flip();
                 int outlength = 0;
                 while ((outlength = outchannel.write(bf)) != 0) {
-                    System.out.println("读，" + length + "写," + outlength);
+                    System.out.println("read，" + length + " write," + outlength);
                 }
                 // 将当前位置置为0，然后设置limit为容量，也就是从0到limit（容量）这块，都可以利用，通道读取的数据存储到0到limit这块
                 bf.clear();
