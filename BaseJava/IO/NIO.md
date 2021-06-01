@@ -294,7 +294,7 @@ Buffer有三个核心属性：
 testNio
 ```
 
-其中filp()尤其重要，她完成的Buffer从写模式到读模式的切换，那么她是如何完成切换的呢？咱们看一下源码：
+其中`filp()`尤其重要，她完成的Buffer从写模式到读模式的切换，那么她是如何完成切换的呢？咱们看一下源码：
 
 ```java
 public final Buffer flip() {
@@ -307,7 +307,7 @@ public final Buffer flip() {
 
 结合参数打印及源码，我们得到这个结论——filp方法：将Buffer从写模式切换到读模式。具体操作是将Position值重置为0，Limit的值设置为之前Position的值，Mark标记位归位。
 
-切换成读模式用filp()，那么切换成写模式怎么做呢？用Clear()。Clear方法（请注意Clear不是清除数据）：将Position置为0，Limit等于Capacity。下面看一下源码：
+切换成读模式用`filp()`，那么切换成写模式怎么做呢？用`Clear()`。Clear方法（请注意Clear不是清除数据）：将Position置为0，Limit等于Capacity。下面看一下源码：
 
 ```java
 public final Buffer clear() {
@@ -319,7 +319,7 @@ public final Buffer clear() {
 ```
 
 > **Clear方法 vs Compact方法：**
-> Clear方法清空缓冲区；Compact方法只会清空已读取的数据，而还未读取的数据继续保存在Buffer中；
+> Clear方法清空缓冲区，但是缓冲区数据还在，只是“被遗忘”了，意味着不再有任何标记会告诉你哪些数据被读过，哪些还没有；Compact方法只会清空已读取的数据，而还未读取的数据继续保存在Buffer中（`Compact()`方法将所有未读的数据拷贝到Buffer起始处，然后将position设到最后一个未读元素正后面，limit属性依然像`clear()`方法一样，设置成capacity。现在Buffer准备好写数据了，但是不会覆盖未读的数据。）；
 
 再来个读、写模式下的三个核心属性的示意图，辅助大家理解：
 
