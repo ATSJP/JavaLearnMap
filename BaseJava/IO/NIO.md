@@ -219,6 +219,8 @@ Buffer有三个核心属性：
 
   用于记录当前Position的位置
 
+##### 原理
+
 说了这么多概念，那么Buffer是如何读、写数据的呢？咱们先来看看写：
 
 ````java
@@ -339,7 +341,7 @@ Limit：可读的最大位置
 
 Capacity：容量
 
-##### 实现
+##### 扩展实现
 
 - ByteBuffer
 - CharBuffer
@@ -349,9 +351,12 @@ Capacity：容量
 - LongBuffer
 - ShortBuffer
 - MappedByteBuffer
+
 - HeapByteBuffer
 - DirectByteBuffer
 - ...
+
+其中MappedByteBuffer、HeapByteBuffer、DirectByteBuffer将在#零拷贝中仔细探究。
 
 #### Selector 
 
