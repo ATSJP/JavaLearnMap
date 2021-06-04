@@ -325,7 +325,7 @@ public final Buffer clear() {
 
 再来个读、写模式下的三个核心属性的示意图，辅助大家理解：
 
-![img](NIO.assets/Buffer.jpg)
+![Buffer](NIO.assets/Buffer.jpg)
 
 **写模式**
 
@@ -416,9 +416,9 @@ key.readyOps();
 - 非直接缓冲区是**需要**经过一个：copy的阶段的(从内核空间copy到用户空间)
 - 直接缓冲区**不需要**经过copy阶段，也可以理解成--->**内存映射文件**
 
-![img](NIO.assets/v2-b75abc108506e1f48abbba0f91b80fdc_720w.jpg)
+![直接缓冲区](NIO.assets/v2-b75abc108506e1f48abbba0f91b80fdc_720w.jpg)
 
-![img](NIO.assets/v2-51ec191305139e98a3b43d82c8ba17b1_720w.jpg)
+![非直接缓冲区](NIO.assets/v2-51ec191305139e98a3b43d82c8ba17b1_720w.jpg)
 
 ### 文件
 
