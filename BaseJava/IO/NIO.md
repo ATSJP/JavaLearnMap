@@ -405,7 +405,7 @@ key.readyOps();
 
 最后我们来总结一下，这三个组件：
 
-![img](NIO.assets/NIO.jpg)
+![三大组件总结](NIO.assets/NIO.jpg)
 
 ### 零拷贝
 
