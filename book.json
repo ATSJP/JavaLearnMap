@@ -1,5 +1,19 @@
 {
+  "title": "Note",
   "plugins": [
-    "summary"
-  ]
+    "github ",
+    "copy-code-button"
+  ],
+  "pluginsConfig": {
+    "github": {
+      "url": "https://github.com/atsjp/note"
+    }
+  },
+  "links": {
+    "sidebar": {
+      "GitHub": "https://github.com/atsjp",
+      "Gitee": "https://gitee.com/atsjp",
+      "个人博客": "https://blog.csdn.net/qq_37604508"
+    }
+  }
 }
