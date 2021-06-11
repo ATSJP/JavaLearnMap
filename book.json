@@ -1,7 +1,7 @@
 {
   "title": "Note",
   "plugins": [
-    "github ",
+    "github",
     "copy-code-button"
   ],
   "pluginsConfig": {
