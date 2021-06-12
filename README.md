@@ -1,18 +1,19 @@
 # Note
+## KnowledgeTree
+
+![KnowledgeTree](README.assets/image-20211221214627583.png)
 
 ## Gitbook
+
 https://atsjp.gitbook.io/
 
 ## Github
+
 https://github.com/atsjp/note
 
 ## Gitee
 
 [![ATSJP/note](README.assets/widget_card.svg)](https://gitee.com/atsjp/note)
-
-## KnowledgeTree
-
-![知识积累](README.assets/image-20211221214627583.png)
 
 ## Mythical Creatures
 
@@ -38,8 +39,8 @@ https://github.com/atsjp/note
 ## How to Publish
 
 ### Gitbook
-First, use [Gitbook-Summary](https://github.com/imfly/gitbook-summary) to generate Summary.md, like this:
 
+First, use [Gitbook-Summary](https://github.com/imfly/gitbook-summary) to generate Summary.md, like this:
 ```shell
 book sm
 ```
