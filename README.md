@@ -1,6 +1,10 @@
-
-
 # Note
+
+## Gitbook
+https://atsjp.gitbook.io/
+
+## Github
+https://github.com/atsjp/note
 
 ## Gitee
 
@@ -10,7 +14,7 @@
 
 ![知识积累](README.assets/image-20211221214627583.png)
 
-## Hope
+## Mythical Creatures
 
 ```
   ┏┛ ┻━━━━━┛ ┻┓
@@ -30,4 +34,23 @@
       ┃ ┫ ┫   ┃ ┫ ┫
       ┗━┻━┛   ┗━┻━┛
 ```
+
+## How to Publish
+
+### Gitbook
+First, use [Gitbook-Summary](https://github.com/imfly/gitbook-summary) to generate Summary.md, like this:
+
+```shell
+book sm
+```
+Second, Create Gitbook At [Gitbook.com](https://www.gitbook.com/), choose auto synchronize from Github.
+Third, push code to Github.
+
+
+
+
+
+
+
+
 
