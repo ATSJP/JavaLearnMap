@@ -3,6 +3,10 @@
 
 ![KnowledgeTree](README.assets/image-20211221214627583.png)
 
+## Github Page
+
+https://atsjp.github.io/note/
+
 ## Gitbook
 
 https://atsjp.gitbook.io/
@@ -37,6 +41,12 @@ https://github.com/atsjp/note
 ```
 
 ## How to Publish
+
+## Github Page
+
+First, config `_config.yml`.
+
+Second, push code to Github.
 
 ### Gitbook
 
