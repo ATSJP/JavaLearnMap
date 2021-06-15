@@ -140,7 +140,7 @@
     * [SlidingWindow(滑动窗口)](Mathematics/Arithmetic/SlidingWindow(滑动窗口).md)
 - OPS
   - [CI DI](OPS/CI-DI/README.md)
-    * [Jenkins](OPS/CI-DI/Jenkins.md)
+    * [Jenkins](OPS/CI-DI/jenkins.md)
   - [Container](OPS/Container/README.md)
     - [Docker](OPS/Container/Docker/Docker.md)
       * [Docker Cluster](OPS/Container/Docker/Docker-cluster.md)
@@ -172,7 +172,7 @@
     * [Http](OPS/Network/Http.md)
     * [Nginx](OPS/Network/Nginx.md)
   - [OS](OPS/OS/README.md)
-    * [Linux](OPS/OS/Linux.md)
+    * [Linux](OPS/OS/linux.md)
 - [Utils](Utils/README.md)
   - [Idea](Utils/Idea/README.md)
     - [Plugins](Utils/Idea/Plugins/README.md)

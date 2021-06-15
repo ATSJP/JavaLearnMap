@@ -1,5 +1,6 @@
 {
   "title": "Note",
+  "outputfile": "index.md",
   "plugins": [
     "github",
     "copy-code-button"
