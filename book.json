@@ -1,6 +1,7 @@
 {
   "title": "Note",
-  "outputfile": "index.md",
+  "outputfile": "SUMMARY.md",
+  "ignores": ["SUMMARY.md"],
   "plugins": [
     "github",
     "copy-code-button"

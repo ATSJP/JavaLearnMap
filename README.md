@@ -46,16 +46,21 @@ https://github.com/atsjp/note
 
 First, config `_config.yml`.
 
+Second, update `index.md`
+```shell
+book sm -o index.md
+```
+
 Second, push code to Github.
 
 ### Gitbook
 
-First, use [Gitbook-Summary](https://github.com/imfly/gitbook-summary) to generate Summary.md, like this:
+First, use [Gitbook-Summary](https://github.com/imfly/gitbook-summary) to generate `Summary.md`, like this:
 
 ```shell
 book sm
 ```
-Second, Create Gitbook At [Gitbook.com](https://www.gitbook.com/), choose auto synchronize from Github.
+Second, create Gitbook At [Gitbook.com](https://www.gitbook.com/), choose auto synchronize from Github.
 
 Third, push code to Github.
 
