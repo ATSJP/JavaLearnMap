@@ -1,25 +1,22 @@
-# Note
+# About
+
+Daily notes and knowledge accumulation...
+
 ## KnowledgeTree
 
 ![KnowledgeTree](README.assets/image-20211221214627583.png)
 
-## Github Page
+## Source
+**Where can i read?**
 
-https://atsjp.github.io/note/
+- [Github Page](https://atsjp.github.io/note/) >> [Content ](https://atsjp.github.io/note/SUMMARY.html)
+- [Gitbook](https://atsjp.gitbook.io/)
+- [Github](https://github.com/atsjp/note)
+- [Gitee](https://gitee.com/atsjp/note) 
+  
+  [![ATSJP/note](README.assets/widget_card.svg)]()
 
-## Gitbook
-
-https://atsjp.gitbook.io/
-
-## Github
-
-https://github.com/atsjp/note
-
-## Gitee
-
-[![ATSJP/note](README.assets/widget_card.svg)](https://gitee.com/atsjp/note)
-
-## Mythical Creatures
+# Mythical Creatures
 
 ```
   ┏┛ ┻━━━━━┛ ┻┓
@@ -40,9 +37,11 @@ https://github.com/atsjp/note
       ┗━┻━┛   ┗━┻━┛
 ```
 
+# For controller
+
 ## How to Publish
 
-## Github Page
+### Github Page
 
 First, config `_config.yml`.
 
