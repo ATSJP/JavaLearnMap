@@ -12,6 +12,9 @@ Daily notes and knowledge accumulation...
 - [Github Page](https://atsjp.github.io/note/) >> [Content ](https://atsjp.github.io/note/SUMMARY.html)
 - [Gitbook](https://atsjp.gitbook.io/)
 - [Github](https://github.com/atsjp/note)
+
+  [![Note Card](https://github-readme-stats.vercel.app/api/pin/?username=atsjp&repo=note&show_owner=true&bg_color=30,e96443,904e95&title_color=fff&text_color=fff)](https://github.com/atsjp/note)
+
 - [Gitee](https://gitee.com/atsjp/note)
 
   [![ATSJP/note](README.assets/widget_card.svg)]()
@@ -19,22 +22,22 @@ Daily notes and knowledge accumulation...
 # Mythical Creatures
 
 ```
-  ┏┛ ┻━━━━━┛ ┻┓
-  ┃　　　　　　 ┃
-  ┃　　　━　　　┃
+  ┏┛ ┻━━━┛ ┻┓
+  ┃　　　　　　    ┃
+  ┃　　　━　　　  ┃
   ┃　┳┛　  ┗┳　┃
-  ┃　　　　　　 ┃
-  ┃　　　┻　　　┃
-  ┃　　　　　　 ┃
-  ┗━┓　　　┏━━━┛
-    ┃　　　┃   神兽祝福
-    ┃　　　┃   草泥马祝你通过关！
-    ┃　　　┗━━━━━━━━━┓
-    ┃　　　　　　　    ┣┓
-    ┃　　　　         ┏┛
-    ┗━┓ ┓ ┏━━━┳ ┓ ┏━┛
-      ┃ ┫ ┫   ┃ ┫ ┫
-      ┗━┻━┛   ┗━┻━┛
+  ┃　　　　　　    ┃
+  ┃　　　┻　　  　┃
+  ┃　　　　　　    ┃
+  ┗━┓　　　┏━━┛
+      ┃　　　┃   神兽祝福
+      ┃　　　┃   草泥马祝你通过关！
+      ┃　　　┗━━━━━┓
+      ┃　　　　　　　    ┣┓
+      ┃　　　　          ┏┛
+      ┗┓┓┏━┳ ┏━━┛
+        ┃┫┫  ┃┫┫
+        ┗┻┛  ┗┻┛
 ```
 
 # For controller
@@ -62,6 +65,8 @@ book sm
 Second, create Gitbook At [Gitbook.com](https://www.gitbook.com/), choose auto synchronize from Github.
 
 Third, push code to Github.
+
+
 
 
 
