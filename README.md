@@ -21,24 +21,7 @@ Daily notes and knowledge accumulation...
 
 # Mythical Creatures
 
-```
-  ┏┛ ┻━━━┛ ┻┓
-  ┃　　　　　　    ┃
-  ┃　　　━　　　  ┃
-  ┃　┳┛　  ┗┳　┃
-  ┃　　　　　　    ┃
-  ┃　　　┻　　  　┃
-  ┃　　　　　　    ┃
-  ┗━┓　　　┏━━┛
-      ┃　　　┃   神兽祝福
-      ┃　　　┃   草泥马祝你通过关！
-      ┃　　　┗━━━━━┓
-      ┃　　　　　　　    ┣┓
-      ┃　　　　          ┏┛
-      ┗┓┓┏━┳ ┏━━┛
-        ┃┫┫  ┃┫┫
-        ┗┻┛  ┗┻┛
-```
+![Mythical Creatures](README.assets/image-20211222164001763.png)
 
 # For controller
 
