@@ -67,7 +67,7 @@ Second, create Gitbook At [Gitbook.com](https://www.gitbook.com/), choose auto s
 
 Third, push to Github.
 
-### Gitbook
+### 语雀
 
 Manual sync all data
 
