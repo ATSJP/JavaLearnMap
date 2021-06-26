@@ -17,9 +17,9 @@ Daily notes and knowledge accumulation...
 
 - [Github](https://github.com/atsjp/note)
   Always Lastest...
-  [![Note Card](https://github-readme-stats.vercel.app/api/pin/?username=atsjp&repo=note&show_owner=true&bg_color=30,e96443,904e95&title_color=fff&text_color=fff)](https://github.com/atsjp/note)  
+  [![Note Card](https://github-readme-stats.vercel.app/api/pin/?username=atsjp&repo=note&show_owner=true&bg_color=30,e96443,904e95&title_color=fff&text_color=fff)](https://github.com/atsjp/note)
 
-- [Gitee](https://gitee.com/atsjp/note) 
+- [Gitee](https://gitee.com/atsjp/note)
   Sync From Github...
   [![ATSJP/note](https://gitee.com/atsjp/note/widgets/widget_card.svg?colors=ffffff,1e252b,323d47,455059,d7deea,99a0ae)](https://gitee.com/atsjp/note)
 
@@ -33,26 +33,15 @@ Daily notes and knowledge accumulation...
 
 ### Github Page
 
-#### Cotent
+#### Catalogue Index
 
-First, config `_config.yml`.
+Copy `README.md` to `index.md`
 
-Second, update `index.md`, use command, like this:
-```shell
-book sm -o index.md
-```
+#### Content
 
-Second, push to Github.
-
-#### Catalogue
-
-`Github.com` Auto sync catalogue.
+Github Page auto generate content from current project's markdown file.
 
 ### Gitbook
-
-#### Cotent
-
-`Gitbook.com` Auto sync content.
 
 #### Catalogue
 
@@ -63,19 +52,12 @@ First, use [Gitbook-Summary](https://github.com/imfly/gitbook-summary) to genera
 ```shell
 book sm
 ```
-Second, create Gitbook At [Gitbook.com](https://www.gitbook.com/), choose auto synchronize from Github.
+Second, push to Github.
 
-Third, push to Github.
+#### Content
+
+Gitbook Auto sync content.
 
 ### 语雀
 
 Manual sync all data
-
-
-
-
-
-
-
-
-
