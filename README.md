@@ -18,11 +18,15 @@ Daily notes and knowledge accumulation...
 **Where is project？**
 
 - [Github](https://github.com/atsjp/note)
+  
   Always Lastest...
-  [![Note Card](https://github-readme-stats.vercel.app/api/pin/?username=atsjp&repo=note&show_owner=true&bg_color=30,e96443,904e95&title_color=fff&text_color=fff)](https://github.com/atsjp/note)  
 
+  [![Note Card](https://github-readme-stats.vercel.app/api/pin/?username=atsjp&repo=note&show_owner=true&bg_color=30,e96443,904e95&title_color=fff&text_color=fff)](https://github.com/atsjp/note)  
+  
 - [Gitee](https://gitee.com/atsjp/note) 
+  
   Sync From Github...
+  
   [![ATSJP/note](https://gitee.com/atsjp/note/widgets/widget_card.svg?colors=ffffff,1e252b,323d47,455059,d7deea,99a0ae)](https://gitee.com/atsjp/note)
 
 # Mythical Creatures
