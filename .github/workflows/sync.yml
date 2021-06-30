@@ -12,5 +12,9 @@ jobs:
           src: 'github/ATSJP'
           dst: 'gitee/ATSJP'
           dst_key: ${{ secrets.ATSJP_ID_RSA }}
-          dst_token:  ${{ secrets.ATSJP_TOKEN }}
+          # 必选，Gitee对应的用于创建仓库的token
+          # dst_token:  ${{ secrets.ATSJP_TOKEN }}
+          # 静态名单机制，可以用于更新某些指定库
+          static_list: "note"
+        debug: true
 
