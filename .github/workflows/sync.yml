@@ -1,20 +1,33 @@
+# action名称
 name: sync
+# 触发条件
 on:
+  # 在Master分支Push的时候
   push:
     branches: master
+# 任务
 jobs:
-  repo-sync:
+  # 这个名称随意
+  repo1-sync:
+    # 在xx上运行
     runs-on: ubuntu-latest
+    # 步骤
     steps:
+      # 步骤名称
       - name: Mirror the Github organization repos to Gitee.
+        # 使用什么镜像
         uses: Yikun/hub-mirror-action@master
+        # 使用什么参数
         with:
+          # 源
           src: 'github/ATSJP'
+          # 目标
           dst: 'gitee/ATSJP'
+          # 目标的SSH私钥，里面的名称就是你在secret里配置的Name
           dst_key: ${{ secrets.ATSJP_ID_RSA }}
-          # 必选，Gitee对应的用于创建仓库的token
+          # 目标的Api Token
           dst_token:  ${{ secrets.ATSJP_TOKEN }}
           # 静态名单机制，可以用于更新某些指定库
           static_list: "note"
+          # debug模式会打印所有执行的命令
           debug: true
-
