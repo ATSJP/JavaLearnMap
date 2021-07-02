@@ -8,7 +8,7 @@ on:
 # 任务
 jobs:
   # 这个名称随意
-  repo1-sync:
+  repo-sync:
     # 在xx上运行
     runs-on: ubuntu-latest
     # 步骤
