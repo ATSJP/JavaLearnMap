@@ -2,6 +2,7 @@
 
 - Base Java
   - [Cache](BaseJava/Cache/README.md)
+    * [Caffeine](BaseJava/Cache/Caffeine.md)
     * [Jet Cahce](BaseJava/Cache/JetCahce.md)
     * [Mem Cache](BaseJava/Cache/MemCache.md)
   - [Data Structure](BaseJava/DataStructure/README.md)
@@ -10,6 +11,7 @@
   - [IO](BaseJava/IO/IO.md)
     * [NIO](BaseJava/IO/NIO.md)
   - [Jdk](BaseJava/Jdk/README.md)
+    * [Java Flight Recorder](BaseJava/Jdk/JavaFlightRecorder.md)
     * [Shallow Copy VS Deep Copy](BaseJava/Jdk/ShallowCopyVSDeepCopy.md)
   - [Monitor](BaseJava/Monitor/README.md)
     * [Micrometer](BaseJava/Monitor/Micrometer.md)
