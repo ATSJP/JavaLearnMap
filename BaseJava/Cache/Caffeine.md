@@ -21,11 +21,11 @@
 版本：
 
 ```xml
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
- 		    <version>2.5.4</version>
-        </dependency>
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-actuator</artifactId>
+  <version>2.5.4</version>
+</dependency>
 ```
 
 
@@ -66,7 +66,7 @@ MetricsRegistrar：`org.springframework.boot.actuate.metrics.cache.CacheMetricsR
 	 * @return {@code true} if the {@code cache} is supported and was registered
 	 */
 	public boolean bindCacheToRegistry(Cache cache, Tag... tags) {
-        // 此处完成Cache绑定到Registry的功能，即 [Micrometer]（https://micrometer.io/）的Api使用方式
+    // 此处完成Cache绑定到Registry的功能，即 [Micrometer]（https://micrometer.io/）的Api使用方式
 		MeterBinder meterBinder = getMeterBinder(unwrapIfNecessary(cache), Tags.of(tags));
 		if (meterBinder != null) {
 			meterBinder.bindTo(this.registry);
@@ -77,9 +77,9 @@ MetricsRegistrar：`org.springframework.boot.actuate.metrics.cache.CacheMetricsR
 
 	@SuppressWarnings({ "unchecked" })
 	private MeterBinder getMeterBinder(Cache cache, Tags tags) {
-        // 自定义Tags
+    // 自定义Tags
 		Tags cacheTags = tags.and(getAdditionalTags(cache));
-        // 调用binderProviders#getMeterBinder获取MeterBinder
+    // 调用binderProviders#getMeterBinder获取MeterBinder
 		return LambdaSafe.callbacks(CacheMeterBinderProvider.class, this.binderProviders, cache)
 				.withLogger(CacheMetricsRegistrar.class)
 				.invokeAnd((binderProvider) -> binderProvider.getMeterBinder(cache, cacheTags)).filter(Objects::nonNull)
@@ -92,12 +92,12 @@ MetricsRegistrar：`org.springframework.boot.actuate.metrics.cache.CacheMetricsR
 	 * @return a list of additional tags to associate to that {@code cache}.
 	 */
 	protected Iterable<Tag> getAdditionalTags(Cache cache) {
-        // 自定义标签
+    // 自定义标签
 		return Tags.of("name", cache.getName());
 	}
 
 	private Cache unwrapIfNecessary(Cache cache) {
-        // 针对事务感知缓存装饰器做处理
+    // 针对事务感知缓存装饰器做处理
 		if (ClassUtils.isPresent("org.springframework.cache.transaction.TransactionAwareCacheDecorator",
 				getClass().getClassLoader())) {
 			return TransactionAwareCacheDecoratorHandler.unwrapIfNecessary(cache);
@@ -110,7 +110,7 @@ MetricsRegistrar：`org.springframework.boot.actuate.metrics.cache.CacheMetricsR
 		private static Cache unwrapIfNecessary(Cache cache) {
 			try {
 				if (cache instanceof TransactionAwareCacheDecorator) {
-                    // 事务感知缓存装饰器，主要将Cache包了一层
+          // 事务感知缓存装饰器，主要将Cache包了一层
 					return ((TransactionAwareCacheDecorator) cache).getTargetCache();
 				}
 			}
@@ -135,7 +135,7 @@ CacheMeterBinderProvider：`org.springframework.boot.actuate.metrics.cache.Caffe
 	// CaffeineCacheMeterBinderProvider.class
 	@Override
 	public MeterBinder getMeterBinder(CaffeineCache cache, Iterable<Tag> tags) {
-        // 这里直接依赖Micrometer中的Metrics实现
+    // 这里直接依赖Micrometer中的Metrics实现
 		return new CaffeineCacheMetrics(cache.getNativeCache(), cache.getName(), tags);
 	}
 ```
@@ -145,12 +145,12 @@ CacheMeterBinderProvider：`org.springframework.boot.actuate.metrics.cache.Caffe
 版本：
 
 ```xml
-        <!-- micrometer -->
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-registry-prometheus</artifactId>
-            <version>1.7.3</version>
-        </dependency>
+<!-- micrometer -->
+<dependency>
+  <groupId>io.micrometer</groupId>
+  <artifactId>micrometer-registry-prometheus</artifactId>
+  <version>1.7.3</version>
+</dependency>
 ```
 
 MeterBinder：`io.micrometer.core.instrument.binder.cache.CaffeineCacheMetrics`，继承`io.micrometer.core.instrument.binder.cache.CacheMeterBinder`，下方为两者的类图：
@@ -164,7 +164,7 @@ MeterBinder：`io.micrometer.core.instrument.binder.cache.CaffeineCacheMetrics`�
 核心方法：
 
 ```java
-    // CacheMeterBinder.class
+  // CacheMeterBinder.class
 	public final void bindTo(MeterRegistry registry) {
         // 显而易见，这里是绑定各种指标
         if (this.size() != null) {
@@ -197,7 +197,7 @@ MeterBinder：`io.micrometer.core.instrument.binder.cache.CaffeineCacheMetrics`�
         this.bindImplementationSpecificMetrics(registry);
     }
     
-	// CaffeineCacheMetrics.class
+	  // CaffeineCacheMetrics.class
     protected void bindImplementationSpecificMetrics(MeterRegistry registry) {
         // 这里是一些Caffeine提供的额外指标
         FunctionCounter.builder("cache.eviction.weight", this.cache, (c) -> {
