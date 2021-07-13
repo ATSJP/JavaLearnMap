@@ -251,6 +251,22 @@ Mac上安装Docker方式各式各样，这边仅仅介绍一下Docker官网介�
 
 再来看看一些硬核的吧
 
+#### Oh-My-Zsh
+
+基于强大的Zsh进行二次封装，支持配置管理，Mac Monterey默认使用Zsh，如果非Zsh的Shell终端，也可以自己安装一下[Zsh](https://github.com/ohmyzsh/ohmyzsh/wiki/Installing-ZSH)。安装好了Zsh后，我们直接基于Zsh来安装[Oh-My-Zsh](https://github.com/ohmyzsh/ohmyzsh)：
+
+![Installation](踏上Mac之路.assets/image-20220105135556553.png)
+
+
+
+安装好之后，你会得到默认的效果：
+
+
+
+![Basic](踏上Mac之路.assets/image-20220105135832613.png)
+
+后续就是各自研究Oh-My-Zsh的配置了。
+
 #### Brew
 
 通常基于Linux的Ubuntu、Centos都有自带的软件安装神器，分别是apt-get、yum，Mac也不例外，只是需要自己安装一下，她叫Brew。怎么安装？[官方](https://brew.sh/)
@@ -283,12 +299,6 @@ colorscheme molokai
 ###### 效果
 
 ![vim](踏上Mac之路.assets/vim.png)
-
-#### ITerm2
-
-还没折腾，看看别人的效果吧（大致就是Oh-My-Zsh主题+字体+各种配色方案，本人讲究大道至简，搞点配色方案护护眼得了，排查BUG的时候，你还有心情看这玩意？）：
-
-![img](踏上Mac之路.assets/item2.png)
 
 #### Osx Terminal
 
