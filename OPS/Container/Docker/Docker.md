@@ -72,6 +72,22 @@ docker rm <实例id>
       挂载宿主目录到容器
 ```
 
+**6、Network**
+
+```
+## 解除容器绑定的网络 网络名词root_default 容器名称root_redis_1
+docker network disconnect root_default root_redis_1
+## 删除原先的网络
+[root@ecs-test-01 ~]# docker network rm root_default
+## 重新创建容器网络
+[root@ecs-test-01 ~]# docker network create --subnet=172.22.16.0/24 root_default
+7d40e0be1fcade91f8109a54a05bf0f012584e0bbb9449bec5335db247efd0be
+## 为容器重新指定网络
+[root@ecs-test-01 ~]# docker network connect root_default root_redis_1
+##重新启动容器
+[root@ecs-test-01 ~]# docker container restart root_redis_1
+```
+
 ### 四、常用示例
 
 #### 1、部署mysql
