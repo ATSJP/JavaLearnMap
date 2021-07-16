@@ -2,11 +2,13 @@
 
 
 
-## Redis
+# Redis
 
-### 一、介绍
+# 一、介绍
 
-### 二、常用命令
+
+
+# 二、常用命令
 
 1、获取最大允许连接数
 
@@ -59,7 +61,7 @@ sscan myset 0 match f*
 
 注意：游标的值，其实就是查出来结果的number号
 
-### 三、使用
+# 三、使用
 
 - **1、哨兵模式下，如果通过哨兵查询主从服务器？**
 
@@ -76,7 +78,7 @@ sscan myset 0 match f*
 
 
 
-## Redis的Java客户端
+# Redis的Java客户端
 
 Jedis、Lettuce 和 Redisson
 
