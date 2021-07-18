@@ -141,9 +141,9 @@ Redisson 是一个在 Redis 的基础上实现的 Java 驻内存数据网格（I
 
 - Redisson 对字符串的操作支持比较差。
 
-**4. 使用建议**
+## 总结
 
-结论：lettuce + Redisson
+搭配lettuce + Redisson
 
 Jedis 和 lettuce 是比较纯粹的 Redis 客户端，几乎没提供什么高级功能。Jedis 的性能比较差，所以如果你不需要使用 Redis 的高级功能的话，优先推荐使用 lettuce。
 
