@@ -6,31 +6,43 @@
 
 ## 数据结构
 
-### strings
+### 基础数据结构
 
-### hashes
+#### Strings
 
-### lists
+#### Hashes
 
-### sets
+#### Lists
 
-### sorted sets
+#### Sets
 
-### bitmaps
+#### Sorted Sets
 
-### hyperloglogs
+### 高级数据结构
 
-### geospatial indexes
+#### Bitmaps
 
-### streams
+#### HyperLogLogs
 
-## 功能
+#### Geospatial Indexes
 
-### Lua
+#### Streams
 
-### LRU eviction
+## 特性
 
-### transactions
+### Transactions
+
+### Pub/Sub
+
+### Lua scripting
+
+### Keys with a limited time-to-live
+
+### LRU eviction of keys
+
+### Automatic failover]
+
+### 
 
 # 客户端
 
