@@ -40,9 +40,7 @@
 
 ### LRU eviction of keys
 
-### Automatic failover]
-
-### 
+### Automatic failover
 
 # 客户端
 
