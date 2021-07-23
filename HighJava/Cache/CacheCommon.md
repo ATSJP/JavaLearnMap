@@ -12,35 +12,28 @@
 
 ### Cache Aside
 
-#### 获取数据
-
 ```flow
 st=>start: 开始
 e=>end: 结束
 op_db=>operation: 从DB加载数据
 op_cache=>operation: 将DB数据放入Cache中
+cond_re_wr=>condition: 是否是读？
 cond_cache=>condition: 缓存是否有数据
 io=>inputoutput: 输出数据
 
-st->cond_cache
+op_db_write=>operation: 更新DB数据
+op_cache_write=>operation: 删除缓存
+
+st->cond_re_wr
+cond_re_wr(no)->op_db_write
+op_db_write(right)->op_cache_write->e
+
+cond_re_wr(yes)->cond_cache
 cond_cache(no)->op_db(right)->op_cache
 cond_cache(yes)->io
 op_cache->io
 io->e
 ```
-
-#### 更新数据
-
-```flow
-st=>start: 开始
-e=>end: 结束
-op_db=>operation: 更新DB数据
-op_cache=>operation: 删除缓存
-
-st->op_db->op_cache->e
-```
-
-
 
 经常用到的一种策略模式。这种模式主要流程如下：
 
@@ -87,10 +80,24 @@ Write Through 套路和 Read Through 相仿，不过是在更新数据时发生�
 ```flow
 st=>start: 开始
 e=>end: 结束
-op_db=>operation: 更新DB数据
-op_cache=>operation: 删除缓存
+op_db=>operation: 从DB加载数据
+op_cache=>operation: 将DB数据放入Cache中
+cond_re_wr=>condition: 是否是读？
+cond_cache=>condition: 缓存是否有数据
+io=>inputoutput: 输出数据
 
-st->op_db->op_cache->e
+op_db_write=>operation: 更新DB数据
+op_cache_write=>operation: 删除缓存
+
+st->cond_re_wr
+cond_re_wr(no)->op_db_write
+op_db_write(right)->op_cache_write->e
+
+cond_re_wr(yes)->cond_cache
+cond_cache(no)->op_db(right)->op_cache
+cond_cache(yes)->io
+op_cache->io
+io->e
 ```
 
 
