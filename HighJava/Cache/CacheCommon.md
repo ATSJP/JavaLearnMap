@@ -83,28 +83,26 @@ e=>end: 结束
 op_db=>operation: 从DB加载数据
 op_cache=>operation: 将DB数据放入Cache中
 cond_re_wr=>condition: 是否是读？
-cond_cache=>condition: 缓存是否有数据
+cond_cache_read=>condition: 缓存是否有数据
 io=>inputoutput: 输出数据
 
+cond_cache_write=>condition: 缓存是否有数据
 op_db_write=>operation: 更新DB数据
 op_cache_write=>operation: 删除缓存
 
 st->cond_re_wr
-cond_re_wr(no)->op_db_write
-op_db_write(right)->op_cache_write->e
 
-cond_re_wr(yes)->cond_cache
-cond_cache(no)->op_db(right)->op_cache
-cond_cache(yes)->io
+cond_re_wr(yes)->cond_cache_read
+cond_cache_read(no)->op_db(right)->op_cache
+cond_cache_read(yes)->io
 op_cache->io
 io->e
+
+cond_re_wr(no)->cond_cache_write
+cond_cache_write(yes)->op_cache_write->op_db_write
+cond_cache_write(no)->op_db_write
+op_db_write->e
 ```
-
-
-
-![img](CacheCommon.assets/v2-4e09f2b59a672829b43d35973b76f6ac_1440w.jpg)
-
-
 
 这种方式的风险也显而易见，如果追求落库之后再返回成功，效率必然降低很多，缓存的意义就不大了。如果追求落到缓存上就算成功，那问题又抛给了缓存的丢失风险上。
 
