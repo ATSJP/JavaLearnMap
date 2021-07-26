@@ -69,14 +69,6 @@ A线程->Cache:将DB数据放入缓存
 
 Read/Write Through 套路是把更新数据库的操作由缓存自己代理了，对应用层来说是透明的，应用不再需要关心数据同步问题。
 
-#### Read Through
-
-Read Through 就是在查询操作中更新缓存，也就是说，当缓存失效的时候（过期或 LRU 换出），Cache Aside 是由调用方负责把数据加载入缓存，而 Read Through 则用缓存服务自己来加载，从而对应用方是透明的。
-
-#### Write Through
-
-Write Through 套路和 Read Through 相仿，不过是在更新数据时发生。当有数据更新的时候，如果没有命中缓存，直接更新数据库，然后返回。如果命中了缓存，则更新缓存，然后再由 Cache 自己更新数据库（这是一个同步操作）。
-
 ```flow
 st=>start: 开始
 e=>end: 结束
@@ -104,11 +96,16 @@ cond_cache_write(no)->op_db_write
 op_db_write->e
 ```
 
+#### Read Through
+
+Read Through 就是在查询操作中更新缓存，也就是说，当缓存失效的时候（过期或 LRU 换出），Cache Aside 是由调用方负责把数据加载入缓存，而 Read Through 则用缓存服务自己来加载，从而对应用方是透明的。
+
+#### Write Through
+
+Write Through 套路和 Read Through 相仿，不过是在更新数据时发生。当有数据更新的时候，如果没有命中缓存，直接更新数据库，然后返回。如果命中了缓存，则更新缓存，然后再由 Cache 自己更新数据库（这是一个同步操作）。
+
+
 这种方式的风险也显而易见，如果追求落库之后再返回成功，效率必然降低很多，缓存的意义就不大了。如果追求落到缓存上就算成功，那问题又抛给了缓存的丢失风险上。
-
-### Write Around
-
-这种策略下，数据直接写入数据库，只有读取的数据才能进入缓存。Write Around 可以与 Read Through 结合使用，并在数据只写一次、读取次数较少或从不读的情况下提供良好的性能。例如，实时日志或聊天室消息。同样，这个模式也可以与 Cache Aside 组合使用。
 
 ### Write Behind
 

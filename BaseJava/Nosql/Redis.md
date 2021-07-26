@@ -18,6 +18,10 @@
 
 #### Sorted Sets
 
+##### 跳跃表
+
+推荐文章：https://mp.weixin.qq.com/s?__biz=Mzg5MzU2NDgyNw==&mid=2247487151&idx=1&sn=30b017e0d25b80848e645fc77d772655&source=41#wechat_redirect
+
 ### 高级数据结构
 
 #### Bitmaps
