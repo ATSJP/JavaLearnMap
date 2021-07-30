@@ -56,6 +56,12 @@ Text打开settings.xml文件啦，但是每次这么用，这路径也太长了�
 
 ![Downie4](踏上Mac之路.assets/Downie4.png)
 
+#### 远程控制
+
+##### Microsoft Remote Desktop
+
+微软官方的远程桌面软件，已经支持M1
+
 ## 技术篇
 
 ### Jdk
@@ -254,6 +260,8 @@ Mac上安装Docker方式各式各样，这边仅仅介绍一下Docker官网介�
 #### Oh-My-Zsh
 
 基于强大的Zsh进行二次封装，支持配置管理，Mac Monterey默认使用Zsh，如果非Zsh的Shell终端，也可以自己安装一下[Zsh](https://github.com/ohmyzsh/ohmyzsh/wiki/Installing-ZSH)。安装好了Zsh后，我们直接基于Zsh来安装[Oh-My-Zsh](https://github.com/ohmyzsh/ohmyzsh)：
+
+友情提醒：在操作过程中，记得备份环境变量配置。终端是Zsh的，安装OMZ后，`.zprofile`文件依旧生效，故可以不用刻意迁移配置。
 
 ![Installation](踏上Mac之路.assets/image-20220105135556553.png)
 
