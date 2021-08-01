@@ -316,7 +316,7 @@ colorscheme molokai
 
 
 
-<img src="踏上Mac之路.assets/terminal.png" alt="img"  />
+![image-20220124214314909](踏上Mac之路.assets/terminal.png)
 
 
 
