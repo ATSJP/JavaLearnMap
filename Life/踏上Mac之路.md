@@ -412,9 +412,7 @@ Mac上Brew是个好东西，所以直接用Brew来上手安装，避免遇到包
 
 第一步：`mkdir ~/.nvm`
 
-第二步（如果本地有则无需创建啦）：`mkdir ~/.zprofile`
-
-第三步：`vim ~/.zprofile`
+第二步：`vim ~/.zprofile`
 
 然后输入下面的配置
 
