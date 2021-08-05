@@ -424,7 +424,7 @@ Mac上Brew是个好东西，所以直接用Brew来上手安装，避免遇到包
   [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  
 ```
 
-第四步：`source ~/.zprofile`
+第三步：`source ~/.zprofile`
 
 ##### 验证
 
