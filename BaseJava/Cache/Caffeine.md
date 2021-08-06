@@ -14,7 +14,7 @@
 
 ## 实现
 
-### SpringBoot自动配置
+### SpringBoot健康检查
 
 #### SpringBoot实现
 
