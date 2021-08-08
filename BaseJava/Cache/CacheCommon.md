@@ -72,15 +72,15 @@ Read/Write Through 套路是把更新数据库的操作由缓存自己代理了�
 ```flow
 st=>start: 开始
 e=>end: 结束
-op_db=>operation: 从DB加载数据
-op_cache=>operation: 将DB数据放入Cache中
+op_db=>operation: 开辟缓存空间
+op_cache=>operation: 将低速存储器数据放入Cache中
 cond_re_wr=>condition: 是否是读？
 cond_cache_read=>condition: 缓存是否有数据
 io=>inputoutput: 输出数据
 
 cond_cache_write=>condition: 缓存是否有数据
-op_db_write=>operation: 更新DB数据
-op_cache_write=>operation: 删除缓存
+op_db_write=>operation: 更新低速存储器数据
+op_cache_write=>operation: 将数据写入Cache
 
 st->cond_re_wr
 
@@ -117,7 +117,9 @@ Write Behind 又叫 Write Back。就是 Linux 文件系统的 Page Cache 的算�
 
 ### 一致性问题
 
+如何保证Cache、DB数据保持强一致性？这不就类似于分布式事务？未完待续...
 
+PS：当然Cache的主要目的是为了性能，如果必须强一致性，则一定会带来性能损失，未必是个好主意，凡事需要结合业务以及实际应用场景来平衡。
 
 ### 缓存穿透
 
