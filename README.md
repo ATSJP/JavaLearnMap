@@ -4,7 +4,7 @@ Daily notes and knowledge accumulation...
 
 ## KnowledgeTree
 
-![KnowledgeTree](README.assets/image-20211221214627583.png)
+![KnowledgeTree](README.assets/KnowledgeTree.png)
 
 ## Source
 **Where can I  read?**
