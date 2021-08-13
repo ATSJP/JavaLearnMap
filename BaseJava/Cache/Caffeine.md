@@ -14,7 +14,206 @@
 
 ## 实现
 
+### SpringBoot整合
+
+#### 自动配置整合
+
+添加依赖：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.6.3</version>
+        <relativePath/> 
+    </parent>
+   
+     <!-- ... --> 
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!-- Cache -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>2.9.3</version>
+        </dependency>
+    </dependencies>
+
+     <!-- ... --> 
+
+</project>
+
+```
+
+启动类加上`@EnableCaching`注解：
+
+```java
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
+
+@EnableCaching
+@SpringBootApplication
+public class CacheCaffeineApplication {
+
+  public static void main(String[] args) {
+    SpringApplication.run(CacheCaffeineApplication.class, args);
+  }
+}
+```
+
+配置文件:
+
+```yml
+spring:
+  cache:
+    caffeine:
+      # 提供的是示例参数配置，具体参数含义可以参照Caffeine官方文档
+      spec: initialCapacity=50,maximumSize=500,expireAfterAccess=10s,recordStats
+
+```
+
+到此，自动配置整合完毕，后续使用如下：
+
+```java
+  @CachePut(cacheNames = "userInfo", key = "#userInfo.id")
+  public UserInfo addUserInfo(UserInfo userInfo) {
+    // ...
+  }
+
+  @Cacheable(cacheNames = "userInfo", key = "#id")
+  public UserInfo getById(Integer id) {
+    // ...
+  }
+
+  @CacheEvict(cacheNames = "userInfo", key = "#id")
+  public void deleteById(Integer id) {
+    // ...
+  }
+```
+
+#### 手动配置整合
+
+添加依赖：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.6.3</version>
+        <relativePath/> 
+    </parent>
+   
+     <!-- ... --> 
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!-- Cache -->
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>2.9.3</version>
+        </dependency>
+    </dependencies>
+
+     <!-- ... --> 
+
+</project>
+
+```
+
+缓存配置类：
+
+```java
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import java.util.concurrent.TimeUnit;
+
+@Configuration
+public class CacheConfig {
+
+  @Bean
+  public Cache<String, Object> caffeineCache() {
+    return Caffeine.newBuilder()
+        .initialCapacity(50)
+        .maximumSize(500)
+        .recordStats()
+        .expireAfterAccess(10, TimeUnit.SECONDS)
+        .build();
+  }
+
+}
+```
+
+
+
+到此，手动配置整合完毕，后续使用如下：
+
+```java
+  @Resource Cache<String, Object> caffeineCache;
+
+  public void addUserInfo(UserInfo userInfo) {
+    caffeineCache.put(String.valueOf(userInfo.getId()), userInfo);
+    // ...
+  }
+
+  public UserInfo getByName(Integer id) {
+    UserInfo userInfo = (UserInfo) caffeineCache.asMap().get(String.valueOf(id));
+    // ...
+  }
+
+  public void deleteById(Integer id) {
+    caffeineCache.asMap().remove(String.valueOf(id));
+    // ...
+  }
+```
+
 ### SpringBoot健康检查
+
+官方文档：https://docs.spring.io/spring-boot/docs/2.5.4/reference/htmlsingle/#actuator.metrics.supported.cache
+
+**重要**：下方是官方的原话，大致的意思就是，Caffeine Metrics 已经支持自动配置，但是只能在启动的时候绑定。如果有一些Cache是动态生成的，则需要手动结合CacheMetricsRegistrar实现。
+
+> ##### Cache Metrics
+>
+> Auto-configuration enables the instrumentation of all available `Cache`s on startup with metrics prefixed with `cache`. Cache instrumentation is standardized for a basic set of metrics. Additional, cache-specific metrics are also available.
+>
+> The following cache libraries are supported:
+>
+> - Caffeine
+> - EhCache 2
+> - Hazelcast
+> - Any compliant JCache (JSR-107) implementation
+> - Redis
+>
+> Metrics are tagged by the name of the cache and by the name of the `CacheManager` that is derived from the bean name.
+>
+> 
+>
+> **Note**
+>
+> > Only caches that are configured on startup are bound to the registry. For caches not defined in the cache’s configuration, e.g. caches created on-the-fly or programmatically after the startup phase, an explicit registration is required. A `CacheMetricsRegistrar` bean is made available to make that process easier.
 
 #### SpringBoot实现
 
@@ -28,9 +227,20 @@
 </dependency>
 ```
 
+自动配置：
+
+`MetricsAutoConfiguration`
+
+Cache相关实现：
+
+`CacheMetricsRegistrarConfiguration`
+
+`CacheMeterBinderProvidersConfiguration`
+`CaffeineCacheMeterBinderProvider`
 
 
-入口：`org.springframework.boot.actuate.autoconfigure.metrics.cache.CacheMetricsRegistrarConfiguration`
+
+我们直接看Registrar是如何注册Cache监控指标的，入口：`org.springframework.boot.actuate.autoconfigure.metrics.cache.CacheMetricsRegistrarConfiguration`
 
 核心方法：
 
