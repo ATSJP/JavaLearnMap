@@ -10,19 +10,75 @@
 
 ### 饿汉
 
+```java
+public class Singleton {
 
+    private static Singleton instance = new Singleton();
+ 
+    private Singleton() {}
+ 
+    public static Singleton getInstance() {
+        return instance;
+    }
+}
+```
 
 ### 懒汉
 
-
+```java
+public class Singleton {
+ 
+    private static Singleton instance;
+ 
+    private Singleton() {}
+ 
+    public static synchronized Singleton getInstance() {
+        if (instance == null) {
+            instance = new Singleton();
+        }
+        return instance;
+    }
+}
+```
 
 ### 双重检测
 
-
+```java
+public class Singleton {
+ 
+    private volatile static Singleton singleton;
+ 
+    private Singleton() {}
+ 
+    public static Singleton getSingleton() {
+        if (singleton == null) {
+            synchronized (Singleton.class) {
+                if (singleton == null) {
+                    singleton = new Singleton();
+                }
+            }
+        }
+        return singleton;
+    }
+}
+```
 
 ### 静态内部类
 
-
+```java
+public class Singleton {
+ 
+    private static class Holder {
+        private static final Singleton INSTANCE = new Singleton();
+    }
+ 
+    private Singleton() {}
+ 
+    public static final Singleton getInstance() {
+        return Holder.INSTANCE;
+    }
+}	
+```
 
 ### 枚举
 
@@ -33,10 +89,6 @@ public enum Singleton {
  
 }	
 ```
-
-
-
-
 
 ## 对比
 
