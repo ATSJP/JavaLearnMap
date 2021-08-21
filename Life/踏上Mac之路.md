@@ -62,6 +62,12 @@ Text打开settings.xml文件啦，但是每次这么用，这路径也太长了�
 
 ![IShot](踏上Mac之路.assets/IShot.png)
 
+#### 压缩软件
+
+##### FastZip
+
+
+
 #### 下载软件
 
 ##### Downie4
