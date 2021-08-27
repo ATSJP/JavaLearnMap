@@ -6,7 +6,7 @@
 
 ### 前言
 
-先看两个方法， 不同的地方在于volatile的修饰：
+先看两个方法，不同的地方在于volatile的修饰：
 
 ```java
   private static boolean isSimpleOver = false;

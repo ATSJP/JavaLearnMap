@@ -1,3 +1,7 @@
+[TOC]
+
+
+
 # 单例模式
 
 ## 介绍
@@ -70,6 +74,71 @@ public class Singleton {
     }
 }
 ```
+
+#### 为什么要加volatile？
+
+因为`singleton = new Singleton();`无法保证原子性，为什么？通常Java文件将使用`javac`命令编译，得到Class，我们在使用`javap -c Singleton.class`，将获得Jvm指令，如下：
+
+```java
+Compiled from "Singleton.java"
+public class Singleton {
+  public static Singleton getSingleton();
+    Code:
+       0: getstatic     #2                  // Field singleton:LSingleton;
+       3: ifnonnull     37
+       6: ldc           #3                  // class Singleton
+       8: dup
+       9: astore_0
+      10: monitorenter
+      11: getstatic     #2                  // Field singleton:LSingleton;
+      14: ifnonnull     27
+      17: new           #3                  // class Singleton
+      20: dup
+      21: invokespecial #4                  // Method "<init>":()V
+      24: putstatic     #2                  // Field singleton:LSingleton;
+      27: aload_0
+      28: monitorexit
+      29: goto          37
+      32: astore_1
+      33: aload_0
+      34: monitorexit
+      35: aload_1
+      36: athrow
+      37: getstatic     #2                  // Field singleton:LSingleton;
+      40: areturn
+    Exception table:
+       from    to  target type
+          11    29    32   any
+          32    35    32   any
+}
+```
+
+熟知Synchronized原理的，很快便知道以下指令和代码是对应的：
+
+> 不熟悉的也没事，我教你呀，飞机票：[Synchronized](../SourceAnalysis/Jdk/ConcurrentProgramming/Synchronized.md)
+
+```java
+      synchronized (Singleton.class) {
+        if (singleton == null) {
+        	singleton = new Singleton();
+        }
+      }
+
+  		10: monitorenter
+      11: getstatic     #2                  // Field singleton:LSingleton;
+      14: ifnonnull     27
+      17: new           #3                  // class Singleton             创建一个对象，分配内存
+      20: dup																//                             复制栈顶数值并将复制值压入栈顶
+      21: invokespecial #4                  // Method "<init>":()V         调用超类构造方法，实例初始化方法，私有方法
+      24: putstatic     #2                  // Field singleton:LSingleton; 为指定的类的静态域赋值
+      27: aload_0 												  // 														 将第一个引用类型本地变量推送至栈顶
+      28: monitorexit
+
+```
+
+由此可见，`singleton = new Singleton();`可以为分为三步：1、创建对象，分配内存；2、实例初始化；3、变量引用实例。
+
+同时，Jvm存在指令重排序
 
 ### 静态内部类
 
