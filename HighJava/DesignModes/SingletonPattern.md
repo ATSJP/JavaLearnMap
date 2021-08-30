@@ -140,6 +140,8 @@ public class Singleton {
 
 同时，Jvm存在指令重排序情况，那么编译器可能做以下重排序：1、创建对象，分配内存；3、变量引用实例；2、实例初始化；那么在一个实例还没初始化结束的时候，此时已经被变量引用了，那么变量访问实例将会出问题。所以此处必须加上Volatile，因为Volatile的一个重要功能，就是告诉编译器禁止指令重排序。
 
+>Volatile原理不明白？没关系，飞机票：[Volatile](../SourceAnalysis/Jdk/ConcurrentProgramming/Volatile.md)
+
 ### 静态内部类
 
 ```java
