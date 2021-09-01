@@ -190,6 +190,18 @@ javac
 java
 ```
 
+#### JMC
+
+深知Java自带工具Java Mission Control是个利器，可以截止目前（2021），[Oracle](https://www.oracle.com/java/technologies/downloads/tools/)还未支持M1，所以强大的OpenJdk为大家收集了各路JMC的版本，其中就有支持M1的zuluJdk版本：
+
+- Github：https://github.com/openjdk/jmc
+
+- OpenJdk：https://openjdk.java.net/projects/jmc/
+
+- Zulu-mission-control：https://www.azul.com/products/components/zulu-mission-control/#block-download
+
+  ![image-20220218213720311](踏上Mac之路.assets/image-20220218213720311.png)
+
 ### Jprofiler
 
 Jprogiler对于Java开发者，作用无须多言，建议各位从官方下载：[官方](https://www.ej-technologies.com/products/jprofiler/overview.html)
