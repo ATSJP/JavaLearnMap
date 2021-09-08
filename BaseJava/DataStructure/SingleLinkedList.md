@@ -2,7 +2,7 @@
 
 单链表是一种链式存取的数据结构，用一组地址任意的[存储单元](https://baike.baidu.com/item/存储单元/8727749)存放线性表中的[数据元素](https://baike.baidu.com/item/数据元素/715313)。链表中的数据是以结点来表示的，每个结点的构成：元素([数据元素](https://baike.baidu.com/item/数据元素/715313)的映象) + [指针](https://baike.baidu.com/item/指针/2878304)(指示后继元素存储位置)，元素就是存储数据的存储单元，指针就是连接每个结点的地址数据。
 
-![image-20200806094205067](SingleLinkedList.assets/image-20200806094205067.png)
+![node](SingleLinkedList.assets/node.png)
 
 
 
