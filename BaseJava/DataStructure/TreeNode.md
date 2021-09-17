@@ -30,16 +30,23 @@
 | **Height of tree** | The height of a tree is the height of its root node.         | **树的高度**         | 树的高度是其根节点的高度。                                   |
 | **Depth of node ** | The depth of a node is the number of edges from the tree's root node to the node. | **节点的深度**       | 节点的深度是从树的根节点到该节点的边的个数。 （注：树的深度指的是树中节点的最大层次。） |
 | **Forest**         | A forest is a set of n ≥ 0 disjoint trees.                   | **森林**             | 森林是n(>=0)棵互不相交的树的集合。                           |
+|                    |                                                              | **无序树**           | 树中任意节点的子节点之间没有顺序关系，这种树也称为自由树。   |
+|                    |                                                              | **有序树**           | 树中任意节点的子节点之间有顺序关系。                         |
 
 ### 树的种类
 
-#### 无序树
+#### 总览
 
-树中任意节点的子节点之间没有顺序关系，这种树也称为自由树。
+下图从百度百科摘抄，可见树的种类及其多，本文将主要介绍几种常见的树。
 
-#### 有序树
-
-树中任意节点的子节点之间有顺序关系。
+| 名称             | 种类                                                         |
+| ---------------- | :----------------------------------------------------------- |
+| 二叉树           | ▪ [二叉树](https://baike.baidu.com/item/二叉树) ▪ [二叉查找树](http://baike.baidu.com/view/389459.htm)▪ [笛卡尔树](http://baike.baidu.com/view/6667519.htm)▪ [Top tree](http://baike.baidu.com/searchword/?word=Top tree&pic=1&sug=1&enc=utf8)▪ [T树](http://baike.baidu.com/searchword/?word=T树&pic=1&sug=1&enc=utf8) |
+| 自平衡二叉查找树 | ▪ [AA树](http://baike.baidu.com/searchword/?word=AA树&pic=1&sug=1&enc=utf8)▪ [AVL树](http://baike.baidu.com/view/671745.htm)▪ [红黑树](http://baike.baidu.com/view/133754.htm)▪ [伸展树](http://baike.baidu.com/view/1118088.htm)▪ [树堆](http://baike.baidu.com/searchword/?word=树堆&pic=1&sug=1&enc=utf8)▪ [节点大小平衡树](http://baike.baidu.com/searchword/?word=节点大小平衡树&pic=1&sug=1&enc=utf8) |
+| B树              | ▪ [B树](http://baike.baidu.com/view/298408.htm)▪ [B+树](http://baike.baidu.com/view/1168762.htm)▪ [B*树](http://baike.baidu.com/view/1605516.htm)▪ [Bx树](http://baike.baidu.com/searchword/?word=Bx树&pic=1&sug=1&enc=utf8)▪ [UB树](http://baike.baidu.com/searchword/?word=UB树&pic=1&sug=1&enc=utf8)▪ [2-3树](http://baike.baidu.com/view/1668085.htm)▪ [2-3-4树](http://baike.baidu.com/view/1995382.htm)▪ [(a,b)-树](http://baike.baidu.com/searchword/?word=(a%2Cb)-树&pic=1&sug=1&enc=utf8)▪ [Dancing tree](http://baike.baidu.com/searchword/?word=Dancing tree&pic=1&sug=1&enc=utf8)▪ [H树](http://baike.baidu.com/searchword/?word=H树&pic=1&sug=1&enc=utf8) |
+| Trie             | ▪ [前缀树](http://baike.baidu.com/searchword/?word=前缀树&pic=1&sug=1&enc=utf8)▪ [后缀树](http://baike.baidu.com/view/117678.htm)▪ [基数树](http://baike.baidu.com/searchword/?word=基数树&pic=1&sug=1&enc=utf8) |
+| 非二叉树         | ▪ [Exponential tree](http://baike.baidu.com/searchword/?word=Exponential tree&pic=1&sug=1&enc=utf8)▪ [Fusion tree](http://baike.baidu.com/searchword/?word=Fusion tree&pic=1&sug=1&enc=utf8)▪ [区间树](http://baike.baidu.com/searchword/?word=区间树&pic=1&sug=1&enc=utf8)▪ [PQ tree](http://baike.baidu.com/searchword/?word=PQ tree&pic=1&sug=1&enc=utf8)▪ [Range tree](http://baike.baidu.com/searchword/?word=Range tree&pic=1&sug=1&enc=utf8)▪ [SPQR tree](http://baike.baidu.com/searchword/?word=SPQR tree&pic=1&sug=1&enc=utf8)▪ [Van Emde Boas tree](http://baike.baidu.com/searchword/?word=Van Emde Boas tree&pic=1&sug=1&enc=utf8) |
+| 其他类型         | ▪ [堆](http://baike.baidu.com/view/249120.htm)▪ [散列树](http://baike.baidu.com/searchword/?word=散列树&pic=1&sug=1&enc=utf8)▪ [Finger tree](http://baike.baidu.com/searchword/?word=Finger tree&pic=1&sug=1&enc=utf8)▪ [Metric tree](http://baike.baidu.com/searchword/?word=Metric tree&pic=1&sug=1&enc=utf8)▪ [Cover tree](http://baike.baidu.com/searchword/?word=Cover tree&pic=1&sug=1&enc=utf8)▪ [BK-tree](http://baike.baidu.com/searchword/?word=BK-tree&pic=1&sug=1&enc=utf8)▪ [Doubly-chained tree](http://baike.baidu.com/searchword/?word=Doubly-chained tree&pic=1&sug=1&enc=utf8)▪ [iDistance](http://baike.baidu.com/searchword/?word=iDistance&pic=1&sug=1&enc=utf8)▪ [Link-cut tree](http://baike.baidu.com/searchword/?word=Link-cut tree&pic=1&sug=1&enc=utf8)▪ [树状数组](http://baike.baidu.com/view/1420784.htm) |
 
 #### 二叉树（Binary Tree)
 
@@ -51,9 +58,23 @@
 
 **特点**
 
-- 二叉树的第i层至多有2<sup>i-1</sup>个节点
+- 二叉树的第i层至多有2<sup>i-1</sup>（i≥1）个节点
+
 - [深度](#deep)为k的二叉树至多有2<sup>k-1</sup>个节点
-- 对任何一棵二叉树，如果其[终端节点](#叶节点或终端节点)数为n<sub>0</sub>，度为2的节点数为n<sub>2</sub>，则n<sub>0</sub>=n<sub>2</sub>+1。
+
+- 若在任意一棵二叉树中，有n<sub>0</sub>个叶子节点，有n<sub>2</sub>个度为2的节点，则必有n<sub>0</sub>=n<sub>2</sub>+1
+
+- 具有n个节点的满二叉树深为log2n+1
+
+- 若对一棵有n个节点的完全二叉树进行顺序编号（1≤i≤n），那么，对于编号为i（i≥1）的节点：
+
+  当i=1时，该节点为根，它无双亲节点。
+
+  当i>1时，该节点的双亲节点的编号为i/2。
+
+  若2i≤n，则有编号为2i的左节点，否则没有左节点。
+
+  若2i+1≤n，则有编号为2i+1的右节点，否则没有右节点。
 
 ![二叉树](TreeNode.assets/二叉树.png)
 
@@ -92,21 +113,21 @@
 
 ![完满二叉树](TreeNode.assets/完满二叉树.png)
 
-##### 霍夫曼树
+##### 哈夫曼树（Huffman Tree）
 
 **定义**
 
-带权路径最短的二叉树称为哈夫曼树或最优二叉树。
+给定N个权值作为N个叶子结点，构造一棵二叉树，若该树的带权路径长度达到最小，称这样的二叉树为最优二叉树，也称为哈夫曼树(Huffman Tree)。哈夫曼树是带权路径长度最短的树，权值较大的结点离根较近。
 
-##### 二叉查找树
+##### 二叉查找树（Binary Search Tree）
 
 **定义**
 
 又称为是二叉排序树（Binary Sort Tree）或二叉搜索树。二叉排序树或者是一棵空树，或者是具有下列性质的二叉树：
 
   　　1) 若左子树不空，则左子树上所有节点的值均小于它的根节点的值；
-    　　2) 若右子树不空，则右子树上所有节点的值均大于或等于它的根节点的值；
-      　　3) 左、右子树也分别为二叉排序树；
+        　　2) 若右子树不空，则右子树上所有节点的值均大于或等于它的根节点的值；
+              　　3) 左、右子树也分别为二叉排序树；
 　　4) 没有键值相等的节点。
 
 
@@ -114,6 +135,8 @@
 **特点**
 
 - 对二叉查找树进行中序遍历，即可得到有序的数列。
+
+#### 自平衡二叉查找树
 
 ##### 平衡二叉树（Balanced Binary Tree）
 
@@ -139,7 +162,7 @@
 **使用场景**
 平衡二叉树适合用于插入删除次数比较少，但查找多的情况。也在`Windows`进程地址空间管理中得到了使用旋转的目的是为了降低树的高度，使其平衡。
 
-###### 平衡二叉树之红黑树
+##### 红黑树（Red Black Tree） 
 
 **定义**
 
@@ -233,10 +256,6 @@ Tire树称为字典树，又称单词查找树，Trie树，是一种树形结构
 - 从根节点到某一节点，路径上经过的字符连接起来，为该节点对应的字符串；
 
 - 每个节点的所有子节点包含的字符都不相同。
-
-#### 哈夫曼树
-
-带权路径最短的二叉树称为哈夫曼树或最优二叉树；
 
 ## 应用
 
