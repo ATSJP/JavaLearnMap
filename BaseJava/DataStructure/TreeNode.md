@@ -2,7 +2,7 @@
 
 
 
-# TreeNode(树)
+# Tree(树)
 
 ## 基础知识
 
@@ -47,6 +47,8 @@
 | Trie             | ▪ [前缀树](http://baike.baidu.com/searchword/?word=前缀树&pic=1&sug=1&enc=utf8)▪ [后缀树](http://baike.baidu.com/view/117678.htm)▪ [基数树](http://baike.baidu.com/searchword/?word=基数树&pic=1&sug=1&enc=utf8) |
 | 非二叉树         | ▪ [Exponential tree](http://baike.baidu.com/searchword/?word=Exponential tree&pic=1&sug=1&enc=utf8)▪ [Fusion tree](http://baike.baidu.com/searchword/?word=Fusion tree&pic=1&sug=1&enc=utf8)▪ [区间树](http://baike.baidu.com/searchword/?word=区间树&pic=1&sug=1&enc=utf8)▪ [PQ tree](http://baike.baidu.com/searchword/?word=PQ tree&pic=1&sug=1&enc=utf8)▪ [Range tree](http://baike.baidu.com/searchword/?word=Range tree&pic=1&sug=1&enc=utf8)▪ [SPQR tree](http://baike.baidu.com/searchword/?word=SPQR tree&pic=1&sug=1&enc=utf8)▪ [Van Emde Boas tree](http://baike.baidu.com/searchword/?word=Van Emde Boas tree&pic=1&sug=1&enc=utf8) |
 | 其他类型         | ▪ [堆](http://baike.baidu.com/view/249120.htm)▪ [散列树](http://baike.baidu.com/searchword/?word=散列树&pic=1&sug=1&enc=utf8)▪ [Finger tree](http://baike.baidu.com/searchword/?word=Finger tree&pic=1&sug=1&enc=utf8)▪ [Metric tree](http://baike.baidu.com/searchword/?word=Metric tree&pic=1&sug=1&enc=utf8)▪ [Cover tree](http://baike.baidu.com/searchword/?word=Cover tree&pic=1&sug=1&enc=utf8)▪ [BK-tree](http://baike.baidu.com/searchword/?word=BK-tree&pic=1&sug=1&enc=utf8)▪ [Doubly-chained tree](http://baike.baidu.com/searchword/?word=Doubly-chained tree&pic=1&sug=1&enc=utf8)▪ [iDistance](http://baike.baidu.com/searchword/?word=iDistance&pic=1&sug=1&enc=utf8)▪ [Link-cut tree](http://baike.baidu.com/searchword/?word=Link-cut tree&pic=1&sug=1&enc=utf8)▪ [树状数组](http://baike.baidu.com/view/1420784.htm) |
+
+![常见树的关系](TreeNode.assets/常见树的关系.png)
 
 #### 二叉树（Binary Tree)
 
@@ -107,9 +109,7 @@
 
 **定义**
 
-换句话说，**所有非叶子结点的度都是2**。（**只要你有孩子，你就必然是有两个孩子。**） 
-
-**注：**Full Binary Tree又叫做Strictly Binary Tree。
+换句话说，**所有非叶子结点的度都是2**。（只要你有孩子，你就必然是有两个孩子） 
 
 ![完满二叉树](TreeNode.assets/完满二叉树.png)
 
@@ -125,10 +125,13 @@
 
 又称为是二叉排序树（Binary Sort Tree）或二叉搜索树。二叉排序树或者是一棵空树，或者是具有下列性质的二叉树：
 
-  　　1) 若左子树不空，则左子树上所有节点的值均小于它的根节点的值；
-        　　2) 若右子树不空，则右子树上所有节点的值均大于或等于它的根节点的值；
-              　　3) 左、右子树也分别为二叉排序树；
-　　4) 没有键值相等的节点。
+- 若左子树不空，则左子树上所有节点的值均小于它的根节点的值；
+
+- 若右子树不空，则右子树上所有节点的值均大于或等于它的根节点的值；
+
+- 左、右子树也分别为二叉排序树；
+
+- 没有键值相等的节点。
 
 
 
@@ -138,11 +141,11 @@
 
 #### 自平衡二叉查找树
 
-##### 平衡二叉树（Balanced Binary Tree）
+##### AVL树
 
 **定义**
 
-平衡二叉树又被称为AVL树，且具有以下性质：它是一棵空树或它的左右两个子树的高度差的绝对值不超过1，并且左右两个子树都是一棵平衡二叉树。
+具有以下性质：它是一棵空树或它的左右两个子树的高度差的绝对值不超过1，并且左右两个子树都是一棵平衡二叉树。
 
 增加和删除可能需要通过一次或多次**树旋转**来重新平衡这个树。
 
@@ -174,7 +177,7 @@
 
 **特点**
 
-　红黑树是每个节点都带有颜色属性的二叉查找树，颜色为红色或黑色。在二叉查找树强制的一般要求以外，对于任何有效的红黑树我们增加了如下的额外要求:
+红黑树是每个节点都带有颜色属性的二叉查找树，颜色为红色或黑色。在二叉查找树强制的一般要求以外，对于任何有效的红黑树我们增加了如下的额外要求:
 
 - 节点是红色或黑色。
 
@@ -201,23 +204,23 @@
 
 **定义**
 
-B树（B-tree）是一种树状数据结构，能够用来存储排序后的数据。这种数据结构能够让查找数据、循序存取、插入数据及删除的动作，都在对数时间内完成。B树，概括来说是一个一般化的二叉查找树，可以拥有多于2个子节点。与自平衡二叉查找树不同，B-tree为系统最优化大块数据的读和写操作。B-tree算法减少定位记录时所经历的中间过程，从而加快存取速度。这种数据结构常被应用在数据库和文件系统的实作上。
+B树（B-tree）是一种自平衡的树，它是一种多路搜索树（并不是二叉的），能够用来存储排序后的数据。这种数据结构能够让查找数据、循序存取、插入数据及删除的动作，都在对数时间内完成。B树，概括来说是一个一般化的二叉查找树，可以拥有多于2个子节点。与自平衡二叉查找树不同，B-tree为系统最优化大块数据的读和写操作。B-tree算法减少定位记录时所经历的中间过程，从而加快存取速度。这种数据结构常被应用在数据库和文件系统的实作上。
 
 ##### B+树
 
 **定义**
 
-B+树是B树的变体，也是一种多路搜索树。其定义基本与B-树相同，除了：
+B+树是B树的变体，也是一种多路搜索树。B+树上的叶子结点存储关键字以及相应记录的地址，叶子结点以上各层作为索引使用。一棵m阶的B+树定义如下:
 
-- 非叶子节点的子树指针与关键字个数相同；
+- 每个结点至多有m个子女
 
-- 非叶子节点的子树指针P[i]，指向关键字值属于[K[i], K[i+1])的子树（B-树是开区间）；
+- 除根结点外，每个结点至少有[m/2]个子女，根结点至少有两个子女
 
-- 为所有叶子节点增加一个链指针；
+- 有k个子女的结点必有k个关键字
 
-- 所有关键字都在叶子节点出现；
+B+树的查找与B树不同，当索引部分某个结点的关键字与所查的关键字相等时，并不停止查找，应继续沿着这个关键字左边的指针向下，一直查到该关键字所在的叶子结点为止。
 
-B+树的搜索与B树也基本相同，区别是B+树只有达到叶子节点才命中（B树可以在非叶子节点命中），其性能也等价于在关键字全集做一次二分查找；
+
 
 **特点**
 
@@ -233,9 +236,7 @@ B+树的搜索与B树也基本相同，区别是B+树只有达到叶子节点才
 
 **定义**
 
-B*树是B+树的变体，在B+树的非根和非叶子节点再增加指向兄弟的指针，将节点的最低利用率从1/2提高到2/3。　　
-
-B*树定义了非叶子节点关键字个数至少为(2/3)*M，即块的最低使用率为2/3（代替B+树的1/2）；
+B*树是B+树的变体，在B+树的非根和非叶子结点再增加指向兄弟的指针；B*树定义了非叶子结点关键字个数至少为(2/3)*M，即块的最低使用率为2/3（代替B+树的1/2）。
 
 B+树的分裂：当一个节点满时，分配一个新的节点，并将原节点中1/2的数据复制到新节点，最后在父节点中增加新节点的指针；B+树的分裂只影响原节点和父节点，而不会影响兄弟节点，所以它不需要指向兄弟的指针；
 
@@ -248,6 +249,8 @@ B*树的分裂：当一个节点满时，如果它的下一个兄弟节点未满
 **定义**
 
 Tire树称为字典树，又称单词查找树，Trie树，是一种树形结构，是一种哈希树的变种。典型应用是用于统计，排序和保存大量的字符串（但不仅限于字符串），所以经常被搜索引擎系统用于文本词频统计。**它的优点是：利用字符串的公共前缀来减少查询时间，最大限度地减少无谓的字符串比较，查询效率比哈希树高。**
+
+
 
 **特点**
 
@@ -283,7 +286,7 @@ public class TreeNode {
 }
 ```
 
-#### 二叉树遍历
+#### 树遍历
 
 ##### 前序遍历
 
@@ -438,6 +441,10 @@ public static void postOrder(TreeNode tree) {
     }
 }
 ````
+
+##### 层次遍历
+
+同BFS（广度优先搜索）
 
 #### BFS(广度优先搜索)
 
