@@ -48,7 +48,7 @@
 | 非二叉树         | ▪ [Exponential tree](http://baike.baidu.com/searchword/?word=Exponential tree&pic=1&sug=1&enc=utf8)▪ [Fusion tree](http://baike.baidu.com/searchword/?word=Fusion tree&pic=1&sug=1&enc=utf8)▪ [区间树](http://baike.baidu.com/searchword/?word=区间树&pic=1&sug=1&enc=utf8)▪ [PQ tree](http://baike.baidu.com/searchword/?word=PQ tree&pic=1&sug=1&enc=utf8)▪ [Range tree](http://baike.baidu.com/searchword/?word=Range tree&pic=1&sug=1&enc=utf8)▪ [SPQR tree](http://baike.baidu.com/searchword/?word=SPQR tree&pic=1&sug=1&enc=utf8)▪ [Van Emde Boas tree](http://baike.baidu.com/searchword/?word=Van Emde Boas tree&pic=1&sug=1&enc=utf8) |
 | 其他类型         | ▪ [堆](http://baike.baidu.com/view/249120.htm)▪ [散列树](http://baike.baidu.com/searchword/?word=散列树&pic=1&sug=1&enc=utf8)▪ [Finger tree](http://baike.baidu.com/searchword/?word=Finger tree&pic=1&sug=1&enc=utf8)▪ [Metric tree](http://baike.baidu.com/searchword/?word=Metric tree&pic=1&sug=1&enc=utf8)▪ [Cover tree](http://baike.baidu.com/searchword/?word=Cover tree&pic=1&sug=1&enc=utf8)▪ [BK-tree](http://baike.baidu.com/searchword/?word=BK-tree&pic=1&sug=1&enc=utf8)▪ [Doubly-chained tree](http://baike.baidu.com/searchword/?word=Doubly-chained tree&pic=1&sug=1&enc=utf8)▪ [iDistance](http://baike.baidu.com/searchword/?word=iDistance&pic=1&sug=1&enc=utf8)▪ [Link-cut tree](http://baike.baidu.com/searchword/?word=Link-cut tree&pic=1&sug=1&enc=utf8)▪ [树状数组](http://baike.baidu.com/view/1420784.htm) |
 
-![常见树的关系](TreeNode.assets/常见树的关系.png)
+![常见树的关系](Tree.assets/常见树的关系.png)
 
 #### 二叉树（Binary Tree)
 
@@ -78,7 +78,7 @@
 
   若2i+1≤n，则有编号为2i+1的右节点，否则没有右节点。
 
-![二叉树](TreeNode.assets/二叉树.png)
+![二叉树](Tree.assets/二叉树.png)
 
 ##### 满二叉树(Perfect Binary Tree)
 
@@ -95,7 +95,7 @@
 - 第k层的节点数是：2<sup>k-1</sup>
 - 总节点数是：2<sup>k-1</sup>，且总节点数一定是奇数
 
-![满二叉树](TreeNode.assets/满二叉树.png)
+![满二叉树](Tree.assets/满二叉树.png)
 
 ##### 完全二叉树(Complete Binary Tree)
 
@@ -103,7 +103,7 @@
 
 若设二叉树的深度为h，除第h层外，其它各层(1～h-1) 的节点数都达到最大个数，第h层所有节点从左向右连续地紧密排列，这就是完全二叉树。
 
-![完全二叉树](TreeNode.assets/完全二叉树.png)
+![完全二叉树](Tree.assets/完全二叉树.png)
 
 ##### 完满二叉树（Full/Strictly Binary Tree）
 
@@ -111,7 +111,7 @@
 
 换句话说，**所有非叶子结点的度都是2**。（只要你有孩子，你就必然是有两个孩子） 
 
-![完满二叉树](TreeNode.assets/完满二叉树.png)
+![完满二叉树](Tree.assets/完满二叉树.png)
 
 ##### 哈夫曼树（Huffman Tree）
 
@@ -264,7 +264,7 @@ Tire树称为字典树，又称单词查找树，Trie树，是一种树形结构
 
 树的种类实在是太多，关于树的算法题也是贼多，这一篇文章不可能全部介绍完，我们需要具体问题再具体分析。这里主要介绍的是二叉树，并且只介绍树的一些最基础的几个算法。我们先来看个图:
 
-![图片](TreeNode.assets/treeNode_no.jpg)
+![图片](Tree.assets/treeNode_no.jpg)
 
 ```java
 public class TreeNode {
@@ -296,7 +296,7 @@ public class TreeNode {
 
 访问顺序如下:
 
-![图片](TreeNode.assets/preorder_traversal.jpg)
+![图片](Tree.assets/preorder_traversal.jpg)
 
 代码如下：
 
@@ -339,7 +339,7 @@ public static void preOrder(TreeNode tree) {
 
 访问顺序如下：
 
-![图片](TreeNode.assets/inorder_traversal.jpg)
+![图片](Tree.assets/inorder_traversal.jpg)
 
 代码如下：
 
@@ -380,7 +380,7 @@ public static void inOrderTraversal(TreeNode tree) {
 
 访问顺序如下：
 
-![图片](TreeNode.assets/DEBFCA.jpg)
+![图片](Tree.assets/DEBFCA.jpg)
 
 代码如下：
 
@@ -454,7 +454,7 @@ public static void postOrder(TreeNode tree) {
 
 访问顺序如下：
 
-![图片](TreeNode.assets/bfs.jpg)
+![图片](Tree.assets/bfs.jpg)
 
 代码如下：
 
@@ -540,7 +540,7 @@ private static void bfs(TreeNode tree, int level, List<List<Integer>> list) {
 
 访问顺序如下：
 
-![图片](TreeNode.assets/dfs.jpg)
+![图片](Tree.assets/dfs.jpg)
 
 代码如下：
 
