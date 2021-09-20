@@ -8,8 +8,6 @@
 
 树是一个有n个有限节点组成一个具有层次关系的集合，每个节点有0个或者多个子节点，没有父节点的节点称为根节点，也就是说除了根节点以外每个节点都有父节点，并且有且只有一个。
 
-树的种类比较多，有二叉树，红黑树，平衡二叉树，B树，哈夫曼树，字典树等等。
-
 ### 概念定义
 
 | Name               | Define                                                       | 名称                 | 定义                                                         |
@@ -41,14 +39,18 @@
 
 | 名称             | 种类                                                         |
 | ---------------- | :----------------------------------------------------------- |
-| 二叉树           | ▪ [二叉树](https://baike.baidu.com/item/二叉树) ▪ [二叉查找树](http://baike.baidu.com/view/389459.htm)▪ [笛卡尔树](http://baike.baidu.com/view/6667519.htm)▪ [Top tree](http://baike.baidu.com/searchword/?word=Top tree&pic=1&sug=1&enc=utf8)▪ [T树](http://baike.baidu.com/searchword/?word=T树&pic=1&sug=1&enc=utf8) |
-| 自平衡二叉查找树 | ▪ [AA树](http://baike.baidu.com/searchword/?word=AA树&pic=1&sug=1&enc=utf8)▪ [AVL树](http://baike.baidu.com/view/671745.htm)▪ [红黑树](http://baike.baidu.com/view/133754.htm)▪ [伸展树](http://baike.baidu.com/view/1118088.htm)▪ [树堆](http://baike.baidu.com/searchword/?word=树堆&pic=1&sug=1&enc=utf8)▪ [节点大小平衡树](http://baike.baidu.com/searchword/?word=节点大小平衡树&pic=1&sug=1&enc=utf8) |
-| B树              | ▪ [B树](http://baike.baidu.com/view/298408.htm)▪ [B+树](http://baike.baidu.com/view/1168762.htm)▪ [B*树](http://baike.baidu.com/view/1605516.htm)▪ [Bx树](http://baike.baidu.com/searchword/?word=Bx树&pic=1&sug=1&enc=utf8)▪ [UB树](http://baike.baidu.com/searchword/?word=UB树&pic=1&sug=1&enc=utf8)▪ [2-3树](http://baike.baidu.com/view/1668085.htm)▪ [2-3-4树](http://baike.baidu.com/view/1995382.htm)▪ [(a,b)-树](http://baike.baidu.com/searchword/?word=(a%2Cb)-树&pic=1&sug=1&enc=utf8)▪ [Dancing tree](http://baike.baidu.com/searchword/?word=Dancing tree&pic=1&sug=1&enc=utf8)▪ [H树](http://baike.baidu.com/searchword/?word=H树&pic=1&sug=1&enc=utf8) |
-| Trie             | ▪ [前缀树](http://baike.baidu.com/searchword/?word=前缀树&pic=1&sug=1&enc=utf8)▪ [后缀树](http://baike.baidu.com/view/117678.htm)▪ [基数树](http://baike.baidu.com/searchword/?word=基数树&pic=1&sug=1&enc=utf8) |
-| 非二叉树         | ▪ [Exponential tree](http://baike.baidu.com/searchword/?word=Exponential tree&pic=1&sug=1&enc=utf8)▪ [Fusion tree](http://baike.baidu.com/searchword/?word=Fusion tree&pic=1&sug=1&enc=utf8)▪ [区间树](http://baike.baidu.com/searchword/?word=区间树&pic=1&sug=1&enc=utf8)▪ [PQ tree](http://baike.baidu.com/searchword/?word=PQ tree&pic=1&sug=1&enc=utf8)▪ [Range tree](http://baike.baidu.com/searchword/?word=Range tree&pic=1&sug=1&enc=utf8)▪ [SPQR tree](http://baike.baidu.com/searchword/?word=SPQR tree&pic=1&sug=1&enc=utf8)▪ [Van Emde Boas tree](http://baike.baidu.com/searchword/?word=Van Emde Boas tree&pic=1&sug=1&enc=utf8) |
-| 其他类型         | ▪ [堆](http://baike.baidu.com/view/249120.htm)▪ [散列树](http://baike.baidu.com/searchword/?word=散列树&pic=1&sug=1&enc=utf8)▪ [Finger tree](http://baike.baidu.com/searchword/?word=Finger tree&pic=1&sug=1&enc=utf8)▪ [Metric tree](http://baike.baidu.com/searchword/?word=Metric tree&pic=1&sug=1&enc=utf8)▪ [Cover tree](http://baike.baidu.com/searchword/?word=Cover tree&pic=1&sug=1&enc=utf8)▪ [BK-tree](http://baike.baidu.com/searchword/?word=BK-tree&pic=1&sug=1&enc=utf8)▪ [Doubly-chained tree](http://baike.baidu.com/searchword/?word=Doubly-chained tree&pic=1&sug=1&enc=utf8)▪ [iDistance](http://baike.baidu.com/searchword/?word=iDistance&pic=1&sug=1&enc=utf8)▪ [Link-cut tree](http://baike.baidu.com/searchword/?word=Link-cut tree&pic=1&sug=1&enc=utf8)▪ [树状数组](http://baike.baidu.com/view/1420784.htm) |
+| 二叉树           | ▪ [二叉树](https://baike.baidu.com/item/二叉树) ▪ [二叉查找树](http://baike.baidu.com/view/389459.htm)▪ [笛卡尔树](http://baike.baidu.com/view/6667519.htm) ▪ [Top tree](http://baike.baidu.com/searchword/?word=Top tree&pic=1&sug=1&enc=utf8) ▪ [T树](http://baike.baidu.com/searchword/?word=T树&pic=1&sug=1&enc=utf8) |
+| 自平衡二叉查找树 | ▪ [AA树](http://baike.baidu.com/searchword/?word=AA树&pic=1&sug=1&enc=utf8) ▪ [AVL树](http://baike.baidu.com/view/671745.htm) ▪ [红黑树 ](http://baike.baidu.com/view/133754.htm) ▪ [伸展树](http://baike.baidu.com/view/1118088.htm) ▪ [树堆 ](http://baike.baidu.com/searchword/?word=树堆&pic=1&sug=1&enc=utf8) ▪ [节点大小平衡树](http://baike.baidu.com/searchword/?word=节点大小平衡树&pic=1&sug=1&enc=utf8) |
+| B树              | ▪ [B树 ](http://baike.baidu.com/view/298408.htm) ▪ [B+树 ](http://baike.baidu.com/view/1168762.htm) ▪ [B*树](http://baike.baidu.com/view/1605516.htm) ▪ [Bx树](http://baike.baidu.com/searchword/?word=Bx树&pic=1&sug=1&enc=utf8) ▪ [UB树](http://baike.baidu.com/searchword/?word=UB树&pic=1&sug=1&enc=utf8) ▪ [2-3树](http://baike.baidu.com/view/1668085.htm) ▪ [2-3-4树](http://baike.baidu.com/view/1995382.htm) ▪ [(a,b)-树](http://baike.baidu.com/searchword/?word=(a%2Cb)-树&pic=1&sug=1&enc=utf8) ▪ [Dancing tree](http://baike.baidu.com/searchword/?word=Dancing tree&pic=1&sug=1&enc=utf8) ▪ [H树](http://baike.baidu.com/searchword/?word=H树&pic=1&sug=1&enc=utf8) |
+| Trie             | ▪ [前缀树 ](http://baike.baidu.com/searchword/?word=前缀树&pic=1&sug=1&enc=utf8) ▪ [后缀树 ](http://baike.baidu.com/view/117678.htm) ▪ [基数树](http://baike.baidu.com/searchword/?word=基数树&pic=1&sug=1&enc=utf8) |
+| 非二叉树         | ▪ [Exponential tree ](http://baike.baidu.com/searchword/?word=Exponential tree&pic=1&sug=1&enc=utf8) ▪ [Fusion tree](http://baike.baidu.com/searchword/?word=Fusion tree&pic=1&sug=1&enc=utf8) ▪ [区间树](http://baike.baidu.com/searchword/?word=区间树&pic=1&sug=1&enc=utf8)▪ [PQ tree](http://baike.baidu.com/searchword/?word=PQ tree&pic=1&sug=1&enc=utf8) ▪ [Range tree](http://baike.baidu.com/searchword/?word=Range tree&pic=1&sug=1&enc=utf8) ▪ [SPQR tree](http://baike.baidu.com/searchword/?word=SPQR tree&pic=1&sug=1&enc=utf8) ▪ [Van Emde Boas tree](http://baike.baidu.com/searchword/?word=Van Emde Boas tree&pic=1&sug=1&enc=utf8) |
+| 其他类型         | ▪ [堆 ](http://baike.baidu.com/view/249120.htm) ▪ [散列树 ](http://baike.baidu.com/searchword/?word=散列树&pic=1&sug=1&enc=utf8) ▪ [Finger tree](http://baike.baidu.com/searchword/?word=Finger tree&pic=1&sug=1&enc=utf8) ▪ [Metric tree](http://baike.baidu.com/searchword/?word=Metric tree&pic=1&sug=1&enc=utf8) ▪ [Cover tree](http://baike.baidu.com/searchword/?word=Cover tree&pic=1&sug=1&enc=utf8) ▪ [BK-tree](http://baike.baidu.com/searchword/?word=BK-tree&pic=1&sug=1&enc=utf8) ▪ [Doubly-chained tree ](http://baike.baidu.com/searchword/?word=Doubly-chained tree&pic=1&sug=1&enc=utf8) ▪ [iDistance](http://baike.baidu.com/searchword/?word=iDistance&pic=1&sug=1&enc=utf8) ▪ [Link-cut tree](http://baike.baidu.com/searchword/?word=Link-cut tree&pic=1&sug=1&enc=utf8) ▪ [树状数组](http://baike.baidu.com/view/1420784.htm) |
+
+下面是常见树的关系：
 
 ![常见树的关系](Tree.assets/常见树的关系.png)
+
+
 
 #### 二叉树（Binary Tree)
 
