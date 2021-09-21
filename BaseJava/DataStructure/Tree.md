@@ -26,7 +26,7 @@
 | **Level**          | The level of a node is defined by ０ + (the number of connections between the node and the root). | **层次**             | 节点的层次(Level)从根(Root)开始定义起，根为第0层，根的孩子为第1层。以此类推，若某节点在第i层，那么其子树的根就在第i+1层。 |
 | **Height of node** | The height of a node is the number of edges on the longest path between that node and a leaf. | **节点的高度**       | 节点的高度是该节点和某个叶子之间存在的最长路径上的边的个数。 |
 | **Height of tree** | The height of a tree is the height of its root node.         | **树的高度**         | 树的高度是其根节点的高度。                                   |
-| **Depth of node ** | The depth of a node is the number of edges from the tree's root node to the node. | **节点的深度**       | 节点的深度是从树的根节点到该节点的边的个数。 （注：树的深度指的是树中节点的最大层次。） |
+| **Depth of node**  | The depth of a node is the number of edges from the tree's root node to the node. | **节点的深度**       | 节点的深度是从树的根节点到该节点的边的个数。 （注：树的深度指的是树中节点的最大层次。） |
 | **Forest**         | A forest is a set of n ≥ 0 disjoint trees.                   | **森林**             | 森林是n(>=0)棵互不相交的树的集合。                           |
 |                    |                                                              | **无序树**           | 树中任意节点的子节点之间没有顺序关系，这种树也称为自由树。   |
 |                    |                                                              | **有序树**           | 树中任意节点的子节点之间有顺序关系。                         |
