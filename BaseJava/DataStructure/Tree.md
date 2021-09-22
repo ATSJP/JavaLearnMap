@@ -288,9 +288,9 @@ public class TreeNode {
 }
 ```
 
-#### 树遍历
+### 树遍历
 
-##### 前序遍历
+#### 前序遍历
 
 他的访问顺序是：根节点→左子树→右子树
 
@@ -333,7 +333,7 @@ public static void preOrder(TreeNode tree) {
 }
 ```
 
-##### 中序遍历
+#### 中序遍历
 
 他的访问顺序是：左子树→根节点→右子树
 
@@ -374,7 +374,7 @@ public static void inOrderTraversal(TreeNode tree) {
 }
 ```
 
-##### 后续遍历
+#### 后续遍历
 
 他的访问顺序是：左子树→右子树→根节点
 
@@ -444,11 +444,11 @@ public static void postOrder(TreeNode tree) {
 }
 ````
 
-##### 层次遍历
+#### 层次遍历
 
 同BFS（广度优先搜索）
 
-#### BFS(广度优先搜索)
+### BFS(广度优先搜索)
 
 他的访问顺序是：先访问上一层，在访问下一层，一层一层的往下访问
 
@@ -534,7 +534,7 @@ private static void bfs(TreeNode tree, int level, List<List<Integer>> list) {
 }
 ```
 
-#### DFS(深度优先搜索)
+### DFS(深度优先搜索)
 
 他的访问顺序是：先访根节点，然后左节点，一直往下，直到最左节点没有子节点的时候然后往上退一步到父节点，然后父节点的右子节点在重复上面步骤……
 
