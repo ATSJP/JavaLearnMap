@@ -2,13 +2,13 @@
 
 
 
-## ThreadLocal
+# ThreadLocal
 
 >`ThreadLocal` == 本地线程？额，好像是这么一回事，如果你要这么翻译，我只能说没毛病，谁让你英语这么好呢，但是在你要继续问，这玩意是不是用来解决多线程问题的，我得打断你，老铁，他还真的不是叫做本地线程，在代码体系里，他是用来解决多线程共享变量的线程安全问题的，听不懂？别急，咱们坐下来慢慢谈。
 
-### 介绍
+## 介绍
 
-#### 概念
+### 概念
 
 引用`JDK`官方原话：
 
@@ -34,19 +34,19 @@ graph LR
 
 也就实现了所谓的`local`含义，这样在多线程的情况下，就能确保数据的线程安全。
 
-#### 应用场景
+### 应用场景
 
 1. 多个线程下，可能存在线程安全问题的一些共享变量
 2. 多个线程下，需要公用的引用对象（多线程多实例 ，一个线程一个实例，线程间不共享实例）
 
-#### 对比
+### 对比
 
 `ThreadLocal`与`Synchronized`对比：
 
 1. `Synchronized`主要是通过线程等待，牺牲时间来解决多线程问题
 2. `ThreadLocal`主要是通过每个线程单独一份存储空间，牺牲空间来解决冲突，并且相比于``Synchronized``，`ThreadLocal`具有线程隔离的效果，只有在线程内才能获取到对应的值，线程外则不能访问到想要的值
 
-### 使用
+## 使用
 
 首先看下下面的代码，20个线程去做`count`，大家可以多次执行看看，可以对比下执行结果，看看是不是每次结果都是一样的：
 
@@ -122,9 +122,9 @@ Thread[pool-1-thread-1,5,main],start:0
 Thread[pool-1-thread-1,5,main],end:2
 ```
 
-### 分析
+## 分析
 
-#### 实现
+### 实现
 
 类图：
 
@@ -305,7 +305,7 @@ public class ThreadLocal<T> {
 
 `ThreadLocal`本身不做数据结构的实现，只是封装了静态内部类`ThreadLocalMap`、`Thread`的调用逻辑，提供给使用者使用，`ThreadLocalMap`利用`Entry[]`数组实现了对象实例的存储，其中索引的计算利用斐波那契散列乘数来较大程度的避免Hash冲突，`ThreadLocalMap`对外提供了`Entry[]`的数据存储维护方法。
 
-#### 回收机制
+### 回收机制
 
 在上述源码中，可见`ThreadLocalMap`对象实例，实际上是存放在每个`Thread`中的，只是被定义在`ThreadLocal`中。既然是这样的，那么`ThreadLocalMap`的生命周期与`Thread`一样长，在`Thread`被销毁的时候，`ThreadLocalMap`也会随之被回收。
 
@@ -389,7 +389,7 @@ use local varaible:thread.Test01$LocalVariable@492267bb
 
  `ThreadLocalMap`和`Thread`的生命周期一样长，所以不管线程是否重用，我们都应该，在使用完静态变量后，都应该主动加remove掉不需要的内容，以确保不会发生内存泄露问题。
 
-#### 误区
+### 误区
 
 1. `ThreadLocalMap`在`ThreadLocal`内？
 
@@ -398,8 +398,6 @@ use local varaible:thread.Test01$LocalVariable@492267bb
    A、`ThreadLocalMap`定义在`ThreadLocal`内？
 
    B、运行时，`ThreadLocalMap`的实例对象是在`ThreadLocal`实例对象内，还是在`Thread`实例对象内？
-
-   
 
    对于问题A，不言而喻，下方源码证明了这一点，`ThreadLocalMap`确实是`ThreadLocal`的静态内部类。
 
@@ -410,7 +408,7 @@ use local varaible:thread.Test01$LocalVariable@492267bb
    对于问题B，同样咱们分析源码，从源码中`get`、`set`中可见，`ThreadLocalMap`都是从`Thread`中获取所得，由此可见证明了：运行时，`ThreadLocalMap`的实例对象是在`Thread`实例对象内
 
    ```java
-       public T get() {
+    public T get() {
            Thread t = Thread.currentThread();
            ThreadLocalMap map = getMap(t);
            if (map != null) {
@@ -437,7 +435,7 @@ use local varaible:thread.Test01$LocalVariable@492267bb
            return t.threadLocals;
        }
    ```
-
+   
    
 
 2. `ThreadLocalMap`的索引及`table`，能否有一个较好的总结？
@@ -450,11 +448,15 @@ use local varaible:thread.Test01$LocalVariable@492267bb
 
 
 
+# InheritableThreadLocal
 
+> https://www.cnblogs.com/hama1993/p/10400265.html
 
+# TransmittableThreadLocal
 
-
-
+> 阿里提供：
+>
+> https://github.com/alibaba/transmittable-thread-local
 
 
 
