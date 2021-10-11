@@ -2,7 +2,7 @@
 
 ## 使用
 
-![cyclicbarrier-2](CyclicBarrier.assets/fa4d24955103ee1c8c0564ab45eebe26.png)
+![示意图](CyclicBarrier.assets/fa4d24955103ee1c8c0564ab45eebe26.png)
 
 ```java
  @Test
@@ -50,7 +50,7 @@ CyclicBarrier(int parties, Runnable barrierAction) {
 }
 ```
 
-**维护锁状态逻辑**
+### 维护锁状态逻辑
 
 其底层使用ReentrantLock+Condition进行锁状态的维护
 
@@ -168,7 +168,7 @@ private int dowait(boolean timed, long nanos) throws InterruptedException, Broke
 
 可以看到，是通过index字段控制线程等待的，当index不为0的时候，线程统一会进行阻塞，直到index为0的时候，才会唤醒所有线程，这时候所有线程才会继续往下执行。
 
-**重复使用**
+### 重复使用
 
 这个跟CountdownLatch不一样的是，CountdownLatch是一次性的，而CycliBarrier是可以重复使用的，只需调用一下reset方法。
 
