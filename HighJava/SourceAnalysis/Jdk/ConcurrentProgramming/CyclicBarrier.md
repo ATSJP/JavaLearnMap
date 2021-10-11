@@ -37,7 +37,7 @@
 
 有两个构造方法，只有带Runnable参数的构造方法才会在所有线程都到达等待点之后执行Runnable里面的run方法。
 
-```text
+```java
 CyclicBarrier(int parties) {
     this(parties, null);
 }
@@ -54,7 +54,7 @@ CyclicBarrier(int parties, Runnable barrierAction) {
 
 其底层使用ReentrantLock+Condition进行锁状态的维护
 
-```text
+```java
 // 维护锁状态
 private final ReentrantLock lock = new ReentrantLock();
 private final Condition trip = lock.newCondition();
@@ -72,7 +72,7 @@ private static class Generation {
 
 具体看看其是如何实现等待逻辑的，线程等待需要调用await方法
 
-```text
+```java
 public int await() {
         return dowait(false, 0L);
  }
@@ -84,7 +84,7 @@ public int await(long timeout, TimeUnit unit){
 
 最终调用的是dowait方法
 
-```text
+```java
 // 核心等待方法
 private int dowait(boolean timed, long nanos) throws InterruptedException, BrokenBarrierException, TimeoutException {
   final ReentrantLock lock = this.lock;
@@ -172,7 +172,7 @@ private int dowait(boolean timed, long nanos) throws InterruptedException, Broke
 
 这个跟CountdownLatch不一样的是，CountdownLatch是一次性的，而CycliBarrier是可以重复使用的，只需调用一下reset方法。
 
-```text
+```java
 public void reset() {
     final ReentrantLock lock = this.lock;
     lock.lock();
