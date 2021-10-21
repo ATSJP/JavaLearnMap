@@ -4,7 +4,7 @@
 
 ## 一、基本使用
 
-#### Stash
+### Stash
 
 ````shell
 git stash 将当前修改储藏起来
@@ -20,7 +20,7 @@ git stash drop 删除当前储藏区的内容
 git stash list 显示当前储藏区的内容
 ````
 
-#### Push
+### Push
 
 ```shell
 git push -u orgin master 推送本地内容到远程仓库中，注意-u 针对第一次关联仓库
@@ -28,7 +28,7 @@ git push -u orgin master 推送本地内容到远程仓库中，注意-u 针对�
 git push -f 强制推送本地分支要 远程分支
 ```
 
-#### Config
+### Config
 
 ```shell
 # 全局配置
@@ -38,13 +38,13 @@ git config --global http.proxy 'http://127.0.0.1:1080'
 git config --global https.proxy 'http://127.0.0.1:1080'
 ```
 
-#### Reflog
+### Reflog
 
 ```shell
-git reflog 显示历史命令
+git reflog 可以查看所有分支的所有操作记录
 ```
 
-#### Reset
+### Reset
 
 ```shell
 ## 回退本地分支版本，并且推送到远程仓库
@@ -53,7 +53,7 @@ git reset --hard <head>  回退到指定的head
 git reset --hard <head>
 ```
 
-#### Checkout
+### Checkout
 
 ```shell
 git checkout -- <fileName>  撤销指定的文件，到最近一次add或者commit的状态
@@ -63,7 +63,7 @@ git checkout -b <分支名>  创建分支  -b表示创建并切换 （相当于�
 git checkout <分支名>  切换分支
 ```
 
-#### Branch
+### Branch
 
 ```shell
 git branch <分支名>  创建分支
@@ -71,14 +71,14 @@ git branch <分支名>  创建分支
 git branch -d <分支名>  删除分支
 ```
 
-#### Remote
+### Remote
 
 
 ```shell
 git remote add orgin <remote resp link>  关联仓库到远程仓库中
 ```
 
-#### Commit
+### Commit
 
 修改上一次Commit的提交时间：
 
@@ -93,10 +93,6 @@ git commit –amend
 ````
 
 
-
-
-
-## 二、常见问题
 
 **问题一、当本地初始化的库，第一次推送到远程仓库的时候，需要进行设置**
 
@@ -139,9 +135,7 @@ git push
 5. 将repo2分支合并到repo1的master分支上
 6. 提交更新到repo1的master分支上 
 
-
-
-# 配置git push不用每次输入用户名和密码
+### 配置git push不用每次输入用户名和密码
 
 #### 1.使用ssh协议
 
@@ -172,7 +166,7 @@ git remote set-url origin git@xxx.com:xxx/xxx.git
 
 #### 2.设置git配置
 
-##### 对于 HTTP 协议 git 拥有一个凭证系统来处理这个事情
+对于 HTTP 协议 git 拥有一个凭证系统来处理这个事情
 
 - 默认所有都不缓存。 每一次连接都会询问你的用户名和密码。
 - "cache" 模式会将凭证存放在内存中一段时间。 密码永远不会被存储在磁盘中，并且在15分钟后从内存中清除。
