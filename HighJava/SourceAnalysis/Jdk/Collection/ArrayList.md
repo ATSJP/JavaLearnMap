@@ -120,7 +120,6 @@ graph TB
             Integer.MAX_VALUE :
             MAX_ARRAY_SIZE;
     }
-
 ```
 
 ### 使用
@@ -141,12 +140,72 @@ graph TB
 
 1、如何证明线程不安全？
 
+```java
+  @Test
+  public void testArrayListUnSafe() throws InterruptedException, BrokenBarrierException {
+    int size = 100;
+    List<Integer> list = new ArrayList<>();
+    ThreadPoolExecutor threadPoolExecutor =
+        new ThreadPoolExecutor(
+            size,
+            size,
+            0L,
+            TimeUnit.MILLISECONDS,
+            new LinkedBlockingQueue<>(),
+            r -> new Thread(r, "test"));
+    CyclicBarrier cyclicBarrier =
+        new CyclicBarrier(
+            size + 1,
+            () -> {
+              System.out.println("gate open");
+            });
+    for (int i = 0; i < size; i++) {
+      threadPoolExecutor.execute(
+          () -> {
+            try {
+              cyclicBarrier.await();
+            } catch (InterruptedException | BrokenBarrierException e) {
+              e.printStackTrace();
+            }
+            try {
+              for (int j = 0; j < size; j++) {
+                list.add(j);
+              }
+            } catch (Exception e) {
+              // 这里可能会有什么异常？
+              e.printStackTrace();
+            }
+            try {
+              cyclicBarrier.await();
+            } catch (InterruptedException | BrokenBarrierException e) {
+              e.printStackTrace();
+            }
+          });
+    }
+    cyclicBarrier.await();
+    cyclicBarrier.await();
+    System.out.println(list.size());
+  }
+```
 
+在不运行之前，你觉得结果是如何？`list.size()`为10000吗。实际运行结果，每次都是不一样的， 且会出现`ArrayIndexOutOfBoundsException`异常，正是因为`ArrayList`没有保证线程安全，在并发访问时存在线程安全问题。
 
+那么为什么会存在线程安全问题呢？这还得归根到源码里：
 
+```java
+    public boolean add(E e) {
+		ensureCapacityInternal(size + 1);  // Increments modCount!!
+        // size++ 线程不安全
+		elementData[size++] = e;
+		return true;
+	}
+```
 
+size++是非原子操作，在并发时，会有线程安全。
 
+>  size++可拆解为size=size+1，细分为：第一步，计算size + 1 ，第二步，把size + 1的结果赋值给size，在执行第二步的时候，可能size的值已经发生了变化。
 
+那么怎么简单解决呢？使用synchronized + volatile即可，当然了还有其他的方式，本篇文章不在赘述，在并发编程相关内容，将会详细研讨。
 
 
 
