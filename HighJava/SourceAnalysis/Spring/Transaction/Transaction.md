@@ -701,13 +701,3 @@ TransactionAspectSupport->TransactionAspectSupport: prepareTransactionInfo
 
 ![TransactionInfrastructure](Transaction.assets/TransactionInfrastructure.jpeg)
 
-
-
-
-
-
-
-
-
-
-

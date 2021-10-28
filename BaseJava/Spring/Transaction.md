@@ -2,11 +2,11 @@
 
 
 
- ## Spring之事务
+# Spring之事务
 
-### 一、事务的那些概念
+## 一、事务的那些概念
 
-#### 1、事务执行正确四要素
+### 1、事务执行正确四要素
 
 ​		**ACID** 
 
@@ -18,7 +18,7 @@
 
 - **持久性（Durability）**：事务一旦执行成功，它对数据库的数据的改变必须是永久的，不会因各种异常导致数据不一致或丢失。 
 
-#### 2、事务执行存在问题及隔离级别
+### 2、事务执行存在问题及隔离级别
 
 ​		事务在执行过程中，以下四种情况是不可避免的问题。
 
@@ -46,10 +46,10 @@
 
   隔离级别越高，数据库事务并发执行性能越差，能处理的操作越少。所以一般地，推荐使用REPEATABLE READ级别保证数据的读一致性。对于幻读的问题，可以通过加锁来防止。 
 
-### 二、Spring之事务
+## 二、Spring之事务
 
 
-#### 1、事务传播性
+### 1、事务传播性
 
 - **PROPAGATION_REQUIRED**：A如果有事务，B将使用该事务；如果A没有事务，B将创建一个新的事务
 
@@ -105,15 +105,50 @@
 >
 > 如上设计，可以在B异常后Rollback掉B的脏数据，继续执行C，TryCatch起到一个分支执行的作用。
 
-#### 2、是否只读
+### 2、是否只读
 
 如果将事务设置为只读，表示这个事务只读取数据但不更新数据, 这样可以帮助数据库引擎优化事务。
 
-#### 3、事务超时
+### 3、事务超时
 
 事务超时就是事务的一个定时器，在特定时间内事务如果没有执行完毕，那么就会自动回滚，而不是一直等待其结束。在 TransactionDefinition 中以 int 的值来表示超时时间，默认值是-1，其单位是秒。
 
-#### 3、回滚规则
+### 3、回滚规则
 
 回滚规则定义了哪些异常会导致事务回滚而哪些不会。默认情况下，事务只有遇到运行期异常时才会回滚。
 
+
+## 结合数据库思考一些场景
+
+```java
+  class UserService {
+    private UserDAO userDao;
+    private UserManager userManager;
+  
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
+    public void doSomething(String userMobile) {
+      UserEntity userEntity = userDao.selectByUserMobile(userMobile);
+      logger.info("isExists:{}", userEntity != null);
+      Long userId = userManager.insertByUserMobile(userMobile);
+      userEntity = userDao.selectByUserMobile(userMobile);
+      logger.info("isExists:{}", userEntity != null);
+      userEntity = userDao.selectByPrimaryKey(userId);
+      logger.info("isExists:{}", userEntity != null);
+    }
+  }
+  
+  class UserManager {
+    private UserDAO userDao;
+	
+    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = RuntimeException.class)
+    public Long insertByUserMobile(String userMobile) {
+      UserEntity userEntity = new UserEntity();
+      userEntity.setUserMobile(userMobile);
+      userDao.insert(userEntity);
+      return userEntity.getId();
+    }
+	
+  }
+```
+
+当使用Mysql数据库，配置RR（Repeatable Read，可重复读）隔离级别，猜猜结果是什么，如果是Oracle（Oracle仅支持Read Committed、Serializable，默认是RC）呢？
