@@ -120,12 +120,16 @@
 
 ## 结合数据库思考一些场景
 
+### 隔离级别
+
+代码如下：
+
 ```java
   class UserService {
     private UserDAO userDao;
     private UserManager userManager;
   
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = RuntimeException.class)
     public void doSomething(String userMobile) {
       UserEntity userEntity = userDao.selectByUserMobile(userMobile);
       logger.info("isExists:{}", userEntity != null);
@@ -139,8 +143,8 @@
   
   class UserManager {
     private UserDAO userDao;
-	
-    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = RuntimeException.class)
+
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = RuntimeException.class)
     public Long insertByUserMobile(String userMobile) {
       UserEntity userEntity = new UserEntity();
       userEntity.setUserMobile(userMobile);
@@ -151,4 +155,66 @@
   }
 ```
 
-当使用Mysql数据库，配置RR（Repeatable Read，可重复读）隔离级别，猜猜结果是什么，如果是Oracle（Oracle仅支持Read Committed、Serializable，默认是RC）呢？
+当使用Mysql数据库，配置RR（Repeatable Read，可重复读）隔离级别，使用Innodb，猜猜结果是什么，如果是Oracle（Oracle仅支持Read Committed、Serializable，默认是RC）呢？
+
+Mysql、隔离级别RR、Innodb：
+```text
+isExists:false
+isExists:false
+isExists:false
+```
+
+Oracle、隔离级别RC：
+```text
+isExists:true
+isExists:true
+isExists:true
+```
+
+如果代码在稍微调整一下呢？
+
+代码如下：
+
+```java
+  class UserService {
+    private UserDAO userDao;
+    private UserManager userManager;
+
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = RuntimeException.class)
+    public void doSomething(String userMobile) {
+      /// UserEntity userEntity = userDao.selectByUserMobile(userMobile);
+      /// logger.info("isExists:{}", userEntity != null);
+      Long userId = userManager.insertByUserMobile(userMobile);
+      UserEntity userEntity = userDao.selectByUserMobile(userMobile);
+      logger.info("isExists:{}", userEntity != null);
+      userEntity = userDao.selectByPrimaryKey(userId);
+      logger.info("isExists:{}", userEntity != null);
+    }
+  }
+  
+  class UserManager {
+    private UserDAO userDao;
+
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = RuntimeException.class)
+    public Long insertByUserMobile(String userMobile) {
+      UserEntity userEntity = new UserEntity();
+      userEntity.setUserMobile(userMobile);
+      userDao.insert(userEntity);
+      return userEntity.getId();
+    }
+	
+  }
+```
+
+Mysql、隔离级别RR、Innodb：
+```text
+isExists:true
+isExists:true
+```
+
+Oracle、隔离级别RC：
+```text
+isExists:true
+isExists:true
+```
+
