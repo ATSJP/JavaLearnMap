@@ -65,7 +65,7 @@
 
 - **PROPAGATION_NESTED**：A和B底层采用保存点机制，形成嵌套事务
   
-
+  
   
   注意：
   
@@ -166,7 +166,7 @@ isExists:false
 
 Oracle、隔离级别RC：
 ```text
-isExists:true
+isExists:false
 isExists:true
 isExists:true
 ```
@@ -218,3 +218,8 @@ isExists:true
 isExists:true
 ```
 
+**总结**：SQL标准规范说明了，RR、RC的要求，即RR要求一个事务里，多次读结果是一样的（可能会出现幻读），RC仅要求读的内容是别的事务已提交的内容。
+
+
+
+故这么解释，可以搞得清楚结果，但是往深了去，针对Mysql 可以延深到RR级别下，InnoDB，如何实现的，主要会涉及到MVCC、Read View等。具体详细内容，见我的这篇[MVCC](../Sql/Mysql/MVCC.md)。
