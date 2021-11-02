@@ -164,13 +164,6 @@ isExists:false
 isExists:false
 ```
 
-Oracle、隔离级别RC：
-```text
-isExists:false
-isExists:true
-isExists:true
-```
-
 如果代码在稍微调整一下呢？
 
 代码如下：
@@ -207,12 +200,6 @@ isExists:true
 ```
 
 Mysql、隔离级别RR、Innodb：
-```text
-isExists:true
-isExists:true
-```
-
-Oracle、隔离级别RC：
 ```text
 isExists:true
 isExists:true
