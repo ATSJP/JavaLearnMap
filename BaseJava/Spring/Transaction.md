@@ -144,7 +144,7 @@
   class UserManager {
     private UserDAO userDao;
 
-    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = RuntimeException.class)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.DEFAULT, rollbackFor = RuntimeException.class)
     public Long insertByUserMobile(String userMobile) {
       UserEntity userEntity = new UserEntity();
       userEntity.setUserMobile(userMobile);
@@ -195,7 +195,7 @@ isExists:true
   class UserManager {
     private UserDAO userDao;
 
-    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = RuntimeException.class)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.DEFAULT, rollbackFor = RuntimeException.class)
     public Long insertByUserMobile(String userMobile) {
       UserEntity userEntity = new UserEntity();
       userEntity.setUserMobile(userMobile);
