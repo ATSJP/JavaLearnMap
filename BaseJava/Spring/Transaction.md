@@ -155,9 +155,19 @@
   }
 ```
 
-当使用Mysql数据库，配置RR（Repeatable Read，可重复读）隔离级别，使用Innodb，猜猜结果是什么，如果是Oracle（Oracle仅支持Read Committed、Serializable，默认是RC）呢？
+当使用Mysql数据库，配置RR（Repeatable Read，可重复读）隔离级别，使用Innodb，猜猜结果是什么，如果是Oracle（Oracle仅支持Read Committed、Serializable、Read-Only，默认是RC）呢？
+
+> Oracle数据一致性参照官方文档：[Data Consistency](https://docs.oracle.com/en/database/oracle/oracle-database/19/cncpt/introduction-to-oracle-database.html#GUID-5F42279D-EE21-4722-9C4A-F24147B16F12)
+> Oracle事务隔离级别参照官方文档: [Oracle Database Transaction Isolation Levels](https://docs.oracle.com/en/database/oracle/oracle-database/19/cncpt/data-concurrency-and-consistency.html#GUID-2A0FDFF0-5F72-4476-BFD2-060A20EA1685)
 
 Mysql、隔离级别RR、Innodb：
+```text
+isExists:false
+isExists:false
+isExists:false
+```
+
+Oracle、隔离级别RC：
 ```text
 isExists:false
 isExists:false
@@ -205,8 +215,19 @@ isExists:true
 isExists:true
 ```
 
+Oracle、隔离级别RC：
+```text
+isExists:true
+isExists:true
+```
+
 **总结**：SQL标准规范说明了，RR、RC的要求，即RR要求一个事务里，多次读结果是一样的（可能会出现幻读），RC仅要求读的内容是别的事务已提交的内容。
 
+MySql针对RR的实现符合SQL标准规范定义；Oracle的RC在SQL标准规范定义之外，还多做了RR的要求，这一点在Oracle官方文档中有说明（[官方文档](https://docs.oracle.
+com/en/database/oracle/oracle-database/19/cncpt/data-concurrency-and-consistency.
+html#GUID-DB571DA8-864F-4FE9-93B9-3EC2DD0604FE)）,Oracle关于RC做了如下说明：
 
+> In the **read committed isolation level**, every query executed by a transaction sees only data committed before the query—not the transaction—began.
+> 事务执行的每个查询只看到在查询开始之前提交的数据，而不是事务开始。
 
-故这么解释，可以搞得清楚结果，但是往深了去，针对Mysql 可以延深到RR级别下，InnoDB，如何实现的，主要会涉及到MVCC、Read View等。具体详细内容，见我的这篇[MVCC](../Sql/Mysql/MVCC.md)。
+故这么解释，可以搞得清楚结果，但是往深了去：针对Mysql可以延深到RR级别下，InnoDB，如何实现的，主要会涉及到MVCC、Read View等。具体详细内容，见我的这篇[MVCC](../Sql/Mysql/MVCC.md)。
