@@ -221,11 +221,15 @@ isExists:true
 isExists:true
 ```
 
-**总结**：SQL标准规范说明了，RR、RC的要求，即RR要求一个事务里，多次读结果是一样的（可能会出现幻读），RC仅要求读的内容是别的事务已提交的内容。
+**总结**：
 
-MySql针对RR的实现符合SQL标准规范定义；Oracle的RC在SQL标准规范定义之外，还多做了RR的要求，这一点在Oracle官方文档中有说明（[官方文档](https://docs.oracle.
+SQL标准规范说明了，RR、RC的要求，即RR要求一个事务里，多次读结果是一样的（可能会出现幻读），RC仅要求读的内容是别的事务已提交的内容。
+
+MySql针对RR的实现符合SQL标准规范定义；
+
+Oracle的RC在SQL标准规范定义之外，还多做了RR的要求，这一点在Oracle官方文档中有说明（[官方文档](https://docs.oracle.
 com/en/database/oracle/oracle-database/19/cncpt/data-concurrency-and-consistency.
-html#GUID-DB571DA8-864F-4FE9-93B9-3EC2DD0604FE)）,Oracle关于RC做了如下说明：
+html#GUID-DB571DA8-864F-4FE9-93B9-3EC2DD0604FE)），Oracle关于RC做了如下说明：
 
 > In the **read committed isolation level**, every query executed by a transaction sees only data committed before the query—not the transaction—began.
 > 事务执行的每个查询只看到在查询开始之前提交的数据，而不是事务开始。
