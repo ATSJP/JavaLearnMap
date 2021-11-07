@@ -133,14 +133,15 @@ Hash值的范围值-2147483648到2147483647，前后加起来大概40亿的映�
             // 1、检查Hash是否相等 2、检查Object是否相等
             if (first.hash == hash && // always check first node
                 ((k = first.key) == key || (key != null && key.equals(k))))
+                // 如果相等，直接返回
                 return first;
-            // 检查节点的下一个是否存在
+            // 检查节点的next是否存在
             if ((e = first.next) != null) {
                 // 检查节点是否为树
                 if (first instanceof TreeNode)
                     return ((TreeNode<K,V>)first).getTreeNode(hash, key);
                 do {
-                    // 如果是链表，则按顺序遍历，直到找到
+                    // 如果是链表，则按顺序遍历，直到找到目标节点
                     if (e.hash == hash &&
                         ((k = e.key) == key || (key != null && key.equals(k))))
                         return e;
@@ -151,11 +152,13 @@ Hash值的范围值-2147483648到2147483647，前后加起来大概40亿的映�
     }
 ```
 
-等等，大伙此时肯定想问，啊，这个公式虽然简单、优雅，能称得上**计算高效**，但是就能说明HashMap的长度是2<sup>n</sup>了吗？是的，就是他，但是为什么呢，咱们继续往下看。
+等等，大伙此时肯定想问，啊，这个公式虽然简单、优雅，能称得上**计算高效**，但是就能说明HashMap的长度是2<sup>n</sup>了吗？是的，但是为什么呢，咱们继续往下看。
 
 #### 降低碰撞
 
-大伙都知道，HashMap高不高效，其中一个最重要的因素便是Hash算法要好。作为HashMap的设计者，肯定也知道这一点，所以在设计HashMap的时候，将这一点完全托付给了Hash算法，即相信Hash算法能够设计好。而HashMap计算下标，则以不影响Hash算法结果的目的而设计，故采用了HashMap的长度尽量是2<sup>n</sup>。
+大伙都知道，HashMap高不高效，其中一个最重要的因素便是Hash算法要好。作为HashMap的设计者，肯定也知道这一点，所以在设计HashMap的时候，将这一点完全托付给了Hash算法，即相信Hash算法能够设计好。而HashMap计算下标，则以不影响Hash算法结果的目的而设计。那么保证HashMap的长度是2<sup>n</sup>，就能保证不影响到Hash算法结果，至于为什么，咱们接着向下看。
+
+
 
 对于HashMap计算下标的公式：`(n - 1) & hash`，我们假设一下：
 
