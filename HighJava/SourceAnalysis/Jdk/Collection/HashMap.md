@@ -199,8 +199,9 @@ Hash值的范围值-2147483648到2147483647，前后加起来大概40亿的映�
         if ((tab = table) == null || (n = tab.length) == 0)
             // 初始化
             n = (tab = resize()).length;
-        // Node数组对应的位置Value为null
+        // Node数组对应的位置是否为null
         if ((p = tab[i = (n - 1) & hash]) == null)
+            // 无Hash冲突的情况
             tab[i] = newNode(hash, key, value, null);
         else {
             // 处理Hash冲突的情况
@@ -210,19 +211,19 @@ Hash值的范围值-2147483648到2147483647，前后加起来大概40亿的映�
                 ((k = p.key) == key || (key != null && key.equals(k))))
                 // 如果相同，则表示新加入的Node已经在HashMap中了，直接返回老Node的引用即可
                 e = p;
-            // 判断是否是红黑树
+            // 判断是否是树
             else if (p instanceof TreeNode)
                 e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
             else {
-                // 此时一定是链表的结构，顺序遍历，直到遍历到队尾 
+                // 此时一定是链表，顺序遍历，直到遍历到队尾
                 for (int binCount = 0; ; ++binCount) {
                     // 判断是否到了链表队尾
                     if ((e = p.next) == null) {
                         // 直接在队尾插入新的Node
                         p.next = newNode(hash, key, value, null);
-                        // 判断当前是否满足转红黑树的条件，TREEIFY_THRESHOLD = 8，binCount表示遍历次数，即链表长度
+                        // 判断当前是否满足转树的条件，TREEIFY_THRESHOLD = 8，binCount表示遍历次数，即链表长度
                         if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
-                            // 转红黑树
+                            // 转树
                             treeifyBin(tab, hash);
                         break;
                     }
@@ -235,10 +236,9 @@ Hash值的范围值-2147483648到2147483647，前后加起来大概40亿的映�
                     p = e;
                 }
             }
-            // 
             if (e != null) { // existing mapping for key
                 V oldValue = e.value;
-                // 是否要替换老节点Value的情况
+                // 是否要替换老节点Value
                 if (!onlyIfAbsent || oldValue == null)
                     e.value = value;
                 // 为LinkedHashMap扩展使用，表示新Node的访问
@@ -285,7 +285,7 @@ Hash值的范围值-2147483648到2147483647，前后加起来大概40亿的映�
         else if ((e = tab[index = (n - 1) & hash]) != null) {
             TreeNode<K,V> hd = null, tl = null;
             do {
-                // 普通Node节点转树节点
+                // Node节点转树节点
                 TreeNode<K,V> p = replacementTreeNode(e, null);
                 if (tl == null)
                     // 根节点记录引用
