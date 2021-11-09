@@ -310,6 +310,8 @@ Hash值的范围值-2147483648到2147483647，前后加起来大概40亿的映�
 
 ### TreeNode
 
+红黑树的实现都在这里了。
+
 ```java
     static final class TreeNode<K,V> extends LinkedHashMap.Entry<K,V> {
         TreeNode<K,V> parent;  // red-black tree links
@@ -903,8 +905,6 @@ Hash值的范围值-2147483648到2147483647，前后加起来大概40亿的映�
 
 ```
 
-
-
 ### resize
 
 ```java
@@ -922,6 +922,7 @@ Hash值的范围值-2147483648到2147483647，前后加起来大概40亿的映�
      */
     static final int MAXIMUM_CAPACITY = 1 << 30;
     
+ 		// 扩容
     final Node<K,V>[] resize() {
         Node<K,V>[] oldTab = table;
         int oldCap = (oldTab == null) ? 0 : oldTab.length;
@@ -932,6 +933,7 @@ Hash值的范围值-2147483648到2147483647，前后加起来大概40亿的映�
             if (oldCap >= MAXIMUM_CAPACITY) {
                 // 阀值赋值为Integer.MAX_VALUE
                 threshold = Integer.MAX_VALUE;
+                // 后续不再扩容了
                 return oldTab;
             }
             // 否则，新容量扩大为2倍，在判断新容量是否小于MAXIMUM_CAPACITY且老容量大于等于默认容量
