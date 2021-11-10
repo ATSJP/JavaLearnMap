@@ -5,7 +5,7 @@
 ## JVM之运行时数据区
 
 ### 一、总览
-![JVM运行时数据区](assets/JVM运行时数据区.jpg)
+![JVM运行时数据区](JVM运行时数据区.assets/JVM运行时数据区.jpg)
 
 **线程私有**：
 Java虚拟机栈，本地方法栈，程序计数器
@@ -49,7 +49,7 @@ Java堆，堆的概念，大家都已熟知，是垃圾回收期主要关注的�
 
 ### 二、异常情况
 
-![抛出异常情况](assets/抛出异常情况.jpg)
+![抛出异常情况](JVM运行时数据区.assets/抛出异常情况.jpg)
 
 OutOfMemoryError：
 - Java堆
@@ -63,7 +63,6 @@ StackOutflowError：
 
 无内存溢出或栈出异常：
 - 程序计数器
-
 
 
 
