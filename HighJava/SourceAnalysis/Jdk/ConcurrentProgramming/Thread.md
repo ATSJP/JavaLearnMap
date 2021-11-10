@@ -4,15 +4,21 @@
 
 ## 线程状态
 
-线程池有5种状态：running，showdown，stop，Tidying，TERMINATED。
+线程有
 
-- running：线程池处于运行状态，可以接受任务，执行任务，创建线程默认就是这个状态了
-- showdown：调用showdown（）函数，不会接受新任务，但是会慢慢处理完堆积的任务。
-- stop：调用showdownnow（）函数，不会接受新任务，不处理已有的任务，会中断现有的任务。
-- Tidying：当线程池状态为showdown或者stop，任务数量为0，就会变为tidying。这个时候会调用钩子函数terminated（）。
-- TERMINATED：terminated（）执行完成。
-
-在线程池中，用了一个原子类来记录线程池的信息，用了int的高3位表示状态，后面的29位表示线程池中线程的个数。
+> 线程池有5种状态：RUNNING，SHUTDOWN，STOP，TIDYING，TERMINATED。
+>
+> - RUNNING：线程池处于运行状态，可以接受任务，执行任务，创建线程默认就是这个状态了
+> - SHUTDOWN：调用showdown()函数，不会接受新任务，但是会慢慢处理完堆积的任务。
+> - STOP：调用showdownnow()函数，不会接受新任务，不处理已有的任务，会中断现有的任务。
+> - TIDYING：当线程池状态为showdown或者stop，任务数量为0，就会变为tidying。这个时候会调用钩子函数terminated（）。
+> - TERMINATED：terminated()执行完成。
+>
+> 在线程池中，用了一个原子类来记录线程池的信息，用了int的高3位表示状态，后面的29位表示线程池中线程的个数。
+>
+> ```java
+>     private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
+> ```
 
 ## 终止线程方法
 
