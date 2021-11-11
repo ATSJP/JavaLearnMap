@@ -4,9 +4,8 @@
 
 # Caffeine
 
-## Caches
 
-### 介绍
+## 介绍
 
 各位移步项目Github，查阅即可，有中文版和英文版。
 
@@ -428,42 +427,39 @@ protected void bindImplementationSpecificMetrics(MeterRegistry registry) {
 }
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## 原理
 
 ### 淘汰策略
 
 #### W-Tiny LFU
 
+![W-Tiny LFU](Caffeine.assets/20210116222503556.png)
 
+
+
+#### LRU
+
+LRU（Least recently used，最近最少使用）算法根据数据的历史访问记录来进行淘汰数据，其核心思想是：如果数据最近被访问过，那么将来被访问的几率也更高。
+
+
+
+![LRU](Caffeine.assets/v2-71b21233c615b1ce899cd4bd3122cbab_720w.jpg)
+
+
+
+#### Tiny LFU 
+
+>
+
+[TinyLFU_PDP2014.pdf](./Caffeine.assets/TinyLFU_PDP2014.pdf) 
 
 #### Segmented LRU (SLRU)
 
 从维基百科摘抄：
 
 > SLRU cache is divided into two segments, a probationary segment and a protected segment. Lines in each segment are ordered from the most to the least recently accessed. Data from misses is added to the cache at the most recently accessed end of the probationary segment. Hits are removed from wherever they currently reside and added to the most recently accessed end of the protected segment. Lines in the protected segment have thus been accessed at least twice. The protected segment is finite, so migration of a line from the probationary segment to the protected segment may force the migration of the LRU line in the protected segment to the most recently used (MRU) end of the probationary segment, giving this line another chance to be accessed before being replaced. The size limit on the protected segment is an SLRU parameter that varies according to the I/O workload patterns. Whenever data must be discarded from the cache, lines are obtained from the LRU end of the probationary segment
+>
+> 
+>
 > SLRU缓存分为两个段，一个试用段和一个保护段。 每个段中的行按最近访问次数最多到最少访问的顺序排列。 未命中的数据被添加到试用段最近访问端的缓存中。 命中将从它们当前所在的任何位置删除，并添加到受保护段的最近访问端。 因此，受保护段中的行至少被访问了两次。 受保护段是有限的，因此将一条线路从试用段迁移到受保护段可能会迫使受保护段中的 LRU 线路迁移到试用段的最近使用 (MRU) 端，从而给这条线路另一个机会 在被替换之前访问。 受保护段的大小限制是根据 I/O 工作负载模式而变化的 SLRU 参数。 每当必须从缓存中丢弃数据时，都会从试用段的 LRU 端获取行
 
