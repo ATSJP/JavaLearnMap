@@ -360,73 +360,62 @@ listen(8, 50)
   >
   > RETURN VALUE
   >
-  >  On  success,  a  file  descriptor for the new socket is returned.  On error, -1 is returned, and errno is set appropri-
+  >  On  success,  a  file  descriptor for the new socket is returned.  On error, -1 is returned, and errno is set appropriately.
   >
-  >  ately.
-
+  
 - bind
 
-> NAME
->
->  bind - bind a name to a socket
->
-> SYNOPSIS
->
->  #include <sys/types.h>          /* See NOTES */
->
->  #include <sys/socket.h>
->
->  int bind(int sockfd, const struct sockaddr *addr,
->
->  socklen_t addrlen);
->
-> DESCRIPTION
->
->  When  a socket is created with socket(2), it exists in a name space (address family) but has no address assigned to it.
->
->  bind() assigns the address specified by addr to the socket referred to by the file descriptor sockfd.   addrlen  speci-
->
->  fies the size, in bytes, of the address structure pointed to by addr.  Traditionally, this operation is called "assign-
->
->  ing a name to a socket".
->
-> RETURN VALUE
->
->  On success, zero is returned.  On error, -1 is returned, and errno is set appropriately.
-
+  > NAME
+  >
+  >  bind - bind a name to a socket
+  >
+  > SYNOPSIS
+  >
+  >  #include <sys/types.h>          /* See NOTES */
+  >
+  >  #include <sys/socket.h>
+  >
+  >  int bind(int sockfd, const struct sockaddr *addr,
+  >
+  >  socklen_t addrlen);
+  >
+  > DESCRIPTION
+  >
+  >  When  a socket is created with socket(2), it exists in a name space (address family) but has no address assigned to it.
+  >
+  >  bind() assigns the address specified by addr to the socket referred to by the file descriptor sockfd.   addrlen  specifies the size, in bytes, of the address structure pointed to by addr.  Traditionally, this operation is called "assigning a name to a socket".
+  >
+  >  RETURN VALUE
+  >
+  >  On success, zero is returned.  On error, -1 is returned, and errno is set appropriately.
+  
 - listen
 
-> NAME
->
->  listen - listen for connections on a socket
->
-> SYNOPSIS
->
->  #include <sys/types.h>          /* See NOTES */
->
->  #include <sys/socket.h>
->
->  int listen(int sockfd, int backlog);
->
-> DESCRIPTION
->
->  listen()  marks  the socket referred to by sockfd as a passive socket, that is, as a socket that will be used to accept
->
->  incoming connection requests using accept(2).
->
->  The sockfd argument is a file descriptor that refers to a socket of type SOCK_STREAM or SOCK_SEQPACKET.
->
->  The backlog argument defines the maximum length to which the queue of pending connections for sockfd may  grow.   If  a
->
->  connection  request  arrives when the queue is full, the client may receive an error with an indication of ECONNREFUSED
->
->  or, if the underlying protocol supports retransmission, the request may be ignored so that a later reattempt at connec-
->
->  tion succeeds.
->
-> RETURN VALUE
->
->  On success, zero is returned.  On error, -1 is returned, and errno is set appropriately.
+  > NAME
+  >
+  >  listen - listen for connections on a socket
+  >
+  > SYNOPSIS
+  >
+  >  #include <sys/types.h>          /* See NOTES */
+  >
+  >  #include <sys/socket.h>
+  >
+  >  int listen(int sockfd, int backlog);
+  >
+  > DESCRIPTION
+  >
+  >  listen()  marks  the socket referred to by sockfd as a passive socket, that is, as a socket that will be used to accept incoming connection requests using accept(2).
+  >
+  >  The sockfd argument is a file descriptor that refers to a socket of type SOCK_STREAM or SOCK_SEQPACKET.
+  >
+  >  The backlog argument defines the maximum length to which the queue of pending connections for sockfd may  grow.   If a connection  request  arrives when the queue is full, the client may receive an error with an indication of ECONNREFUSED
+  >
+  >  or, if the underlying protocol supports retransmission, the request may be ignored so that a later reattempt at connection succeeds.
+  >
+  >  RETURN VALUE
+  >
+  >  On success, zero is returned.  On error, -1 is returned, and errno is set appropriately.
 
 即使不查手册，相信大家也能通过其命名知道其含义，查完手册主要加深我们对Linux IO的其他相关概念更深刻的了解。
 
