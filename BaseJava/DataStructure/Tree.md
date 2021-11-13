@@ -493,12 +493,16 @@ public static void postOrder(TreeNode tree) {
 
 ```java
 public static void levelOrder(TreeNode tree) {
-    if (tree == null)
+    if (tree == null) {
         return;
-    LinkedList<TreeNode> list = new LinkedList<>();//链表，这里我们可以把它看做队列
-    list.add(tree);//相当于把数据加入到队列尾部
+    }
+    // 链表，这里我们可以把它看做队列
+    LinkedList<TreeNode> list = new LinkedList<>();
+    // 相当于把数据加入到队列尾部
+    list.add(tree);
     while (!list.isEmpty()) {
-        TreeNode node = list.poll();//poll方法相当于移除队列头部的元素
+        // poll方法相当于移除队列头部的元素
+        TreeNode node = list.poll();
         System.out.println(node.val);
         if (node.left != null)
             list.add(node.left);
