@@ -547,16 +547,18 @@ private static void printLevel(TreeNode tree, int level) {
 
 ```java
 public static List<List<Integer>> levelOrder(TreeNode tree) {
-    if (tree == null)
+    if (tree == null){
         return null;
+    }
     List<List<Integer>> list = new ArrayList<>();
     bfs(tree, 0, list);
     return list;
 }
 
 private static void bfs(TreeNode tree, int level, List<List<Integer>> list) {
-    if (tree == null)
+    if (tree == null){
         return;
+    }
     if (level >= list.size()) {
         List<Integer> subList = new ArrayList<>();
         subList.add(tree.val);

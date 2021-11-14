@@ -4,11 +4,18 @@
 
 ## 线程状态
 
-线程有
+线程有6种状态：NEW、RUNNABLE、BLOCKED、WAITING、TIME_WAITING、TERMINATED
+
+- NEW：初始状态、线程被构建，但是还没有调用start()方法。
+- RUNNABLE：运行状态，Java 线程将操作系统中的就绪和运行两种状态笼统地称作“运行中“。
+- BLOCKED：阻塞状态，表示线程阻塞于锁。
+- WAITING：等待状态，表示线程进人等待状态，进人该状态表示当前线程需要等待其他线程做出一些特定动作（通知或中断）。
+- TIME_WAITING：超时等待状杰，该状杰不同干 WAITNG.亡是可以在指定的时间自行返回的。
+- TERMINATED：终止状态，表示当前线程已经执行完毕。
 
 > 线程池有5种状态：RUNNING，SHUTDOWN，STOP，TIDYING，TERMINATED。
 >
-> - RUNNING：线程池处于运行状态，可以接受任务，执行任务，创建线程默认就是这个状态了
+> - RUNNING：线程池处于运行状态，可以接受任务，执行任务，创建线程默认就是这个状态了。
 > - SHUTDOWN：调用showdown()函数，不会接受新任务，但是会慢慢处理完堆积的任务。
 > - STOP：调用showdownnow()函数，不会接受新任务，不处理已有的任务，会中断现有的任务。
 > - TIDYING：当线程池状态为showdown或者stop，任务数量为0，就会变为tidying。这个时候会调用钩子函数terminated（）。
