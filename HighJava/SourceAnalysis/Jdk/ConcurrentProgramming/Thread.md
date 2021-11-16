@@ -13,6 +13,16 @@
 - TIME_WAITING：超时等待状态，该状态不同于WAITNG，它是可以在指定的时间自行返回的。
 - TERMINATED：终止状态，表示当前线程已经执行完毕。
 
+线程在生命周期中并不是固定处于某一个状态而是随着代码的执行在不同状态之间切换。Java 线程状态变迁如下图所示（图源《Java 并发编程艺术》4.1.4 节）：
+
+![Java+线程状态变迁](Thread.assets/Java+线程状态变迁.png)
+
+> 备注：原图中 wait 到 runnable 状态的转换中，`join`实际上是`Thread`类的方法，但这里写成了`Object`。
+
+> 补充知识：
+>
+> 
+>
 > 线程池有5种状态：RUNNING，SHUTDOWN，STOP，TIDYING，TERMINATED。
 >
 > - RUNNING：线程池处于运行状态，可以接受任务，执行任务，创建线程默认就是这个状态了。
