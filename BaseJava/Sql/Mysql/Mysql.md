@@ -4,7 +4,7 @@
 
 ## 一、简介
 
-1、事务
+### 事务
 
 未提交读（READ UNCOMMITTED ）：最低隔离级别，一个事务能读取到别的事务未提交的更新数据，很不安全，可能出现丢失更新、脏读、不可重复读、幻读； 
 
@@ -18,7 +18,7 @@ MySQL支持这四种事务等级，默认事务隔离级别是REPEATABLE READ。
 
 ## 二、使用
 
-#### A、用户及权限
+### 用户及权限
 
 ```sql
 # 创建用户
@@ -31,7 +31,7 @@ grant all privileges on *.* to 'user01'@'127.0.0.1' identified by '666666';
 grant select,insert on <database>.<table> to '<user>'@'<ip>' identified by '<password>';
 ```
 
-#### B、远程
+### 远程
 
 ```sql
 select host from user  where user ='root'
@@ -39,6 +39,47 @@ select host from user  where user ='root'
 update user set host = '%' where user = 'root';
 
 flush privileges;
+```
+
+### 存储过程
+
+基本语法
+
+```sql
+-- 创建存储过程
+delimiter $$
+create procedure proc01()
+begin
+	select empno,ename from emp;
+end $$
+delimiter ;
+-- 调用存储过程
+call proc01();
+```
+
+插入测试数据
+
+```sql
+delimiter $$ 
+create procedure proc_batch_insert()
+begin  
+  declare pre_name bigint;  
+  declare ageval int;
+  declare i int;
+  set pre_name = 187635267;
+  set ageval = 100;
+  set i = 1;
+  while i < 10000000 do
+    insert into t_user(name,age, create_time, update_time) 
+    values(concat(pre_name,'@test.com'), (ageval+1)%30, now(), now());
+    set pre_name = pre_name + 1;
+    set i = i + 1;
+	end while;
+end $$
+delimiter ;
+
+-- 调用存储过程
+call proc_batch_insert();
 ```
 
 ## 三、常见问题
