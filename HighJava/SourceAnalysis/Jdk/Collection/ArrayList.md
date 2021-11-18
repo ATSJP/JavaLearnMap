@@ -2,21 +2,21 @@
 
 
 
-## ArrayList
+# ArrayList
 
-### 关系图
+## 类图
 
 ![image-20200804154736870](ArrayList.assets/image-20200804154736870.png)
 
-### 数据结构
+## 数据结构
 
 数组：Object[] elementData
 
-### 原理
+## 原理
 
-#### 扩容
+### 扩容
 
-**知识了解：**
+**知识了解**
 
 minCapacity：最小扩容量，分析源码不难知道，等于当前数组的size+1。
 
@@ -32,7 +32,7 @@ minCapacity：最小扩容量，分析源码不难知道，等于当前数组的
     }
 ```
 
-#### 首次扩容
+### 首次扩容
 
 当我们使用ArrayList()无参构造器初始化对象的时候，默认不扩容，将默认的空数组赋值给数组。后续，在新增数据的时候，触发了扩容机制。
 
@@ -66,7 +66,7 @@ minCapacity：最小扩容量，分析源码不难知道，等于当前数组的
     }
 ```
 
-#### 非首次扩容
+### 非首次扩容
 
 源码处理流程：
 
@@ -122,23 +122,25 @@ graph TB
     }
 ```
 
-### 使用
+## JDK版本区别
 
 1.7和1.8最大的区别就是：1.7是饿汉式创建集合容量，1.8是懒汉式创建集合容量
 
-### 优缺点
+## 优缺点
 
-优点：
+### 优点
 
 1、因为是数组，所以根据脚标取数据很快
 
-缺点：
+### 缺点
 1、数组的新增、删除操作效率不高，涉及到数组的扩容、复制等操作
 2、线程不安全
 
-### 拓展
+## 拓展
 
-1、如何证明线程不安全？
+> 以下代码，均基于jdk1.8
+
+### 如何证明线程不安全？
 
 ```java
   @Test
@@ -207,16 +209,185 @@ size++是非原子操作，在并发时，会有线程安全。
 
 那么怎么简单解决呢？使用synchronized + volatile即可，当然了还有其他的方式，本篇文章不在赘述，在并发编程相关内容，将会详细研讨。
 
+### 扩容了几次？
+
+看看以下代码，猜猜一共扩容了几次？
+
+```java
+  @Test
+  public void testGrow() throws NoSuchFieldException, IllegalAccessException {
+    List<Integer> list = new ArrayList<>(0);
+    list.add(1);
+    list.add(2);
+    list.add(3);
+    list.add(4);
+    list.add(5);
+    list.add(6);
+    list.add(7);
+    list.add(8);
+    list.add(9);
+    list.add(10);
+  }
+```
+
+为了方便了解到具体扩容了几次，我们使用反射的机制获取ArrayList中的elementData数组一看便知：
+
+```java
+  @Test
+  public void testGrow() throws NoSuchFieldException, IllegalAccessException {
+    List<Integer> list = new ArrayList<>(0);
+    Field elementDataField = list.getClass().getDeclaredField("elementData");
+    elementDataField.setAccessible(true);
+    System.out.println("length:" + ((Object[]) elementDataField.get(list)).length);
+
+    // grow
+    list.add(1);
+    System.out.println("add 1 after,length:" + ((Object[]) elementDataField.get(list)).length);
+    // grow
+    list.add(2);
+    System.out.println("add 2 after,length:" + ((Object[]) elementDataField.get(list)).length);
+    // grow
+    list.add(3);
+    System.out.println("add 3 after,length:" + ((Object[]) elementDataField.get(list)).length);
+    // grow
+    list.add(4);
+    System.out.println("add 4 after,length:" + ((Object[]) elementDataField.get(list)).length);
+    // grow
+    list.add(5);
+    System.out.println("add 5 after,length:" + ((Object[]) elementDataField.get(list)).length);
+    list.add(6);
+    System.out.println("add 6 after,length:" + ((Object[]) elementDataField.get(list)).length);
+    // grow
+    list.add(7);
+    System.out.println("add 7 after,length:" + ((Object[]) elementDataField.get(list)).length);
+    list.add(8);
+    System.out.println("add 8 after,length:" + ((Object[]) elementDataField.get(list)).length);
+    list.add(9);
+    System.out.println("add 9 after,length:" + ((Object[]) elementDataField.get(list)).length);
+    // grow
+    list.add(10);
+    System.out.println("add 10 after,length:" + ((Object[]) elementDataField.get(list)).length);
+  }
+```
+
+运行结果：
+
+```text
+length:0
+add 1 after,length:1
+add 2 after,length:2
+add 3 after,length:3
+add 4 after,length:4
+add 5 after,length:6
+add 6 after,length:6
+add 7 after,length:9
+add 8 after,length:9
+add 9 after,length:9
+add 10 after,length:13
+```
+
+结合结果，可见一共扩容了7次，分别是添加1、2、3、4、5、7、10的时候，elementData数组大小变化为：0（new结束）、1、2、3、4、6、9、13。
+
+没猜对？没关系，咱们在稍微变化下题目：
+
+```java
+  @Test
+  public void testGrow() throws NoSuchFieldException, IllegalAccessException {
+    // 换个构造器
+    List<Integer> list = new ArrayList<>();
+    list.add(1);
+    list.add(2);
+    list.add(3);
+    list.add(4);
+    list.add(5);
+    list.add(6);
+    list.add(7);
+    list.add(8);
+    list.add(9);
+    list.add(10);
+  }
+```
+
+这次是几次呢？答案：稍后揭晓。
 
 
 
+首先我们来回顾下两种情况的不同点——构造器：
+
+```java
+    /**
+     * Shared empty array instance used for empty instances.
+     */
+    private static final Object[] EMPTY_ELEMENTDATA = {};
+
+    /**
+     * Shared empty array instance used for default sized empty instances. We
+     * distinguish this from EMPTY_ELEMENTDATA to know how much to inflate when
+     * first element is added.
+     */
+    private static final Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = {};
+
+	  public ArrayList(int initialCapacity) {
+        if (initialCapacity > 0) {
+            this.elementData = new Object[initialCapacity];
+        } else if (initialCapacity == 0) {
+            // new ArrayList<>(0);
+            this.elementData = EMPTY_ELEMENTDATA;
+        } else {
+            throw new IllegalArgumentException("Illegal Capacity: "+
+                                               initialCapacity);
+        }
+    }
+
+    /**
+     * Constructs an empty list with an initial capacity of ten.
+     */
+    public ArrayList() {
+        this.elementData = DEFAULTCAPACITY_EMPTY_ELEMENTDATA;
+    }
+```
+
+很明显针对构造器来讲，区别就是初始赋值不一样，至于为啥不一样，源码解释了：
+
+- EMPTY_ELEMENTDATA：`Shared empty array instance used for empty instances.`
+
+- DEFAULTCAPACITY_EMPTY_ELEMENTDATA：`Shared empty array instance used for default sized empty instances. We
+   distinguish this from EMPTY_ELEMENTDATA to know how much to inflate when first element is added.`
+
+我们暂且将这两种情况称为实际空实例（即人为设置size=0）、默认空实例（即使用空造器）。看完了构造器，我们在来回顾下`add`的扩容机制：
+
+```java
+    /**
+     * Default initial capacity.
+     */
+    private static final int DEFAULT_CAPACITY = 10;
+    
+    private static int calculateCapacity(Object[] elementData, int minCapacity) {
+        if (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA) {
+            // 默认空数组的情况下
+            return Math.max(DEFAULT_CAPACITY, minCapacity);
+        }
+        return minCapacity;
+    }
+
+    private void ensureCapacityInternal(int minCapacity) {
+        ensureExplicitCapacity(calculateCapacity(elementData, minCapacity));
+    }
+
+    public boolean add(E e) {
+        ensureCapacityInternal(size + 1);  // Increments modCount!!
+        // ...
+    }
+
+```
+
+也就是说，针对默认空实例、实际空实例处理是不一样的，默认空实例扩容直接使用默认的大小10，两者后续扩容都按照1.5倍的机制来扩容。
 
 
 
+说到这里，第二种的情况，答案也有了：一共扩容了1次，添加1的时候，elementData数组大小变化为：0（new结束）、10。
 
-
-
-
+至于为什么要谈这两道题目，一方便，是为了更好的理解jdk为ArrayList做的优化；另一方面，是避免小伙伴有`new ArrayList<>(0);`的习惯，以为节省了内存，实则可能会产生多次扩容的时间浪费。
 
 
 
