@@ -9,7 +9,7 @@ Daily notes and knowledge accumulation...
 ## Source
 **Where can I  read?**
 
-- [Github Page](https://atsjp.github.io/note/) >> [Content ](https://atsjp.github.io/note/SUMMARY.html)
+- [Github Page](https://atsjp.github.io/JavaLearnMap/) >> [Content ](https://atsjp.github.io/JavaLearnMap/SUMMARY.html)
 - [Gitbook](https://atsjp.gitbook.io/)
 - [语雀](https://www.yuque.com/atsjp/note)
 
