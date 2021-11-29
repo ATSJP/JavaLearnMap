@@ -8,6 +8,38 @@
 
 ### 一、介绍
 
+#### 查询规范
+
+Spring Data JPA提供的一个查询规范，查询语句关键字，简单的SQL可根据方法命名来即可，省略了写sql语句。
+
+```SQL
+关键字                    方法命名                                 sql where字句
+And                     findByNameAndPwd                    where name= ? and pwd =?
+Or                      findByNameOrSex                     where name= ? or sex=?
+Is,Equals               findById,findByIdEquals             where id= ?
+Between                 findByIdBetween                     where id between ? and ?
+LessThan                findByIdLessThan                    where id < ?
+LessThanEquals          findByIdLessThanEquals              where id <= ?
+GreaterThan             findByIdGreaterThan                 where id > ?
+GreaterThanEquals       findByIdGreaterThanEquals           where id > = ?
+After                   findByIdAfter                       where id > ?
+Before                  findByIdBefore                      where id < ?
+IsNull                  findByNameIsNull                    where name is null
+isNotNull,NotNull       findByNameNotNull                   where name is not null
+Like                    findByNameLike                      where name like ?
+NotLike                 findByNameNotLike                   where name not like ?
+StartingWith            findByNameStartingWith              where name like ‘?%’
+EndingWith              findByNameEndingWith                where name like ‘%?’
+Containing              findByNameContaining                where name like ‘%?%’
+OrderBy                 findByIdOrderByXDesc                where id=? order by x desc
+Not                     findByNameNot                       where name <> ?
+In                      findByIdIn(Collection<?> c)         where id in (?)
+NotIn                   findByIdNotIn(Collection<?> c)      where id not in (?)
+True                    findByAaaTue                        where aaa = true
+False                   findByAaaFalse                      where aaa = false
+IgnoreCase              findByNameIgnoreCase                where UPPER(name)=UPPER(?)
+```
+
 ### 二、配置
 
 **以SpringDataJpa为例** ：
@@ -36,7 +68,7 @@ public LoginInfoEntity register(String loginName, String password, String userNa
  		...
          // 手动抛异常
          int i = 1 / 0；
-		return loginInfoEntity;
+		 return loginInfoEntity;
 }
 ```
 
