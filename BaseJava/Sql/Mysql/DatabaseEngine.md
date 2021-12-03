@@ -46,6 +46,12 @@ Innodb支持事务，锁的力度支持表锁、行级锁；底层为B+树实现
 
 优先使用用户自定义主键作为主键，如果没有，则自动先检查表中是否有唯一索引且不允许存在null值的字段，如果没有，则InnoDB会为表默认添加一个名为row_id隐藏列作为主键，数据类型大小为6Byte。
 
+### MVCC
+
+https://blog.csdn.net/SnailMann/article/details/94724197
+
+https://blog.csdn.net/chen77716/article/details/6742128
+
 
 
 # 索引
