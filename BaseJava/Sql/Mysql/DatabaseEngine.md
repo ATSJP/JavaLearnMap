@@ -56,11 +56,19 @@ https://blog.csdn.net/chen77716/article/details/6742128
 
 # 索引
 
+## 索引类型
+
+### 主键索引
+
+
+
+### 二级索引（辅助索引）
+
+
+
 ## 索引数据结构
 
 ### B+树 & Hash表
-
-
 
 **BTree 索引与 Hash 索引有什么区别？**
 
