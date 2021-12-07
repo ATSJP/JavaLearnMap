@@ -1002,3 +1002,17 @@ public abstract class AbstractFragmentsService {
 }
 ```
 
+
+
+## 异构数据源同步数据
+
+### Oracle同步Mysql
+
+业界常用的增量方案有：
+
+- 基于时间戳定时dump
+- oracle日志文件，比如LogMiner，OGG
+- oracle CDC(Change Data Capture)
+- oracle trigger机制，比如DataBus , SymmetricDS
+- oracle 物化视图(materialized view)
+...
