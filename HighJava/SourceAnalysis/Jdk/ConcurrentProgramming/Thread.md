@@ -43,7 +43,7 @@
 
 #### Stop
 
-使用退出标志，说线程正常退出；
+使用退出标志，说线程正常退出，但是stop函数停止线程过于暴力，它会立即停止线程，不给任何资源释放的余地。
 
 #### 中断
 
@@ -108,72 +108,6 @@ t1.interrupt();
 - 抛出时要注意：当你捕获到InterruptedException异常后，当前线程的中断状态已经被修改为false(表示线程未被中断)；此时你若能够处理中断，则不用理会该值；但如果你继续向上抛InterruptedException异常，你需要再次调用interrupt方法，将当前线程的中断状态设为true。
 - **注意**：绝对不能“吞掉中断”！即捕获了InterruptedException而不作任何处理。这样违背了中断机制的规则，别人想让你线程中断，然而你自己不处理，也不将中断请求告诉调用者，调用者一直以为没有中断请求。
 
-### 如何安全地停止线程？
-
-stop函数停止线程过于暴力，它会立即停止线程，不给任何资源释放的余地，下面介绍两种安全停止线程的方法。
-
-1.循环标记变量
-
-自定义一个共享的[boolean类型变量](https://www.zhihu.com/search?q=boolean类型变量&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A252905837})，表示当前线程是否需要中断。
-
-- 中断标识
-
-```java
-volatile boolean interrupted = false;
-```
-
-- [任务执行函数](https://www.zhihu.com/search?q=任务执行函数&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A252905837})
-
-```java
-Thread t1 = new Thread( new Runnable(){
-    public void run(){
-        while(!interrupted){
-            // 正常任务代码……
-        }
-        // 中断处理代码……
-        // 可以在这里进行资源的释放等操作……
-    }
-} );
-```
-
-- 中断函数
-
-```java
-Thread t2 = new Thread( new Runnable(){
-    public void run(){
-        interrupted = true;
-    }
-} );
-```
-
-2.循环中断状态
-
-- 中断标识 
-  由线程对象提供，无需自己定义。
-- 任务执行函数
-
-```java
-Thread t1 = new Thread( new Runnable(){
-    public void run(){
-        while(!Thread.currentThread.isInterrupted()){
-            // 正常任务代码……
-        }
-        // 中断处理代码……
-        // 可以在这里进行资源的释放等操作……
-    }
-} );
-```
-
-- 中断函数
-
-```java
-t1.interrupt();
-```
-
-上述两种方法本质一样，都是通过循环查看一个[共享标记](https://www.zhihu.com/search?q=共享标记&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A252905837})为来判断线程是否需要中断，他们的区别在于：第一种方法的标识位是我们自己设定的，而第二种方法的标识位是Java提供的。除此之外，他们的实现方法是一样的。
-
-上述两种方法之所以较为安全，是因为一条线程发出终止信号后，接收线程并不会立即停止，而是将本次循环的任务执行完，再跳出[循环停止线程](https://www.zhihu.com/search?q=循环停止线程&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A252905837})。此外，程序员又可以在跳出循环后添加额外的代码进行收尾工作。
-
 ## 线程池
 
 ### Java中的线程池是如何实现的？
@@ -188,10 +122,10 @@ t1.interrupt();
 
 ### 拒绝策略
 
-- AbortPolicy直接抛出异常阻止线程运行；
-- CallerRunsPolicy如果被丢弃的线程任务未关闭，则执行该线程；
-- DiscardOldestPolicy移除队列最早线程尝试提交当前任务
-- DiscardPolicy丢弃当前任务，不做处理
+- `ThreadPoolExecutor.AbortPolicy`：抛出 `RejectedExecutionException`来拒绝新任务的处理。
+- `ThreadPoolExecutor.CallerRunsPolicy`： 调用执行自己的线程运行任务，也就是直接在调用`execute`方法的线程中运行(`run`)被拒绝的任务，如果执行程序已关闭，则会丢弃该任务。因此这种策略会降低对于新任务提交速度，影响程序的整体性能。如果您的应用程序可以承受此延迟并且你要求任何一个任务请求都要被执行的话，你可以选择这个策略。
+- `ThreadPoolExecutor.DiscardPolicy`： 不处理新任务，直接丢弃掉。
+- `ThreadPoolExecutor.DiscardOldestPolicy`： 此策略将丢弃最早的未处理的任务请求。
 
 #### newFixedThreadPool （固定数目线程的线程池）
 
