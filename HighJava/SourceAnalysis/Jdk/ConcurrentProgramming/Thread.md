@@ -1,6 +1,10 @@
 [TOC]
 
-# Thread
+
+
+
+
+# 线程
 
 ## 线程状态
 
@@ -108,46 +112,48 @@ t1.interrupt();
 - 抛出时要注意：当你捕获到InterruptedException异常后，当前线程的中断状态已经被修改为false(表示线程未被中断)；此时你若能够处理中断，则不用理会该值；但如果你继续向上抛InterruptedException异常，你需要再次调用interrupt方法，将当前线程的中断状态设为true。
 - **注意**：绝对不能“吞掉中断”！即捕获了InterruptedException而不作任何处理。这样违背了中断机制的规则，别人想让你线程中断，然而你自己不处理，也不将中断请求告诉调用者，调用者一直以为没有中断请求。
 
-## 线程池
+# 线程池
 
-### Java中的线程池是如何实现的？
+## Java中的线程池是如何实现的？
 
 - 线程中线程被抽象为静态内部类Worker，是基于AQS实现的存放在HashSet中；
 - 要被执行的线程存放在BlockingQueue中；
 - 基本思想就是从workQueue中取出要执行的任务，放在worker中处理；
 
-### 如果线程池中的一个线程运行时出现了异常，会发生什么
+## 如果线程池中的一个线程运行时出现了异常，会发生什么
 
 如果提交任务的时候使用了submit，则返回的feature里会存有异常信息，但是如果数execute则会打印出异常栈。但是不会给其他线程造成影响。之后线程池会删除该线程，会新增加一个worker。
 
-### 拒绝策略
+## 拒绝策略
 
 - `ThreadPoolExecutor.AbortPolicy`：抛出 `RejectedExecutionException`来拒绝新任务的处理。
 - `ThreadPoolExecutor.CallerRunsPolicy`： 调用执行自己的线程运行任务，也就是直接在调用`execute`方法的线程中运行(`run`)被拒绝的任务，如果执行程序已关闭，则会丢弃该任务。因此这种策略会降低对于新任务提交速度，影响程序的整体性能。如果您的应用程序可以承受此延迟并且你要求任何一个任务请求都要被执行的话，你可以选择这个策略。
 - `ThreadPoolExecutor.DiscardPolicy`： 不处理新任务，直接丢弃掉。
 - `ThreadPoolExecutor.DiscardOldestPolicy`： 此策略将丢弃最早的未处理的任务请求。
 
-#### newFixedThreadPool （固定数目线程的线程池）
+## Executors
+
+### newFixedThreadPool （固定数目线程的线程池）
 
 - 阻塞队列为无界队列LinkedBlockingQueue
 - 适用于处理CPU密集型的任务，适用执行长期的任务
 
-#### newCachedThreadPool（可缓存线程的线程池）
+### newCachedThreadPool（可缓存线程的线程池）
 
 - 阻塞队列是SynchronousQueue
 - 适用于并发执行大量短期的小任务
 
-#### newSingleThreadExecutor（单线程的线程池）
+### newSingleThreadExecutor（单线程的线程池）
 
 - 阻塞队列是LinkedBlockingQueue
 - 适用于串行执行任务的场景，一个任务一个任务地执行
 
-#### newScheduledThreadPool（定时及周期执行的线程池）
+### newScheduledThreadPool（定时及周期执行的线程池）
 
 - 阻塞队列是DelayedWorkQueue
 - 周期性执行任务的场景，需要限制线程数量的场景
 
-### 线程池原理
+## 线程池原理
 
 - 提交一个任务，线程池里存活的核心线程数小于corePoolSize时，线程池会创建一个核心线程去处理提交的任务
 - 如果线程池核心线程数已满，即线程数已经等于corePoolSize，一个新提交的任务，会被放进任务队列workQueue排队等待执行。
