@@ -120,7 +120,7 @@ t1.interrupt();
 - 要被执行的线程存放在BlockingQueue中；
 - 基本思想就是从workQueue中取出要执行的任务，放在worker中处理；
 
-## 如果线程池中的一个线程运行时出现了异常，会发生什么
+## 执行 execute()方法和 submit()方法的区别是什么呢？
 
 如果提交任务的时候使用了submit，则返回的feature里会存有异常信息，但是如果数execute则会打印出异常栈。但是不会给其他线程造成影响。之后线程池会删除该线程，会新增加一个worker。
 
@@ -133,6 +133,11 @@ t1.interrupt();
 
 ## Executors
 
+### newSingleThreadExecutor（单线程的线程池）
+
+- 阻塞队列是LinkedBlockingQueue
+- 适用于串行执行任务的场景，一个任务一个任务地执行
+
 ### newFixedThreadPool （固定数目线程的线程池）
 
 - 阻塞队列为无界队列LinkedBlockingQueue
@@ -143,15 +148,15 @@ t1.interrupt();
 - 阻塞队列是SynchronousQueue
 - 适用于并发执行大量短期的小任务
 
-### newSingleThreadExecutor（单线程的线程池）
-
-- 阻塞队列是LinkedBlockingQueue
-- 适用于串行执行任务的场景，一个任务一个任务地执行
-
 ### newScheduledThreadPool（定时及周期执行的线程池）
 
 - 阻塞队列是DelayedWorkQueue
 - 周期性执行任务的场景，需要限制线程数量的场景
+
+> Executors 返回线程池对象的弊端如下：
+>
+> - **FixedThreadPool 和 SingleThreadExecutor** ： 允许请求的队列长度为 Integer.MAX_VALUE ，可能堆积大量的请求，从而导致 OOM。
+> - **CachedThreadPool 和 ScheduledThreadPool** ： 允许创建的线程数量为 Integer.MAX_VALUE ，可能会创建大量线程，从而导致 OOM。
 
 ## 线程池原理
 
