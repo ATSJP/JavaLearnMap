@@ -52,7 +52,7 @@ public class UserManagerImpl implements UserManager {
 
 - JDKProxy实现
 
-```tsx
+```java
 public class JDKProxy implements InvocationHandler {
 
     private Object targetObject;//需要代理的目标对象
@@ -79,7 +79,7 @@ public class JDKProxy implements InvocationHandler {
 
 测试：
 
-```cpp
+```java
 JDKProxy jdkPrpxy = new JDKProxy();
 UserManager userManagerJDK = (UserManager) jdkPrpxy.newProxy(new UserManagerImpl());
 userManagerJDK.addUser("tom", "root");
