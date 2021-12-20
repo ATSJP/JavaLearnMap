@@ -6,10 +6,10 @@
 
 ## Gap Lock
 
-## Net-Key Lock的规则
+## Next-Key Lock的规则
 前提：因为间隙锁在InnoDB、可重复读隔离级别下才有效，所以接下来的描述，若没有特殊说明，默认是可重复读隔离级别。
 
-Net-Key Lock为Record Lock + Gap Lock
+Next-Key Lock为Record Lock + Gap Lock
 
 原则 1：加锁的基本单位是 next-key lock。next-key lock 是前开后闭区间。
 原则 2：只有访问到的对象才会加锁。
