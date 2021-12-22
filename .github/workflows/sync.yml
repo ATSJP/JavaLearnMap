@@ -1,0 +1,16 @@
+name: syncToGitee
+on:
+  push:
+    branches: master
+jobs:
+  repo-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mirror the Github organization repos to Gitee.
+        uses: Yikun/hub-mirror-action@master
+        with:
+          src: 'github/ATSJP'
+          dst: 'gitee/ATSJP'
+          dst_key: ${{ secrets.ATSJP_ID_RSA }}
+          dst_token:  ${{ secrets.ATSJP_TOKEN }}
+
