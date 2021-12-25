@@ -4,7 +4,7 @@
 
 # 简介
 
-> 
+>  推荐一本书：http://redisbook.com/
 
 ## 数据结构
 
