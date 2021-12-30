@@ -28,6 +28,6 @@ jobs:
           # 目标的Api Token
           dst_token:  ${{ secrets.ATSJP_TOKEN }}
           # 静态名单机制，可以用于更新某些指定库
-          static_list: "note"
+          static_list: "JavaLearnMap"
           # debug模式会打印所有执行的命令
           debug: true
