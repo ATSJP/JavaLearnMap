@@ -1,4 +1,4 @@
-# Note
+# JavaLearnMap
 
 - Base Java
   - [Cache](BaseJava/Cache/README.md)
@@ -47,10 +47,10 @@
       * [Explain](BaseJava/Sql/Mysql/Explain.md)
       * [Lock](BaseJava/Sql/Mysql/Lock.md)
     - [Oracle](BaseJava/Sql/Oracle/Oracle.md)
-      * [Oracle锁工作](BaseJava/Sql/Oracle/Oracle锁工作.md)
-      * [Oracle之大表DDL](BaseJava/Sql/Oracle/Oracle之大表DDL.md)
       * [Oracle之事务](BaseJava/Sql/Oracle/Oracle之事务.md)
+      * [Oracle之大表DDL](BaseJava/Sql/Oracle/Oracle之大表DDL.md)
       * [Oracle之语法](BaseJava/Sql/Oracle/Oracle之语法.md)
+      * [Oracle锁工作](BaseJava/Sql/Oracle/Oracle锁工作.md)
     * [My Cat](BaseJava/Sql/MyCat.md)
   - [Version Control](BaseJava/VersionControl/README.md)
     * [Git](BaseJava/VersionControl/Git.md)
@@ -95,8 +95,8 @@
         * [Netty简介](HighJava/IO/NIO/Netty/Netty简介.md)
   - [JVM](HighJava/JVM/README.md)
     * [JMM Java Memory Model](HighJava/JVM/JMM(JavaMemoryModel).md)
-    * [JVM运行时数据区](HighJava/JVM/JVM运行时数据区.md)
     * [JVM之逃逸分析](HighJava/JVM/JVM之逃逸分析.md)
+    * [JVM运行时数据区](HighJava/JVM/JVM运行时数据区.md)
   - [Search Engine](HighJava/SearchEngine/README.md)
     - ES
       * [Elasticsearch](HighJava/SearchEngine/ES/Elasticsearch.md)
@@ -147,7 +147,6 @@
   * [踏上Mac之路](Life/踏上Mac之路.md)
 - Mathematics
   - [Arithmetic](Mathematics/Arithmetic/README.md)
-    * [回溯](Mathematics/Arithmetic/回溯.md)
     * [Base Operator](Mathematics/Arithmetic/BaseOperator.md)
     * [BFS DFS](Mathematics/Arithmetic/BFS&DFS.md)
     * [Dynamic Programming](Mathematics/Arithmetic/DynamicProgramming.md)
@@ -156,6 +155,7 @@
     * [KMP](Mathematics/Arithmetic/KMP.md)
     * [LRU](Mathematics/Arithmetic/LRU.md)
     * [SlidingWindow(滑动窗口)](Mathematics/Arithmetic/SlidingWindow(滑动窗口).md)
+    * [回溯](Mathematics/Arithmetic/回溯.md)
 - OPS
   - [CI DI](OPS/CI-DI/README.md)
     * [Jenkins](OPS/CI-DI/jenkins.md)
