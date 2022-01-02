@@ -1,6 +1,6 @@
 # About
 
-Daily notes and knowledge accumulation...
+Learn Map, Mainly on Java...
 
 ## KnowledgeTree
 

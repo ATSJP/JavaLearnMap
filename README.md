@@ -1,6 +1,6 @@
 # About
 
-Daily notes and knowledge accumulation...
+Learn Map, Mainly on Java...
 
 ## KnowledgeTree
 
@@ -18,16 +18,14 @@ Daily notes and knowledge accumulation...
 **Where is project？**
 
 - [Github](https://github.com/atsjp/JavaLearnMap)
-
   Always Lastest...
 
   [![JavaLearnMap Card](https://github-readme-stats.vercel.app/api/pin/?username=atsjp&repo=JavaLearnMap&show_owner=true&bg_color=30,e96443,904e95&title_color=fff&text_color=fff)](https://github.com/atsjp/JavaLearnMap)
 
-- [Gitee](https://gitee.com/atsjp/note)
-
+- [Gitee](https://gitee.com/atsjp/JavaLearnMap)
   Sync From Github...
 
-  [![ATSJP/note](https://gitee.com/atsjp/note/widgets/widget_card.svg?colors=ffffff,1e252b,323d47,455059,d7deea,99a0ae)](https://gitee.com/atsjp/note)
+  [![ATSJP/JavaLearnMap](https://gitee.com/atsjp/JavaLearnMap/widgets/widget_card.svg?colors=ffffff,1e252b,323d47,455059,d7deea,99a0ae)](https://gitee.com/atsjp/JavaLearnMap)
 
 # Mythical Creatures
 
