@@ -61,6 +61,7 @@
   * [Seckill](BusinessScenario/Seckill.md)
 - High Java
   - [Design Modes](HighJava/DesignModes/README.md)
+    * [DDD](HighJava/DesignModes/DDD.md)
     * [DecoratorPattern装饰者模式](HighJava/DesignModes/DecoratorPattern装饰者模式.md)
     * [Proactor模式](HighJava/DesignModes/Proactor模式.md)
     * [Reactor模式](HighJava/DesignModes/Reactor模式.md)
