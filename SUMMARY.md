@@ -2,6 +2,7 @@
 
 - Base Java
   - [Cache](BaseJava/Cache/README.md)
+    * [Cache Common](BaseJava/Cache/CacheCommon.md)
     * [Caffeine](BaseJava/Cache/Caffeine.md)
     * [Jet Cahce](BaseJava/Cache/JetCahce.md)
     * [Mem Cache](BaseJava/Cache/MemCache.md)
@@ -55,9 +56,6 @@
   * [Data Handle](BusinessScenario/DataHandle.md)
   * [Seckill](BusinessScenario/Seckill.md)
 - High Java
-  - [Cache](HighJava/Cache/README.md)
-    * [Cache Common](HighJava/Cache/CacheCommon.md)
-    * [Cache Consistency](HighJava/Cache/CacheConsistency.md)
   - [Design Modes](HighJava/DesignModes/README.md)
     * [DecoratorPattern装饰者模式](HighJava/DesignModes/DecoratorPattern装饰者模式.md)
     * [Proactor模式](HighJava/DesignModes/Proactor模式.md)
