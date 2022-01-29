@@ -57,7 +57,7 @@
 
 ```
 
-启动类加上`@EnableCaching`注解：
+启动类加上`@EnableCaching`注解，此注解的含义是开启Cache相关的注解：
 
 ```java
 import org.springframework.boot.SpringApplication;
