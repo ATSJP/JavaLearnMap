@@ -1,12 +1,38 @@
+[TOC]
+
+
+
+
+
+
+
 # Lock
 
-## 表级锁
+## InnoDB Locking
 
-## Record Lock
+> 官方文档：https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html
 
-## Gap Lock
+This section describes lock types used by `InnoDB`.
 
-## Next-Key Lock的规则
+- [Shared and Exclusive Locks](https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-shared-exclusive-locks)
+- [Intention Locks](https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-intention-locks)
+- [Record Locks](https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-record-locks)
+- [Gap Locks](https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-gap-locks)
+- [Next-Key Locks](https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-next-key-locks)
+- [Insert Intention Locks](https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-insert-intention-locks)
+- [AUTO-INC Locks](https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-auto-inc-locks)
+- [Predicate Locks for Spatial Indexes](https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-predicate-locks)
+
+
+### Shared and Exclusive Locks
+
+### Intention Locks
+
+### Record Lock
+
+### Gap Locks
+
+### Next-Key Lock的规则
 前提：因为间隙锁在InnoDB、可重复读隔离级别下才有效，所以接下来的描述，若没有特殊说明，默认是可重复读隔离级别。
 
 Next-Key Lock为Record Lock + Gap Lock
@@ -24,3 +50,9 @@ Next-Key Lock为Record Lock + Gap Lock
         3.如果使用了倒叙排序，按照倒叙排序后:
             检索范围的右边多加一个GAP。
             哪个方向还有命中的等值判断，再向同方向拓展外开里闭的区间。
+
+### Insert Intention Locks
+
+### AUTO-INC Locks
+
+### Predicate Locks for Spatial Indexes
