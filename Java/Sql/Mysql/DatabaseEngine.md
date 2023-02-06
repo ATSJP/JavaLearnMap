@@ -16,7 +16,32 @@ Myiasm是mysql默认的存储引擎，不支持数据库事务，行级锁，外
 
 ## Innodb
 
-Innodb支持事务，锁的力度支持表锁、行级锁；底层为B+树实现，适合处理多重并发更新操作，普通select都是快照读（MVCC的功劳），快照读不加锁。InnoDb使用的是聚集索引。
+> 官方介绍：https://dev.mysql.com/doc/refman/8.0/en/innodb-introduction.html
+
+| Feature                                                      | Support                                                      |
+| :----------------------------------------------------------- | :----------------------------------------------------------- |
+| **B-tree indexes**                                           | Yes                                                          |
+| **Backup/point-in-time recovery** (Implemented in the server, rather than in the storage engine.) | Yes                                                          |
+| **Cluster database support**                                 | No                                                           |
+| **Clustered indexes**                                        | Yes                                                          |
+| **Compressed data**                                          | Yes                                                          |
+| **Data caches**                                              | Yes                                                          |
+| **Encrypted data**                                           | Yes (Implemented in the server via encryption functions; In MySQL 5.7 and later, data-at-rest encryption is supported.) |
+| **Foreign key support**                                      | Yes                                                          |
+| **Full-text search indexes**                                 | Yes (Support for FULLTEXT indexes is available in MySQL 5.6 and later.) |
+| **Geospatial data type support**                             | Yes                                                          |
+| **Geospatial indexing support**                              | Yes (Support for geospatial indexing is available in MySQL 5.7 and later.) |
+| **Hash indexes**                                             | No (InnoDB utilizes hash indexes internally for its Adaptive Hash Index feature.) |
+| **Index caches**                                             | Yes                                                          |
+| **Locking granularity**                                      | Row                                                          |
+| **MVCC**                                                     | Yes                                                          |
+| **Replication support** (Implemented in the server, rather than in the storage engine.) | Yes                                                          |
+| **Storage limits**                                           | 64TB                                                         |
+| **T-tree indexes**                                           | No                                                           |
+| **Transactions**                                             | Yes                                                          |
+| **Update statistics for data dictionary**                    | Yes                                                          |
+
+Innodb支持事务，锁的力度支持表锁、行级锁；底层为B+树实现，适合处理多重并发更新操作，普通select都是快照读（MVCC的功劳），快照读不加锁。InnoDb使用的是聚集索引等等。
 
 ### 聚集索引
 
