@@ -56,3 +56,18 @@ Next-Key Lock为Record Lock + Gap Lock
 ### AUTO-INC Locks
 
 ### Predicate Locks for Spatial Indexes
+
+
+
+
+
+### 锁兼容
+
+Table-level lock type compatibility is summarized in the following matrix.
+
+|      | `X`      | `IX`       | `S`        | `IS`       |
+| :--- | :------- | :--------- | :--------- | :--------- |
+| `X`  | Conflict | Conflict   | Conflict   | Conflict   |
+| `IX` | Conflict | Compatible | Conflict   | Compatible |
+| `S`  | Conflict | Conflict   | Compatible | Compatible |
+| `IS` | Conflict | Compatible | Compatible | Compatible |
