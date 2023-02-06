@@ -18,6 +18,8 @@ Myiasm是mysql默认的存储引擎，不支持数据库事务，行级锁，外
 
 > 官方介绍：https://dev.mysql.com/doc/refman/8.0/en/innodb-introduction.html
 
+### 特性
+
 | Feature                                                      | Support                                                      |
 | :----------------------------------------------------------- | :----------------------------------------------------------- |
 | **B-tree indexes**                                           | Yes                                                          |
@@ -42,6 +44,10 @@ Myiasm是mysql默认的存储引擎，不支持数据库事务，行级锁，外
 | **Update statistics for data dictionary**                    | Yes                                                          |
 
 Innodb支持事务，锁的力度支持表锁、行级锁；底层为B+树实现，适合处理多重并发更新操作，普通select都是快照读（MVCC的功劳），快照读不加锁。InnoDb使用的是聚集索引等等。
+
+### 架构
+
+![innodb-architecture](DatabaseEngine.assets/innodb-architecture-8-0.png)
 
 ### 聚集索引
 
