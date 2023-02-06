@@ -73,6 +73,8 @@ Innodb支持事务，锁的力度支持表锁、行级锁；底层为B+树实现
 
 ### MVCC
 
+> 官方介绍：https://dev.mysql.com/doc/refman/8.0/en/innodb-multi-versioning.html
+
 https://blog.csdn.net/SnailMann/article/details/94724197
 
 https://blog.csdn.net/chen77716/article/details/6742128
