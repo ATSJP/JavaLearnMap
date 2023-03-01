@@ -299,7 +299,7 @@ null->system->const->eq_ref->ref->fulltext->ref_or_null->index_merge->unique_sub
 
   当 join type 为 eq_ref 或者 ref 时，谓词的关联信息。可能为 ：null（非 eq_ref、ref join type时）、const（常量）、关联的谓词列名。
 
- #### Extra
+#### Extra
 
 - `Child of '*`table`*' pushed join@1`
 
