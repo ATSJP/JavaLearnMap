@@ -389,7 +389,9 @@ null->system->const->eq_ref->ref->fulltext->ref_or_null->index_merge->unique_sub
 
   
 
-- `Using filesort`，无法利用索引来完成的排序
+- `Using filesort`，当MySQL查询不适合使用索引来优化排序时，将使用文件排序。文件排序可以理解为MySQL在内存中为查询结果建立一个临时表，并在该表中排序。如果结果集太大无法完全保存在内存中，则系统将在磁盘上创建并排序临时文件。这就是所谓的“Using  filesort”（使用文件排序）。
+
+通常，MySQL会尽可能避免使用文件排序，因为它需要对磁盘进行I/O操作，这可能会使查询变得缓慢。因此，您应该努力优化您的查询，以确保MySQL可以使用索引来排序数据而不必使用文件排序。
 
   ```sql
   explain select remark from son order by remark;
